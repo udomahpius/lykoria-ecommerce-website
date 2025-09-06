@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy">
+    <title>Admin Page</title>
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/assets/all.css">
+    <link rel="stylesheet" href="/assets/all.min.css">
+    <link rel="stylesheet" href="/webfonts/fa-solid-900.woff2">
+    <link rel="stylesheet" href="/webfonts/fa-regular-400.woff2">
+    <link rel="stylesheet" href="/webfonts/fa-brands-400.woff2">
+
+    <!-- <link rel="stylesheet" href="/assets/fontawesome.css">
+    <link rel="stylesheet" href="/assets/fontawesome.min.css"> -->
+    <!-- <link rel="stylesheet" href="/assets/all.min.css">
+    <link rel="stylesheet" href="/assets/solid.css"> -->
+</head>
+
+<body>
+    <header>
+        <nav class="container">
+            <h1>Admin Page</h1>
+            <h1><a href="index.html">Home</a></h1>
+        </nav>
+    </header>
+    <div class="banner">
+        <h1>START BLOGGING</h1>
+    </div>
+    <div class="container admin-side">
+        <div class="add-left-item">
+            <div class="add-img">
+                <p> <label for="banner">Add Banner</label></p>
+                <p class="img-bg">
+                    <input type="file" id="inputFile" accept="image/jpg, image/jpeg, image/png">
+                    <i class="fa-duotone fa-solid fa-square-xmark iconClearimg"></i>
+                </p>
+            </div>
+            <div class="add-tittle">
+                <p><label for="title">Add Title</label></p>
+                <p> <input type="text" class="inputText"></p>
+                <p><i class="fa-duotone fa-solid fa-square-check iconAddTitleFunction"></i>
+                    <i class="fa-duotone fa-solid fa-square-xmark iconClearTitleFunction"></i>
+                </p>
+            </div>
+            <div class="add-text">
+                <p><label for="title">Write Here</label></p>
+                <p><textarea name="" id="bodyTextArea"></textarea></p>
+                <p>
+                    <i class="fa-duotone fa-solid fa-square-check iconAddbodyTextArea"></i>
+                    <i class="fa-duotone fa-solid fa-square-xmark iconClearbodyTextArea"></i>
+                </p>
+            </div>
+            <div class="linkBtn">
+                <input type="text" name="" id="" class="inputUrl" placeholder="Add Button URL ...">
+                <i class="fa-duotone fa-solid fa-square-xmark iconClearLinkBtn"></i>
+                <button type="button" class="addLink">Add Button</button>
+            </div>
+        </div>
+        <div class="preview-right-item">
+            <div class="previewItemContainer">
+                <img src="" id="uploadFileEle" alt="">
+            </div>
+            <div class="text-content">
+                <div class="text-area">
+                    <h1 class="previewItemElementTile"></h1>
+                    <p class="bodyTextDisplayContent"></p>
+                </div>
+                <div class="exploreLinkContainer">
+                    <!-- link button -->
+                </div>
+            </div>
+            <div class="publish">
+                <button onclick="transferItem()">Post Blog</button>
+                <button onclick="clearItems()">Delete All Posts</button>
+
+            </div>
+
+        </div>
+        <!-- <i class="fa-duotone fa-solid fa-square-check"></i>
+    <i class="fa-duotone fa-solid fa-square-xmark"></i>     -->
+    </div>
+
+    <script type="module" src="/js/admin.js"></script>
+
+</body>
+
+</html>

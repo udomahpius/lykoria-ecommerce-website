@@ -1,0 +1,155 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: rgb(243, 243, 243);
+}
+i{
+    font-size: 2rem;
+    color: rgb(153, 155, 155);
+}
+label{
+     font-size: 2rem;
+         font-weight: lighter;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+   
+}
+input, textarea{
+    width: 100%;
+    padding: 2rem 15px;
+
+}
+button{
+    width: 100%;
+    padding: 20px;
+    margin-top: 15px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    border-radius: 6px;
+    background-color: rgba(20, 32, 32, 0.687);
+    font-size: 15px;
+    color: white;
+}
+button:hover{
+        background-color: rgba(28, 39, 39, 0.687);
+
+}
+
+/* admin css start */
+.banner h1{
+    text-align: center;
+    margin: 0;
+    padding: 2rem;
+    border: 1px solid gray;
+    font-weight: lighter;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+}
+.img-bg{
+    border: 1px gray solid;
+    background-color: white;
+}
+.img-bg input[type="file"]{
+    outline: 0;
+    border: 0;
+}
+.admin-side{
+    justify-content: space-between;
+    flex:1 1 300px;
+    gap: 15px;
+    display: flex;
+    border:1px solid #ccc;
+      padding:15px;
+       /* margin:10px;  */
+       border-radius:8px; 
+       max-width:100%;
+}
+.add-left-item, .preview-right-item{
+    padding: 1.2rem 3rem;
+    width: 100%;
+}
+.preview-right-item{
+    background-color: rgb(244, 245, 247);
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+.hide-text-content{
+    display: none;
+}
+.preview-right-item .text-content .previewItemElementTile{
+    
+    font-family:Georgia, 'Times New Roman', Times, serif;
+    font-weight: lighter;
+    font-size: 25px;
+}
+.preview-right-item .text-content .bodyTextDisplayContent{
+    font-size: 18px;
+}
+.preview-right-item .text-content .text-area{
+text-align: center;
+padding-bottom: 1rem;
+}
+.exploreLinkContainer{
+    text-align: center;
+    margin-bottom: 1.1rem;
+}
+.exploreLink{
+    background-color: rgb(24, 100, 121);
+    color: white;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    border-radius: 7px;
+}
+.exploreLink:hover{
+        background-color: rgb(13, 127, 158);
+
+}
+.add-left-item{
+    line-height: 2;
+}
+.add-tittle, .add-tittle, .add-img{
+    display: block;
+}
+.previewItemContainer{
+    width: 100%;
+}
+.previewItemContainer img{
+    width: 100%;
+}
+
+.publish-btn-hidden{
+    display:none;
+}
+/* admin css end */
+/* home css start */
+.post{
+    flex:1 1 300px;
+     border:1px solid #ccc;
+      padding:15px;
+       margin:10px; 
+       border-radius:8px; 
+       max-width:30%;
+}
+/* home css end */
+nav{
+        display: flex;
+        justify-content: space-between;
+    }
+    .container{
+       padding: 10px 15px;
+    }
+    header{
+        background-color: rgba(20, 32, 32, 0.687);
+        color: white;
+    }
+    header a{
+        color: white;
+    }
+    a{
+        color: #000;
+        text-decoration: none;
+    }
