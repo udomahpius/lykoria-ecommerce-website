@@ -41,39 +41,31 @@
       </style>
 <body>
 <body>
-    <nav>
-<header>
-  <div>
-    <h1>Admin Page</h1>
-  </div>
-        
-      <div>
-        <a href="public.html">Home</a>
-      </div>
-
-      <div>
-        <button class="toggle-btn">🌙 Dark Mode</button>
-        <a href="signup.html"><i class="fa-solid fa-user"></i></a>
-        <a href="index.html"><i class="fa-solid fa-gear"></i></a>
-      </div>
-  
-  </header>
+     <header>
+  <h1>BP</h1>
+  <nav>
+    <a href="public.html">Published</a>
   </nav>
-
-
-  <div class="container">
-    <h2>Published Posts</h2>
-
-    <div class="controls">
-      <input type="text" id="searchPublish" placeholder="Search by keyword...">
-      <select id="sortPublish">
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-      </select>
-    </div>
-
-    <div id="publishContainer" class="posts-grid"></div>
+  <div>
+    <button class="toggle-btn">🌙 Dark Mode</button>
+    <a href="index.html"><i class="fa-solid fa-gear"></i></a>
   </div>
+</header>
+
+
+   <div class="container filter-controls">
+  <div class="filters">
+    <input type="text" id="searchInput" placeholder="Search posts...">
+    <select id="categoryFilter">
+      <option value="">All Categories</option>
+    </select>
+    <select id="sortSelect">
+      <option value="newest">Newest First</option>
+      <option value="oldest">Oldest First</option>
+    </select>
+  </div>
+
+  <div class="publishedContainer posts-grid"></div>
 
   <script type="module" src="/js/public.js"></script>
       <script type="module" src="/js/main.js"></script>

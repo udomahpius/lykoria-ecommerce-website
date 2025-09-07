@@ -1,15 +1,14 @@
-import { getPosts, deletePost } from "../js/db.js";
+import { getPosts, updatePost, deletePost } from "../js/db.js";
 import { getCategories } from "../js/db.js";
 
-const draftsContainer = document.querySelector(".draftsContainer");
+const publishedContainer = document.querySelector(".publishedContainer");
 const searchInput = document.getElementById("searchInput");
 const categoryFilter = document.getElementById("categoryFilter");
 const sortSelect = document.getElementById("sortSelect");
 
-async function loadDrafts() {
+async function loadPublishedPosts() {
   let posts = await getPosts();
-  posts = posts.filter((p) => p.status === "draft");
-
+  posts = posts.filter((p) => p.status === "published");
   renderPosts(posts);
 }
 
@@ -25,8 +24,8 @@ async function loadCategoryFilter() {
 }
 
 loadCategoryFilter();
+
 function renderPosts(posts) {
-  // Apply filters
   const searchQuery = searchInput.value.toLowerCase();
   const category = categoryFilter.value;
   const sortBy = sortSelect.value;
@@ -34,59 +33,46 @@ function renderPosts(posts) {
   let filtered = posts.filter(
     (p) =>
       (p.title.toLowerCase().includes(searchQuery) ||
-        p.body.toLowerCase().includes(searchQuery) ||
-        (p.author?.firstName + " " + p.author?.lastName)
-          .toLowerCase()
-          .includes(searchQuery)) &&
+       p.body.toLowerCase().includes(searchQuery) ||
+       (p.author?.firstName + " " + p.author?.lastName).toLowerCase().includes(searchQuery)) &&
       (category ? p.category === category : true)
   );
 
-  // Sort
-  filtered.sort((a, b) => {
-    if (sortBy === "newest") {
-      return new Date(b.createdAt) - new Date(a.createdAt);
-    } else {
-      return new Date(a.createdAt) - new Date(b.createdAt);
-    }
-  });
+  filtered.sort((a, b) => sortBy === "newest"
+    ? new Date(b.publishedAt || b.createdAt) - new Date(a.publishedAt || a.createdAt)
+    : new Date(a.publishedAt || a.createdAt) - new Date(b.publishedAt || b.createdAt)
+  );
 
-  // Render
-  draftsContainer.innerHTML = filtered
-    .map(
-      (post) => `
-      <div class="card">
-        <img src="${post.image?.url || ""}" alt="Draft Image">
-        <h2>${post.title}</h2>
-        <p>${post.body}</p>
-        <p><strong>Author:</strong> ${post.author?.firstName || ""} ${
-        post.author?.lastName || ""
-      } (${post.author?.email || ""})</p>
-        <p><strong>Category:</strong> ${post.category || "Uncategorized"}</p>
-        <button onclick="editDraft(${post.id})">Edit</button>
-        <button onclick="removeDraft(${post.id})">Delete</button>
-      </div>
-    `
-    )
-    .join("");
+  publishedContainer.innerHTML = filtered.map(post => `
+    <div class="card">
+      <img src="${post.image?.url || ""}" alt="Post Image">
+      <h2>${post.title}</h2>
+      <p>${post.body}</p>
+      <p><strong>Author:</strong> ${post.author?.firstName || ""} ${post.author?.lastName || ""} (${post.author?.email || ""})</p>
+      <p><strong>Category:</strong> ${post.category || "Uncategorized"}</p>
+      <p><strong>Published At:</strong> ${post.publishedAt ? new Date(post.publishedAt).toLocaleString() : "Unknown"}</p>
+      <button class="delete-btn" data-id="${post.id}">Delete</button>
+    </div>
+  `).join("");
+
+  bindCardButtons();
 }
 
-// Event listeners for live filtering
-searchInput.addEventListener("input", loadDrafts);
-categoryFilter.addEventListener("change", loadDrafts);
-sortSelect.addEventListener("change", loadDrafts);
+// Delete button functionality
+function bindCardButtons() {
+  document.querySelectorAll(".delete-btn").forEach(btn => {
+    btn.onclick = async () => {
+      const postId = Number(btn.dataset.id);
+      await deletePost(postId);
+      loadPublishedPosts();
+    };
+  });
+}
 
-window.editDraft = (id) => {
-  const posts = JSON.parse(localStorage.getItem("posts")) || [];
-  const draft = posts.find((d) => d.id === id);
-  if (draft) {
-    localStorage.setItem("editDraft", JSON.stringify(draft));
-    window.location.href = "editor.html";
-  }
-};
+// Live filtering
+searchInput.addEventListener("input", loadPublishedPosts);
+categoryFilter.addEventListener("change", loadPublishedPosts);
+sortSelect.addEventListener("change", loadPublishedPosts);
 
-window.removeDraft = async (id) => {
-  await deletePost(id);
-  loadDrafts();
-};
-
-loadDrafts();
+window.loadPublishedPosts = loadPublishedPosts; // expose globally
+loadPublishedPosts();

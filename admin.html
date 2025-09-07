@@ -20,26 +20,16 @@
 </head>
 
 <body>
+  <header>
+  <h1>Admin Dashboard</h1>
   <nav>
-<header>
-  <div>
-    <h1>Admin Page</h1>
-  </div>
-        
-      <div>
-        <a href="index.html">Preview</a>
-        <a href="drafts.html">Drafts</a>
-        <a href="public.html">Home</a>
-      </div>
-
-      <div>
-        <button class="toggle-btn">🌙 Dark Mode</button>
-        <a href="signup.html"><i class="fa-solid fa-user"></i></a>
-      </div>
-  
-  </header>
+    <a href="admin.html">Create Post</a>
+    <a href="public.html">Published</a>
   </nav>
-
+  <div>
+    <button class="toggle-btn">🌙 Dark Mode</button>
+  </div>
+</header>
 
   <div class="banner">
     <h1>START BLOGGING</h1>
@@ -103,16 +93,21 @@
       </div>
 
       <!-- BUTTONS -->
-      <div class="publish">
-        <button type="button" class="saveDraftBtn" onclick="saveAsDraft()">Save as Draft</button>
-        <button type="button" class="publishBtn" onclick="publishPost()">Publish</button>
-        <button type="button" class="clearBtn" onclick="clearItems()">Delete All</button>
-      </div>
+       <div class="publish">
+    <button type="button" class="saveDraftBtn">Save as Draft</button>
+    <button type="button" class="publishBtn">Publish</button>
+    <button type="button" class="clearAllBtn">Delete All</button>
+</div>
+
+
+
     </div>
   </div>
 
     <script type="module" src="/js/admin.js"></script>
     <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/publish.js"></script>
+
 
 </body>
 

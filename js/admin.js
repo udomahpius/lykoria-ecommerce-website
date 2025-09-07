@@ -1,21 +1,15 @@
-import { savePost, clearPosts, getAllPosts } from "../js/db.js";
+import { savePost, getPosts, updatePost, deletePost } from "../js/db.js";
 
-const inputImg = document.getElementById("inputFile");
-const inputTitle = document.querySelector(".inputText");
-const textarea = document.getElementById("bodyTextArea");
+const inputImgElement = document.getElementById("inputFile");
+const inputTileField = document.querySelector(".inputText");
+const textareaElement = document.querySelector("#bodyTextArea");
 const inputUrl = document.querySelector(".inputUrl");
 const categoryField = document.querySelector(".categoryField");
 const saveDraftBtn = document.querySelector(".saveDraftBtn");
-const imgPreview = document.getElementById("uploadFileEle");
+const publishBtn = document.querySelector(".publishBtn"); // new button
+const clearAllBtn = document.querySelector(".clearAllBtn"); // delete all
+const imgElement = document.getElementById("uploadFileEle");
 
-// Redirect to login if not logged in
-const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-if (!loggedInUser) {
-  alert("Please login first!");
-  window.location.href = "login.html";
-}
-
-// Keep latest selected image
 let selectedImage = null;
 
 // Convert file to Base64
@@ -28,55 +22,103 @@ function fileToBase64(file) {
   });
 }
 
-// Handle image upload
-inputImg.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
+// Image preview
+inputImgElement.addEventListener("change", async (event) => {
+  const file = event.target.files[0];
   if (!file) return;
-  selectedImage = { name: file.name, url: await fileToBase64(file) };
-  imgPreview.src = selectedImage.url;
-  imgPreview.style.display = "block";
+  const base64 = await fileToBase64(file);
+  selectedImage = {
+    name: file.name,
+    url: base64,
+    type: file.type,
+    size: file.size,
+  };
+  imgElement.src = base64;
+  imgElement.style.display = "block";
 });
 
-// Save Draft
+// Save draft
 saveDraftBtn.addEventListener("click", async () => {
-  if (!inputTitle.value.trim()) return alert("Add title!");
-  if (!textarea.value.trim()) return alert("Add body!");
-  if (!categoryField.value) return alert("Select category!");
+  if (!inputTileField.value.trim() || !textareaElement.value.trim()) {
+    alert("Title and content required!");
+    return;
+  }
+
+  const loggedUser = JSON.parse(localStorage.getItem("loggedInUser")) || {};
 
   const newPost = {
     id: Date.now(),
-    title: inputTitle.value.trim(),
-    body: textarea.value.trim(),
+    title: inputTileField.value.trim(),
+    body: textareaElement.value.trim(),
     image: selectedImage,
     link: inputUrl.value.trim(),
     category: categoryField.value,
     status: "draft",
-    createdAt: new Date()
+    createdAt: new Date(),
+    author: {
+      firstName: loggedUser.firstName || "Unknown",
+      lastName: loggedUser.lastName || "",
+      email: loggedUser.email || "",
+    },
   };
 
   await savePost(newPost);
-
-  // Reset form
-  selectedImage = null;
-  imgPreview.src = "";
-  imgPreview.style.display = "none";
-  inputImg.value = "";
-  inputTitle.value = "";
-  textarea.value = "";
-  inputUrl.value = "";
-  categoryField.value = "";
-
-  alert("Draft saved!");
+  alert("Post saved as Draft!");
+  resetEditor();
 });
 
-// Expose to window for buttons
-window.saveAsDraft = async () => {
-  await saveDraftBtn.click();
-};
-
-window.clearItems = async () => {
-  if (confirm("Delete all posts?")) {
-    await clearPosts();
-    alert("All posts deleted!");
+// Publish post
+publishBtn.addEventListener("click", async () => {
+  if (!inputTileField.value.trim() || !textareaElement.value.trim()) {
+    alert("Title and content required to publish!");
+    return;
   }
-};
+
+  const loggedUser = JSON.parse(localStorage.getItem("loggedInUser")) || {};
+
+  const publishedPost = {
+    id: Date.now(),
+    title: inputTileField.value.trim(),
+    body: textareaElement.value.trim(),
+    image: selectedImage,
+    link: inputUrl.value.trim(),
+    category: categoryField.value,
+    status: "published",
+    createdAt: new Date(),
+    publishedAt: new Date(),
+    author: {
+      firstName: loggedUser.firstName || "Unknown",
+      lastName: loggedUser.lastName || "",
+      email: loggedUser.email || "",
+    },
+  };
+
+  await savePost(publishedPost);
+  alert("Post published successfully!");
+  resetEditor();
+
+  // Optional: refresh Published page if open
+  if (window.loadPublishedPosts) window.loadPublishedPosts();
+});
+
+// Clear all posts
+clearAllBtn.addEventListener("click", async () => {
+  const posts = await getPosts();
+  for (let post of posts) {
+    await deletePost(post.id);
+  }
+  alert("All posts deleted!");
+  resetEditor();
+});
+
+// Reset editor form
+function resetEditor() {
+  selectedImage = null;
+  imgElement.src = "";
+  imgElement.style.display = "none";
+  inputImgElement.value = "";
+  inputTileField.value = "";
+  textareaElement.value = "";
+  inputUrl.value = "";
+  categoryField.value = "";
+}
