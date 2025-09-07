@@ -24,7 +24,6 @@ async function loadCategoryFilter() {
 }
 
 loadCategoryFilter();
-
 function renderPosts(posts) {
   // Apply filters
   const searchQuery = searchInput.value.toLowerCase();

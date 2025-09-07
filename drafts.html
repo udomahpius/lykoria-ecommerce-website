@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Drafts</title>
+        <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/assets/all.css">
+    <link rel="stylesheet" href="/assets/all.min.css">
+    <link rel="stylesheet" href="/webfonts/fa-solid-900.woff2">
+    <link rel="stylesheet" href="/webfonts/fa-regular-400.woff2">
+    <link rel="stylesheet" href="/webfonts/fa-brands-400.woff2">
+
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .drafts-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <body>
+          <nav>
+<header>
+  <div>
+    <h1>Admin Page</h1>
+  </div>
+        
+      <div>
+        <a href="index.html">Preview</a>
+        <a href="public.html">Home</a>
+      </div>
+
+      <div>
+        <button class="toggle-btn">🌙 Dark Mode</button>
+        <a href="signup.html"><i class="fa-solid fa-user"></i></a>
+      </div>
+  
+  </header>
+  </nav>
+
+
+        <div class="container">
+            <h2>Saved Drafts</h2>
+
+            <!-- Filters -->
+            <div class="controls">
+                <input type="text" id="searchDrafts" placeholder="Search by keyword...">
+                <select id="sortDrafts">
+                    <option value="newest">Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+            </div>
+
+            <!-- Posts go here -->
+            <div id="draftsContainer" class="posts-grid"></div>
+        </div>
+        <script type="module" src="/js/drafts.js"></script>
+            <script type="module" src="/js/main.js"></script>
+
+    </body>
+
+</html>

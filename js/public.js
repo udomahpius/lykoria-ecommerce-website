@@ -12,6 +12,7 @@ async function loadDrafts() {
 
   renderPosts(posts);
 }
+
 async function loadCategoryFilter() {
   const categories = await getCategories();
   categoryFilter.innerHTML = `<option value="">All Categories</option>`;
@@ -24,7 +25,6 @@ async function loadCategoryFilter() {
 }
 
 loadCategoryFilter();
-
 function renderPosts(posts) {
   // Apply filters
   const searchQuery = searchInput.value.toLowerCase();

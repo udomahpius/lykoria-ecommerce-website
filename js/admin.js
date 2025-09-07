@@ -1,111 +1,82 @@
-export let setArrayObj = JSON.parse(localStorage.getItem("blogData")) || [];
+import { savePost, clearPosts, getAllPosts } from "../js/db.js";
 
-let currentPost = {
-  image: null,
-  title: "",
-  body: "",
-  link: ""
+const inputImg = document.getElementById("inputFile");
+const inputTitle = document.querySelector(".inputText");
+const textarea = document.getElementById("bodyTextArea");
+const inputUrl = document.querySelector(".inputUrl");
+const categoryField = document.querySelector(".categoryField");
+const saveDraftBtn = document.querySelector(".saveDraftBtn");
+const imgPreview = document.getElementById("uploadFileEle");
+
+// Redirect to login if not logged in
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+if (!loggedInUser) {
+  alert("Please login first!");
+  window.location.href = "login.html";
+}
+
+// Keep latest selected image
+let selectedImage = null;
+
+// Convert file to Base64
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+}
+
+// Handle image upload
+inputImg.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedImage = { name: file.name, url: await fileToBase64(file) };
+  imgPreview.src = selectedImage.url;
+  imgPreview.style.display = "block";
+});
+
+// Save Draft
+saveDraftBtn.addEventListener("click", async () => {
+  if (!inputTitle.value.trim()) return alert("Add title!");
+  if (!textarea.value.trim()) return alert("Add body!");
+  if (!categoryField.value) return alert("Select category!");
+
+  const newPost = {
+    id: Date.now(),
+    title: inputTitle.value.trim(),
+    body: textarea.value.trim(),
+    image: selectedImage,
+    link: inputUrl.value.trim(),
+    category: categoryField.value,
+    status: "draft",
+    createdAt: new Date()
+  };
+
+  await savePost(newPost);
+
+  // Reset form
+  selectedImage = null;
+  imgPreview.src = "";
+  imgPreview.style.display = "none";
+  inputImg.value = "";
+  inputTitle.value = "";
+  textarea.value = "";
+  inputUrl.value = "";
+  categoryField.value = "";
+
+  alert("Draft saved!");
+});
+
+// Expose to window for buttons
+window.saveAsDraft = async () => {
+  await saveDraftBtn.click();
 };
 
-// Save one post
-export function transferItem() {
-  if (!currentPost.title || !currentPost.body) {
-    window.alert("Add at least a title and body before posting!");
-    return;
+window.clearItems = async () => {
+  if (confirm("Delete all posts?")) {
+    await clearPosts();
+    alert("All posts deleted!");
   }
-
-  setArrayObj.push({ ...currentPost }); // push, don’t replace
-  localStorage.setItem("blogData", JSON.stringify(setArrayObj));
-
-  window.alert("Post saved!");
-
-  // Reset currentPost for next post
-  currentPost = { image: null, title: "", body: "", link: "" };
-
-  // Reset preview fields in editor
-  document.getElementById("uploadFileEle").src = "";
-  document.querySelector(".inputText").value = "";
-  document.querySelector("#bodyTextArea").value = "";
-  document.querySelector(".inputUrl").value = "";
-}
-
-// Delete all posts
-export function clearItems() {
-  setArrayObj.length = 0;
-  localStorage.removeItem("blogData");
-  window.alert("All posts deleted!");
-}
-
-// ===== IMAGE =====
-const inputImgElement = document.getElementById("inputFile");
-const imgElement = document.getElementById("uploadFileEle");
-
-inputImgElement.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const base64Image = e.target.result;
-
-      imgElement.src = base64Image;
-      imgElement.style.display = "block";
-
-      currentPost.image = {
-        name: file.name,
-        url: base64Image,
-        type: file.type,
-        size: file.size
-      };
-    };
-    reader.readAsDataURL(file);
-  }
-});
-
-// ===== TITLE =====
-const inputTileField = document.querySelector(".inputText");
-document.querySelector(".iconAddTitleFunction").addEventListener("click", () => {
-  if (!inputTileField.value.trim()) {
-    window.alert("Add your blog title!");
-    return;
-  }
-  currentPost.title = inputTileField.value.trim();
-  window.alert("Title added!");
-});
-
-// ===== BODY =====
-const textareaElement = document.querySelector("#bodyTextArea");
-document.querySelector(".iconAddbodyTextArea").addEventListener("click", () => {
-  if (!textareaElement.value.trim()) {
-    window.alert("Add your blog content!");
-    return;
-  }
-  currentPost.body = textareaElement.value.trim();
-  window.alert("Body added!");
-});
-
-// ===== LINK =====
-const inputUrl = document.querySelector(".inputUrl");
-document.querySelector(".addLink").addEventListener("click", (e) => {
-  e.preventDefault();
-  const linkAddress = inputUrl.value.trim();
-
-  if (linkAddress === "" || !linkAddress.startsWith("http")) {
-    window.alert("It must be a valid link (starting with http)");
-    return;
-  }
-
-  currentPost.link = linkAddress;
-  window.alert("Link added!");
-});
-
-// ✅ Sync editor when preview deletes posts
-window.addEventListener("storage", (event) => {
-  if (event.key === "blogData") {
-    setArrayObj = JSON.parse(localStorage.getItem("blogData")) || [];
-    console.log("Editor synced. Posts:", setArrayObj);
-  }
-});
-
-// Expose functions
-window.transferItem = transferItem;
-window.clearItems = clearItems;
+};

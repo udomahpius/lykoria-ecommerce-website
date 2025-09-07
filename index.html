@@ -1,48 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy">
-    <title>BlogHere</title>
-    <link rel="stylesheet" href="/index.css">
-</head>
- <style>
- .final-preview { 
-      margin-top: 20px; 
-      padding: 15px; 
-      border: 1px solid #ccc; 
-      border-radius: 8px;
-      /* max-width: 600px; */
-    }
-    .final-preview img { border-radius: 6px; }
-    .preview-link { 
-      display: inline-block; 
-      margin-top: 15px; 
-      padding: 8px 14px; 
-      background: royalblue; 
-      color: #fff; 
-      text-decoration: none; 
-      border-radius: 4px;
-    }
-    .preview-link:hover {
-      background: navy;
-    }
-      </style>
-<body>
-    <header>
-        <nav class="container">
-            <h1>BlogHere</h1>
-            <h1><a href="admin.html">admin</a></h1>
-        </nav>
-    </header>
-    <section>
-        <div class="final-preview"></div>
-    </section>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Final Published Posts</title>
+      <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="/assets/all.css">
+    <link rel="stylesheet" href="/assets/all.min.css">
+    <link rel="stylesheet" href="/webfonts/fa-solid-900.woff2">
+    <link rel="stylesheet" href="/webfonts/fa-regular-400.woff2">
+    <link rel="stylesheet" href="/webfonts/fa-brands-400.woff2">
 
-    <script type="module" src="/js/index.js" ></script>
+
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Read the latest blog posts published by our team. Stay updated with fresh insights and stories.">
+  <meta name="keywords" content="Blog, Articles, News, Insights, Stories">
+  <meta name="author" content="Your Blog Name">
+
+  <!-- Open Graph for Social Sharing -->
+  <meta property="og:title" content="Our Blog">
+  <meta property="og:description" content="Explore our latest published blog posts.">
+  <meta property="og:type" content="website">
+
+  <!-- Basic Styles -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      padding: 20px;
+      margin: 0;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .controls input, .controls select {
+      padding: 8px 12px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .public-posts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .post {
+      flex: 1 1 300px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 350px;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .post img {
+      max-width: 100%;
+      border-radius: 6px;
+      margin-bottom: 15px;
+    }
+    .post h2 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+    .post p {
+      flex-grow: 1;
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .post a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .post a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<body>
+    <nav>
+<header>
+  <div>
+    <h1>Admin Page</h1>
+  </div>
+        
+      <div>
+        <a href="admin.html">Admin</a>
+        <a href="drafts.html">Drafts</a>
+        <a href="public.html">Home</a>
+      </div>
+
+      <div>
+        <button class="toggle-btn">🌙 Dark Mode</button>
+        <a href="signup.html"><i class="fa-solid fa-user"></i></a>
+      </div>
   
-      
-    
+  </header>
+  </nav>
+
+  <div class="container">
+    <h2>Blog Posts</h2>
+
+    <!-- Filters -->
+    <div class="controls">
+      <input type="text" id="searchPosts" placeholder="Search by keyword...">
+      <select id="sortPosts">
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+      </select>
+    </div>
+
+    <!-- Posts -->
+    <div id="postsContainer" class="posts-grid"></div>
+  </div>
+
+  <script type="module" src="/js/index.js"></script>
+      <script type="module" src="/js/main.js"></script>
+
 </body>
 </html>
