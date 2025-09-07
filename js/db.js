@@ -2,7 +2,7 @@ const DB_NAME = "blogDB";
 const DB_VERSION = 1;
 let db;
 
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxxuC84xr7TMOpNkbTdDSfwEWXkqEFbXlrf6eVXsCO0wiUtOElJpBXJjzuwiaqAVrgXXA/exec"; // Replace
+const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxh60DmdP8lgOHmU9Tl9PxrZ1ND2YC3KxN5N25M8SPj1x2rgMlfpn0I62CYNhmGXd8Q/exec"; // Replace
 
 // Initialize DB
 export function initDB() {
@@ -33,15 +33,37 @@ export function initDB() {
 }
 
 // Save user
+// export async function saveUser(user) {
+//   await initDB();
+//   return new Promise((resolve, reject) => {
+//     const tx = db.transaction("users", "readwrite");
+//     tx.objectStore("users").put(user);
+//     tx.oncomplete = () => resolve();
+//     tx.onerror = (err) => reject(err);
+//   });
+// }
+
 export async function saveUser(user) {
   await initDB();
   return new Promise((resolve, reject) => {
     const tx = db.transaction("users", "readwrite");
     tx.objectStore("users").put(user);
-    tx.oncomplete = () => resolve();
+    tx.oncomplete = async () => {
+      try {
+        await fetch(GOOGLE_SHEET_URL, {
+          method: "POST",
+          body: JSON.stringify(user),
+          headers: { "Content-Type": "application/json" }
+        });
+      } catch (err) {
+        console.error("Failed to sync user to Google Sheets:", err);
+      }
+      resolve();
+    };
     tx.onerror = (err) => reject(err);
   });
 }
+
 
 // Get user by email
 export async function getUserByEmail(email) {
