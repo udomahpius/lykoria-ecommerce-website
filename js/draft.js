@@ -1,44 +1,40 @@
-// js/draft.js
+const draftsContainer = document.getElementById("draftList");
+
 async function loadDrafts() {
-    const data = await getSheetData('Posts');
-    const draftContainer = document.getElementById('draftsContainer');
-    draftContainer.innerHTML = '';
+  try {
+    const posts = await getSheetData("Posts");
 
-    const drafts = data.filter(post => post[5] === 'draft');
+    // Filter drafts
+    const drafts = posts.filter(p => p[5] === "draft");
 
-    drafts.forEach((draft, i) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <h2>${draft[0]}</h2>
-            <p>${draft[1]}</p>
-            <button onclick="editDraft(${i})">Edit</button>
-            <button onclick="publishDraft(${i})">Publish</button>
-        `;
-        draftContainer.appendChild(card);
-    });
+    if (!drafts.length) {
+      draftsContainer.innerHTML = "<p>No drafts found.</p>";
+      return;
+    }
+
+    draftsContainer.innerHTML = drafts.map((draft, index) => `
+      <div class="post-card">
+        <img src="${draft[2]}" alt="Draft Image">
+        <h3>${draft[0]}</h3>
+        <p>${draft[1]}</p>
+        <button onclick="editDraft(${index})">Edit</button>
+      </div>
+    `).join("");
+
+  } catch (err) {
+    console.error("Error loading drafts:", err);
+    draftsContainer.innerHTML = "<p>Failed to load drafts.</p>";
+  }
 }
 
 function editDraft(index) {
-    getSheetData('Posts').then((data) => {
-        const drafts = data.filter(post => post[5] === 'draft');
-        const draft = drafts[index];
-        const rowIndex = data.indexOf(draft);
-        sessionStorage.setItem('editDraft', JSON.stringify({ ...draft, index: rowIndex }));
-        window.location.href = 'editor.html';
-    });
+  getSheetData("Posts").then(posts => {
+    const draft = posts.filter(p => p[5] === "draft")[index];
+    draft.rowIndex = index + 2; // rowIndex for updateRow
+    sessionStorage.setItem("editDraft", JSON.stringify(draft));
+    window.location.href = "editor.html";
+  });
 }
 
-function publishDraft(index) {
-    getSheetData('Posts').then(async (data) => {
-        const drafts = data.filter(post => post[5] === 'draft');
-        const draft = drafts[index];
-        const rowIndex = data.indexOf(draft);
-        draft[5] = 'published';
-        await updateRow('Posts', rowIndex + 2, draft);
-        alert('Draft published!');
-        loadDrafts();
-    });
-}
-
+// Load drafts on page load
 window.onload = loadDrafts;

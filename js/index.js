@@ -1,21 +1,28 @@
-// js/index.js
-async function loadPosts() {
-    const data = await getSheetData('Posts');
-    const container = document.getElementById('postsContainer');
-    container.innerHTML = '';
+  const container = document.getElementById("postsContainer");
 
-    data.filter(post => post[5] === 'published')
-        .forEach(post => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="${post[2]}" alt="${post[0]}">
-                <h2>${post[0]}</h2>
-                <p>${post[1]}</p>
-                <a href="${post[4]}" class="btn">${post[3]}</a>
-            `;
-            container.appendChild(card);
-        });
-}
+  async function loadPosts() {
+    try {
+      const posts = await getSheetData("Posts");
+      const published = posts.filter(p => p[5] === "published"); // status = published
 
-window.onload = loadPosts;
+      if (!published.length) {
+        container.innerHTML = "<p>No published posts yet.</p>";
+        return;
+      }
+
+      container.innerHTML = published.map(post => `
+        <div class="post-card">
+          <img src="${post[2]}" alt="Post Image">
+          <h3>${post[0]}</h3>
+          <p>${post[1]}</p>
+          <a href="${post[4]}" target="_blank">${post[3]}</a>
+        </div>
+      `).join("");
+
+    } catch (err) {
+      console.error("Error loading posts:", err);
+      container.innerHTML = "<p>Failed to load posts.</p>";
+    }
+  }
+
+  window.onload = loadPosts;

@@ -1,32 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Editor Dashboard</title>
-<link rel="stylesheet" href="../index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor</title>
+  <link rel="stylesheet" href="../index.css">
 </head>
 <body>
-   <div class="editor-container">
-    <h2 id="welcomeUser"></h2>
-    <button id="logoutBtn">Logout</button>
+  <div class="editor-container">
+    <h2 id="welcome"></h2>
 
-    <!-- Your editor form goes here -->
-    <form id="editorForm">
-      <input type="text" id="title" placeholder="Post Title" required>
-      <textarea id="body" placeholder="Write your post..." required></textarea>
-      <input type="url" id="image" placeholder="Image URL (optional)">
-      <button type="submit">Save Draft</button>
-      <button type="button" id="previewBtn">Preview</button>
-      <button type="button" id="publishBtn">Publish</button>
-    </form>
+   <input id="title">
+<textarea id="body"></textarea>
+<input id="image">
+<input id="buttonText">
+<input id="buttonUrl">
+<button id="previewBtn">Preview</button>
+<button id="draftBtn">Save Draft</button>
+<button id="publishBtn">Publish</button>
+<span id="welcome"></span>
+<button id="logoutBtn">Logout</button>
+    </div>
   </div>
-    <!-- ✅ Logout button -->
-    <button id="logoutBtn">Logout</button>
 
-  </div> 
- </div>
-<script  src="../js/db.js"></script>
-<script  src="../js/editor.js"></script>
+  <!-- Load scripts -->
+  <script src="../js/db.js"></script>
+  <script src="../js/editor.js"></script>
 </body>
 </html>

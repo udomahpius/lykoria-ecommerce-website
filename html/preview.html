@@ -1,13 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Post Preview</title>
-<link rel="stylesheet" href="/index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Post Preview</title>
+  <link rel="stylesheet" href="../index.css">
 </head>
 <body>
-<div id="previewContainer"></div>
-<script  src="../js/preview.js"></script>
+  <div class="preview-container">
+    <h2>Post Preview</h2>
+    <div id="postCard" class="post-card">
+      <img id="postImage" src="" alt="Post Image">
+      <h3 id="postTitle"></h3>
+      <p id="postBody"></p>
+      <a id="postButton" href="#" target="_blank">Button</a>
+    </div>
+    <button onclick="window.close()">Close Preview</button>
+  </div>
+  <script src="../js/db.js"></script>
+  <script src="../js/preview.js"></script>
+  <!-- <script>
+    // Load preview data from localStorage
+    const post = JSON.parse(localStorage.getItem("previewPost"));
+    if (post) {
+      document.getElementById("postTitle").textContent = post.title;
+      document.getElementById("postBody").textContent = post.body;
+      document.getElementById("postImage").src = post.image;
+      document.getElementById("postButton").textContent = post.buttonText;
+      document.getElementById("postButton").href = post.buttonUrl;
+    } else {
+      document.getElementById("postCard").textContent = "No preview data found.";
+    }
+  </script> -->
 </body>
 </html>

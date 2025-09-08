@@ -1,14 +1,44 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home</title>
-<link rel="stylesheet" href="index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - My App</title>
+  <link rel="stylesheet" href="../index.css">
+  
 </head>
 <body>
-<div id="postsContainer" class="posts-grid"></div>
-<script type="module" src="js/db.js"></script>
-<script type="module" src="js/index.js"></script>
+
+  <!-- Navbar -->
+  <nav>
+  <div class="logo">MyApp</div>
+  <div class="menu-toggle" id="menu-toggle">&#9776;</div>
+  <ul id="nav-links">
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="signup.html">Signup</a></li>
+    <li><a href="login.html">Login</a></li>
+    <li><a href="editor.html">Editor</a></li>
+    <li><a href="draft.html">Drafts</a></li>
+    <li><a href="preview.html">Preview</a></li>
+  </ul>
+</nav>
+
+
+  <!-- Page Content -->
+  <main>
+    <h1>Welcome to My App</h1>
+    <p>This is your homepage. Use the navigation links above to explore the app.</p>
+  </main>
+  <main id="postsContainer" class="posts-grid">
+  <!-- Posts will load here -->
+</main>
+
+<script src="../js/db.js"></script>
+<script src="../js/index.js"></script>
+<script src="../js/navbar.js"></script>
+
 </body>
 </html>

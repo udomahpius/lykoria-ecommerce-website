@@ -1,18 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Drafts</title>
-<link rel="stylesheet" href="../index.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drafts</title>
+  <link rel="stylesheet" href="../index.css">
 </head>
 <body>
-<div class="draft-container">
-    <h1>Your Drafts</h1>
-    <div id="draftsContainer" class="drafts-grid"></div>
-</div>
+  <h2>Your Drafts</h2>
+  <div id="draftList"></div>
 
-<script src="../js/db.js"></script>
-<script src="../js/draft.js"></script>
+  <script src="../js/db.js"></script>
+  <script src="../js/draft.js"></script>
+  <!-- <script>
+    async function loadDrafts() {
+      try {
+        const posts = await getSheetData("Posts");
+        const drafts = posts.filter(p => p[5] === "draft"); // 6th column = status
+        const container = document.getElementById("draftList");
+        container.innerHTML = "";
+
+        if (drafts.length === 0) {
+          container.textContent = "No drafts found.";
+          return;
+        }
+
+        drafts.forEach((draft, index) => {
+          const card = document.createElement("div");
+          card.classList.add("post-card");
+          card.innerHTML = `
+            <h3>${draft[0]}</h3>
+            <p>${draft[1]}</p>
+            <img src="${draft[2]}" alt="Draft Image">
+            <a href="${draft[4]}" target="_blank">${draft[3]}</a>
+            <button onclick="editDraft(${index})">Edit</button>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        console.error("Failed to load drafts:", err);
+      }
+    }
+
+    function editDraft(index) {
+      getSheetData("Posts").then(posts => {
+        const draft = posts.filter(p => p[5] === "draft")[index];
+        if (draft) {
+          sessionStorage.setItem("editDraft", JSON.stringify({
+            index,
+            title: draft[0],
+            body: draft[1],
+            image: draft[2],
+            buttonText: draft[3],
+            buttonUrl: draft[4]
+          }));
+          window.location.href = "editor.html";
+        }
+      });
+    }
+
+    loadDrafts();
+  </script> -->
 </body>
 </html>
