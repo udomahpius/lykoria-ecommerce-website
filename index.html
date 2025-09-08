@@ -1,127 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog - Final Published Posts</title>
-      <link rel="stylesheet" href="/index.css">
-    <link rel="stylesheet" href="/assets/all.css">
-    <link rel="stylesheet" href="/assets/all.min.css">
-    <link rel="stylesheet" href="/webfonts/fa-solid-900.woff2">
-    <link rel="stylesheet" href="/webfonts/fa-regular-400.woff2">
-    <link rel="stylesheet" href="/webfonts/fa-brands-400.woff2">
-
-
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="Read the latest blog posts published by our team. Stay updated with fresh insights and stories.">
-  <meta name="keywords" content="Blog, Articles, News, Insights, Stories">
-  <meta name="author" content="Your Blog Name">
-
-  <!-- Open Graph for Social Sharing -->
-  <meta property="og:title" content="Our Blog">
-  <meta property="og:description" content="Explore our latest published blog posts.">
-  <meta property="og:type" content="website">
-
-  <!-- Basic Styles -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      padding: 20px;
-      margin: 0;
-    }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
-    .controls input, .controls select {
-      padding: 8px 12px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    .public-posts {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-    .post {
-      flex: 1 1 300px;
-      border: 1px solid #ddd;
-      padding: 20px;
-      border-radius: 10px;
-      max-width: 350px;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-    .post img {
-      max-width: 100%;
-      border-radius: 6px;
-      margin-bottom: 15px;
-    }
-    .post h2 {
-      margin-bottom: 10px;
-      font-size: 20px;
-    }
-    .post p {
-      flex-grow: 1;
-      margin-bottom: 15px;
-      color: #333;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    .post a {
-      color: #007BFF;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .post a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home</title>
+<link rel="stylesheet" href="index.css">
 </head>
 <body>
-<body>
-  <header>
-  <h1>BP</h1>
-  <nav>
-    <a href="admin.html">Create Post</a>
-    <a href="public.html">Published</a>
-    <a href="drafts.html">Draft</a>
-  </nav>
-  <div>
-    <button class="toggle-btn">🌙 Dark Mode</button>
-  </div>
-</header>
-  <div class="container">
-    <h2>Blog Posts</h2>
-
-    <!-- Filters -->
-    <div class="controls">
-      <input type="text" id="searchPosts" placeholder="Search by keyword...">
-      <select id="sortPosts">
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-      </select>
-    </div>
-
-    <!-- Posts -->
-    <div class=" publishedContainer posts-grid"></div>
-  </div>
-
-  <script type="module" src="/js/index.js"></script>
-      <script type="module" src="/js/main.js"></script>
-
+<div id="postsContainer" class="posts-grid"></div>
+<script type="module" src="js/db.js"></script>
+<script type="module" src="js/index.js"></script>
 </body>
 </html>

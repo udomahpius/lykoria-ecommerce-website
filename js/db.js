@@ -1,192 +1,48 @@
-// db.js
-const DB_NAME = "blogDB";
-const DB_VERSION = 1;
-let db;
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbyuXVMXjn7FOEgw8vWo8w1fuzq1iHjObRewgV7_C9kfaUNFcmg4BfKrBH1JV2J5U-VZUQ/exec";
 
-const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxh60DmdP8lgOHmU9Tl9PxrZ1ND2YC3KxN5N25M8SPj1x2rgMlfpn0I62CYNhmGXd8Q/exec "; // Replace with your script
-
-// Initialize DB
-export function initDB() {
+// ✅ Get all rows (JSONP to avoid CORS issues)
+function getSheetData(sheetName) {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const callbackName = "cb_" + Math.random().toString(36).substr(2, 9);
 
-    request.onupgradeneeded = (event) => {
-      db = event.target.result;
-
-      if (!db.objectStoreNames.contains("posts")) {
-        db.createObjectStore("posts", { keyPath: "id" });
-      }
-
-      if (!db.objectStoreNames.contains("users")) {
-        db.createObjectStore("users", { keyPath: "email" });
-      }
-
-      if (!db.objectStoreNames.contains("categories")) {
-        db.createObjectStore("categories", { keyPath: "id" });
-      }
+    window[callbackName] = function(data) {
+      delete window[callbackName];
+      resolve(data.values || []);
     };
 
-    request.onsuccess = (event) => {
-      db = event.target.result;
-      resolve(db);
+    const script = document.createElement("script");
+    script.src = `${SHEET_URL}?sheet=${sheetName}&callback=${callbackName}`;
+    script.onerror = () => reject("Failed to fetch data");
+    document.body.appendChild(script);
+  });
+}
+function appendRow(sheetName, rowData) {
+  return new Promise((resolve, reject) => {
+    const callbackName = "cb_" + Math.random().toString(36).substring(2);
+    window[callbackName] = (response) => {
+      delete window[callbackName];
+      resolve(response);
     };
-
-    request.onerror = (event) => reject(event.target.error);
+    const url = `${SHEET_URL}?sheet=${sheetName}&add=${encodeURIComponent(JSON.stringify(rowData))}&callback=${callbackName}`;
+    const script = document.createElement("script");
+    script.src = url;
+    script.onerror = reject;
+    document.body.appendChild(script);
   });
 }
 
-// ==================== POSTS ====================
+// ✅ Append a new row (uses POST request)
+// async function appendRow(sheetName, rowData) {
+//   try {
+//     const res = await fetch(`${SHEET_URL}?sheet=${sheetName}`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ row: rowData })
+//     });
 
-// Save new post
-export async function savePost(post) {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("posts", "readwrite");
-    tx.objectStore("posts").put(post);
-
-    tx.oncomplete = async () => {
-      try {
-        await fetch(GOOGLE_SHEET_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(post),
-        });
-      } catch (err) {
-        console.error("Failed to sync post to Google Sheets:", err);
-      }
-      resolve();
-    };
-
-    tx.onerror = (err) => reject(err);
-  });
-}
-
-
-// Update existing post
-export async function updatePost(post) {
-  return savePost(post); // Same as savePost; it replaces by keyPath
-}
-
-// Get all posts
-// export async function getPosts() {
-//   await initDB();
-//   return new Promise((resolve, reject) => {
-//     const tx = db.transaction("posts", "readonly");
-//     const store = tx.objectStore("posts");
-//     const request = store.getAll();
-
-//     request.onsuccess = () => resolve(request.result);
-//     request.onerror = (err) => reject(err);
-//   });
+//     return await res.json(); // { result: "success" }
+//   } catch (err) {
+//     console.error("appendRow error:", err);
+//     throw err;
+//   }
 // }
-export async function getPosts() {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("posts", "readonly");
-    const store = tx.objectStore("posts");
-    const request = store.getAll();
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (e) => reject(e);
-  });
-}
-
-// Delete post
-export async function deletePost(id) {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("posts", "readwrite");
-    tx.objectStore("posts").delete(id);
-
-    tx.oncomplete = resolve;
-    tx.onerror = (err) => reject(err);
-  });
-}
-
-// Clear all posts
-export async function clearPosts() {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("posts", "readwrite");
-    tx.objectStore("posts").clear();
-
-    tx.oncomplete = resolve;
-    tx.onerror = (err) => reject(err);
-  });
-}
-
-
-// ==================== USERS ====================
-
-// Save new user
-export async function saveUser(user) {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("users", "readwrite");
-    tx.objectStore("users").put(user);
-
-    tx.oncomplete = async () => {
-      try {
-        await fetch(GOOGLE_SHEET_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(user),
-        });
-      } catch (err) {
-        console.error("Failed to sync user to Google Sheets:", err);
-      }
-      resolve();
-    };
-
-    tx.onerror = (err) => reject(err);
-  });
-}
-
-// Get user by email
-export async function getUserByEmail(email) {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("users", "readonly");
-    const request = tx.objectStore("users").get(email);
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (err) => reject(err);
-  });
-}
-
-// ==================== CATEGORIES ====================
-
-// Save category
-export async function saveCategory(name) {
-  await initDB();
-  const category = { id: Date.now(), name };
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("categories", "readwrite");
-    tx.objectStore("categories").put(category);
-
-    tx.oncomplete = resolve;
-    tx.onerror = (err) => reject(err);
-  });
-}
-
-// Get all categories
-export async function getCategories() {
-  await initDB();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction("categories", "readonly");
-    const request = tx.objectStore("categories").getAll();
-
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = (err) => reject(err);
-  });
-}
-
-// export async function updatePost(post) {
-//   const db = await initDB();
-//   return new Promise((resolve, reject) => {
-//     const tx = db.transaction("posts", "readwrite");
-//     tx.objectStore("posts").put(post);
-//     tx.oncomplete = () => resolve();
-//     tx.onerror = err => reject(err);
-//   });
-// }
-
