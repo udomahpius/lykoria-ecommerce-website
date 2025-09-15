@@ -1,35 +1,34 @@
-// js/login.js
-document.querySelector("#loginForm").addEventListener("submit", async (e) => {
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.querySelector("#email").value.trim();
-  const password = document.querySelector("#password").value.trim();
-
-  if (!email || !password) {
-    alert("Please enter email and password.");
-    return;
-  }
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
   try {
-    const users = await getSheetData("Users");
-    const dataRows = users.slice(1);
+    const res = await fetch("http://localhost:5000/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-    const hashedPassword = await hashPassword(password);
-    const user = dataRows.find(u => u[2] === email && u[3] === hashedPassword);
-
-    if (!user) {
-      alert("Invalid email or password!");
+    // If server sends invalid response
+    if (!res.ok) {
+      const errorMsg = await res.text();
+      alert("Login failed: " + errorMsg);
       return;
     }
 
-    const currentUser = { firstName: user[0], lastName: user[1], email: user[2] };
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    const data = await res.json();
 
-    alert(`Welcome, ${user[0]}! Redirecting to editor...`);
-    window.location.href = "editor.html";
-
+    if (data.success) {
+      localStorage.setItem("token", data.token); // store token
+      alert("Login successful!");
+      window.location.href = "admin.html"; // 🔑 redirect here
+    } else {
+      alert(data.error || "Invalid email or password");
+    }
   } catch (err) {
-    console.error("Login failed:", err);
-    alert("Login failed, please try again.");
+    console.error("Login error:", err);
+    alert("An error occurred while logging in");
   }
 });

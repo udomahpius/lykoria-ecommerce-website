@@ -1,28 +1,46 @@
-  const container = document.getElementById("postsContainer");
+    const API_URL = "http://localhost:5000/api/posts";
 
-  async function loadPosts() {
-    try {
-      const posts = await getSheetData("Posts");
-      const published = posts.filter(p => p[5] === "published"); // status = published
+    const categories = [
+      { key: "tech", label: "Tech" },
+      { key: "health", label: "Health" },
+      { key: "sports", label: "Sports" },
+      { key: "business", label: "Business" },
+      { key: "education", label: "Education" },
+      { key: "entertainment", label: "Entertainment" },
+      { key: "lifestyle", label: "Lifestyle" },
+      { key: "politics", label: "Politics" },
+    ];
 
-      if (!published.length) {
-        container.innerHTML = "<p>No published posts yet.</p>";
-        return;
+    async function loadCategory(categoryKey, categoryLabel) {
+      try {
+        const res = await fetch(`${API_URL}?category=${categoryKey}&limit=6`);
+        const posts = await res.json();
+
+        const section = document.createElement("section");
+        section.innerHTML = `
+          <h2><a href="${categoryKey}.html">${categoryLabel}</a></h2>
+          <div class="posts-grid">
+            ${posts.map(post => `
+              <div class="post-card">
+                ${post.image ? `<img src="${post.image}" alt="">` : ""}
+                <h3>${post.title}</h3>
+                <p>${post.body.substring(0,100)}...</p>
+                <a href="${post.url}" target="_blank" class="read-more">${post.urlText || "Read more"}</a>
+              </div>
+            `).join("")}
+          </div>
+        `;
+        document.getElementById("categories").appendChild(section);
+      } catch (err) {
+        console.error(`Error loading ${categoryKey}:`, err);
       }
-
-      container.innerHTML = published.map(post => `
-        <div class="post-card">
-          <img src="${post[2]}" alt="Post Image">
-          <h3>${post[0]}</h3>
-          <p>${post[1]}</p>
-          <a href="${post[4]}" target="_blank">${post[3]}</a>
-        </div>
-      `).join("");
-
-    } catch (err) {
-      console.error("Error loading posts:", err);
-      container.innerHTML = "<p>Failed to load posts.</p>";
     }
-  }
 
-  window.onload = loadPosts;
+     // Dark/Light toggle
+  document.getElementById("toggleTheme").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.body.classList.toggle("dark-mode");
+  });
+
+    // Load all categories
+    categories.forEach(cat => loadCategory(cat.key, cat.label));

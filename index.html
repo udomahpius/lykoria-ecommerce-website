@@ -1,44 +1,313 @@
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home - My App</title>
-  <link rel="stylesheet" href="../index.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Shop</title>
+<style>
+  * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background:#f7f7f7; color:#333; }
+
+  /* Header */
+  header { display:flex; justify-content:space-between; align-items:center; background:#1e1e2f; padding:15px 20px; color:#fff; position:sticky; top:0; z-index:1000; }
+  header h1 { font-size:24px; font-weight:bold; }
+
+  /* Navigation */
+  nav { display:flex; gap:15px; align-items:center; flex-wrap:wrap; }
+  nav a { color:#fff; text-decoration:none; font-weight:500; padding:6px 12px; border-radius:6px; transition:0.3s; }
+  nav a:hover { background:rgba(255,255,255,0.2); }
+
+  /* Dropdown */
+  .user-dropdown { position:relative; }
+  .dropbtn { background:#444; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; color:#fff; font-weight:500; }
+  .dropdown-content { display:none; position:absolute; right:0; background:#fff; min-width:160px; border-radius:6px; box-shadow:0 6px 12px rgba(0,0,0,0.15); }
+  .dropdown-content a { display:block; color:#333; text-decoration:none; padding:10px; transition:0.3s; }
+  .dropdown-content a:hover { background:#f1f1f1; }
+  .user-dropdown:hover .dropdown-content { display:block; }
+
+  /* Mobile nav toggle */
+  .nav-toggle { display:none; font-size:26px; cursor:pointer; margin-left:10px; }
+  @media(max-width:768px){
+    nav { display:none; flex-direction:column; width:100%; background:#1e1e2f; margin-top:10px; }
+    nav.active { display:flex; }
+    .nav-toggle { display:block; }
+  }
+
+  /* Banner */
+  .banner { background:url('https://via.placeholder.com/1200x350?text=Shop+The+Best+Products') center/cover no-repeat; height:350px; display:flex; justify-content:center; align-items:center; font-size:36px; color:#fff; text-shadow:2px 2px 6px #000; margin-bottom:30px; font-weight:bold; border-radius:12px; }
+
+  /* Container */
+  .container { max-width:1200px; margin:0 auto; padding:20px; }
+
+  /* Category Section */
+  .category-section { margin-bottom:50px; }
+  .category-section h2 { font-size:28px; margin-bottom:20px; color:#1e1e2f; }
+  .category-section h2 a { text-decoration:none; color:#007BFF; transition:0.3s; }
+  .category-section h2 a:hover { color:#0056b3; }
+
+/* Posts Grid */
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  gap: 25px;
+  width: 100%;
+}
+
+/* Redesigned Post Card */
+.post-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  transition: transform 0.3s, box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 15px;
   
+}
+
+.post-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* Badge for category or status */
+.post-card .badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #007BFF;
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+/* Card Image */
+.post-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+  transition: transform 0.3s;
+}
+
+.post-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Card Content */
+.post-card-content {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Title */
+.post-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e1e2f;
+  margin: 0;
+}
+
+/* Description */
+.post-card p {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+/* Call-to-action button */
+.post-card .read-more {
+  text-decoration: none;
+  text-align: center;
+  background: #007BFF;
+  color: #fff;
+  padding: 10px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.post-card .read-more:hover {
+  background: #0056b3;
+}
+  /* Footer */
+  footer { background:#1e1e2f; color:#fff; text-align:center; padding:25px 10px; border-radius:12px 12px 0 0; margin-top:40px; }
+  footer a { color:#fff; margin:0 8px; text-decoration:none; transition:0.3s; }
+  footer a:hover { color:#007BFF; }
+
+  /* Responsive */
+  @media(max-width:700px){
+    .banner { font-size:26px; height:200px; }
+    .post-card img { height:100%;width: 100%; }
+    .category-section h2 { font-size:22px; }
+    .post-card h3 { font-size:16px; }
+    .post-card p { font-size:13px; }
+  }
+    /* Banner */
+  .banner {
+    position: relative;
+    background: linear-gradient(rgba(10, 61, 77, 0.811), rgba(0,0,0,0.4)), url('https://via.placeholder.com/1400x500?text=Affiliate+Home+Banner') center/cover no-repeat;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* border-radius: 16px; */
+    /* margin: 30px auto; */
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .banner-content {
+    text-align: center;
+    color: #fff;
+    padding: 20px;
+    animation: fadeInUp 1s ease forwards;
+  }
+
+  .banner h1 {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+  }
+
+  .banner p {
+    font-size: 20px;
+    margin-bottom: 30px;
+    text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+  }
+
+  .banner-btn {
+    display: inline-block;
+    padding: 14px 30px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(90deg, #007BFF, #00CFFF);
+    border-radius: 50px;
+    text-decoration: none;
+    transition: 0.3s;
+    box-shadow: 0 6px 15px rgba(0,123,255,0.4);
+  }
+
+  .banner-btn:hover {
+    background: linear-gradient(90deg, #0056b3, #00a3cc);
+    box-shadow: 0 8px 20px rgba(0,123,255,0.6);
+    transform: translateY(-3px);
+  }
+
+  @keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive */
+  @media(max-width:768px){
+    .banner { height: 350px; }
+    .banner h1 { font-size: 32px; }
+    .banner p { font-size: 16px; }
+    .banner-btn { font-size: 16px; padding: 12px 25px; }
+  }
+
+  @media(max-width:480px){
+    .banner { height: 280px; }
+    .banner h1 { font-size: 24px; }
+    .banner p { font-size: 14px; }
+    .banner-btn { font-size: 14px; padding: 10px 20px; }
+  }
+
+  /* Dark Mode */
+  body.dark-mode { background:#121212; color:#e0e0e0; }
+  body.dark-mode header { background:#000; }
+  body.dark-mode nav a { color:#ddd; }
+  body.dark-mode .dropbtn { background:#222; }
+  body.dark-mode .dropdown-content { background:#333; }
+  body.dark-mode .dropdown-content a { color:#fff; }
+  body.dark-mode .dropdown-content a:hover { background:#555; }
+</style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav>
-  <div class="logo">MyApp</div>
-  <div class="menu-toggle" id="menu-toggle">&#9776;</div>
-  <ul id="nav-links">
-    <li><a href="../index.html">Home</a></li>
-    <li><a href="signup.html">Signup</a></li>
-    <li><a href="login.html">Login</a></li>
-    <li><a href="editor.html">Editor</a></li>
-    <li><a href="draft.html">Drafts</a></li>
-    <li><a href="preview.html">Preview</a></li>
-  </ul>
-</nav>
+<header>
+  <h1>My Shop</h1>
+  <div class="nav-toggle" id="navToggle">☰</div>
+  <nav id="navMenu">
+    <a href="index.html">Home</a>
+    <a href="./product-category/technology.html">Technology</a>
+    <a href="./product-category/health.html">Health</a>
+    <a href="./product-category/sports.html">Sports</a>
+    <a href="./product-category/business.html">Business</a>
+    <a href="./product-category/education.html">Education</a>
+    <a href="./product-category/entertainment.html">Entertainment</a>
+    <a href="./product-category/lifestyle.html">Lifestyle</a>
+    <a href="./product-category/politics.html">Politics</a>
+    <div class="user-dropdown">
+      <button class="dropbtn">User</button>
+      <div class="dropdown-content">
+        <a href="./html/login.html">Login</a>
+        <a href="./html/signup.html">Signup</a>
+        <a href="./html/admin.html">Admin</a>
+        <a href="#" id="toggleTheme">Dark Mode</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<!-- Banner Section -->
+<div class="banner">
+  <div class="banner-content">
+    <h1>Boost Your Income with Top Affiliate Programs</h1>
+    <p>Discover the best products to promote and start earning today!</p>
+    <a href="#categories" class="banner-btn">Explore Programs</a>
+  </div>
+</div>
 
+<div class="container">
+  <!-- Example category section -->
+  <div class="category-section" id="categories">
+    <!-- Dynamically filled -->
+    <!-- Example -->
+    <!--
+    <h2><a href="technology.html">Technology</a></h2>
+    <div class="posts-grid">
+      <div class="post-card">
+        <img src="image.jpg" alt="">
+        <div class="post-card-content">
+          <h3>Product Title</h3>
+          <p>Product short description...</p>
+          <a href="#" class="read-more">Read More</a>
+        </div>
+      </div>
+    </div>
+    -->
+  </div>
+</div>
 
-  <!-- Page Content -->
-  <main>
-    <h1>Welcome to My App</h1>
-    <p>This is your homepage. Use the navigation links above to explore the app.</p>
-  </main>
-  <main id="postsContainer" class="posts-grid">
-  <!-- Posts will load here -->
-</main>
+<footer>
+  &copy; 2025 My Shop. All Rights Reserved. <br>
+  <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Contact</a>
+</footer>
 
-<script src="../js/db.js"></script>
-<script src="../js/index.js"></script>
-<script src="../js/navbar.js"></script>
+<script src="./js/index.js"></script>
+<script>
+  // Mobile nav toggle
+  const navToggle = document.getElementById("navToggle");
+  const navMenu = document.getElementById("navMenu");
+  navToggle.addEventListener("click", () => navMenu.classList.toggle("active"));
+
+  // Dark mode toggle
+  document.getElementById("toggleTheme").addEventListener("click", e => {
+    e.preventDefault();
+    document.body.classList.toggle("dark-mode");
+  });
+</script>
 
 </body>
 </html>

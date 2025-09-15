@@ -1,40 +1,83 @@
-const draftsContainer = document.getElementById("draftList");
+const API_URL = "http://localhost:5000/api/posts";
+const token = localStorage.getItem("token");
+const draftContainer = document.getElementById("draftContainer");
 
+// Load Draft Posts
 async function loadDrafts() {
   try {
-    const posts = await getSheetData("Posts");
+    const res = await fetch(API_URL);
+    const posts = await res.json();
 
-    // Filter drafts
-    const drafts = posts.filter(p => p[5] === "draft");
+    draftContainer.innerHTML = "";
+    const drafts = posts.filter(p => p.status === "draft");
 
-    if (!drafts.length) {
-      draftsContainer.innerHTML = "<p>No drafts found.</p>";
+    if (drafts.length === 0) {
+      draftContainer.innerHTML = "<p>No drafts available.</p>";
       return;
     }
 
-    draftsContainer.innerHTML = drafts.map((draft, index) => `
-      <div class="post-card">
-        <img src="${draft[2]}" alt="Draft Image">
-        <h3>${draft[0]}</h3>
-        <p>${draft[1]}</p>
-        <button onclick="editDraft(${index})">Edit</button>
-      </div>
-    `).join("");
-
+    drafts.forEach(post => {
+      const div = document.createElement("div");
+      div.className = "post";
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p>${post.body}</p>
+        ${post.image ? `<img src="${post.image}" alt="preview">` : ""}
+        ${post.url ? `<a href="${post.url}" target="_blank">${post.urlText || "Visit Link"}</a>` : ""}
+        <div>
+          <button class="publish" onclick="publishPost('${post._id}')">Publish</button>
+          <button class="delete" onclick="deletePost('${post._id}')">Delete</button>
+        </div>
+      `;
+      draftContainer.appendChild(div);
+    });
   } catch (err) {
-    console.error("Error loading drafts:", err);
-    draftsContainer.innerHTML = "<p>Failed to load drafts.</p>";
+    document.getElementById("msg").innerText = "Error loading drafts: " + err.message;
   }
 }
 
-function editDraft(index) {
-  getSheetData("Posts").then(posts => {
-    const draft = posts.filter(p => p[5] === "draft")[index];
-    draft.rowIndex = index + 2; // rowIndex for updateRow
-    sessionStorage.setItem("editDraft", JSON.stringify(draft));
-    window.location.href = "editor.html";
-  });
+// Publish Draft
+async function publishPost(id) {
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ status: "published" })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById("msg").innerText = "Post published!";
+      loadDrafts();
+    } else {
+      document.getElementById("msg").innerText = data.error || "Failed to publish.";
+    }
+  } catch (err) {
+    document.getElementById("msg").innerText = "Error: " + err.message;
+  }
 }
 
-// Load drafts on page load
-window.onload = loadDrafts;
+// Delete Draft
+async function deletePost(id) {
+  if (!confirm("Are you sure you want to delete this draft?")) return;
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE",
+      headers: { "Authorization": "Bearer " + token }
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById("msg").innerText = "Post deleted!";
+      loadDrafts();
+    } else {
+      document.getElementById("msg").innerText = data.error || "Failed to delete.";
+    }
+  } catch (err) {
+    document.getElementById("msg").innerText = "Error: " + err.message;
+  }
+}
+
+// Initial load
+loadDrafts();

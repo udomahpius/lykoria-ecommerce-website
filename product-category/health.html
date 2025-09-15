@@ -1,0 +1,170 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Category - NAME</title>
+  <style>
+        body{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+ header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    color: #fff;
+    padding: 15px;
+  }
+  nav a {
+    color: #fff;
+    margin: 0 10px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  nav a:hover { text-decoration: underline; }
+
+  /* Dropdown Styles */
+  .user-dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropbtn {
+    background: #444;
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .dropbtn:hover { background: #666; }
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background: #fff;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+    z-index: 10;
+    border-radius: 4px;
+  }
+  .dropdown-content a {
+    color: #333;
+    padding: 10px;
+    text-decoration: none;
+    display: block;
+  }
+  .dropdown-content a:hover {
+    background: #f1f1f1;
+  }
+  .user-dropdown:hover .dropdown-content {
+    display: block;
+  }
+
+  /* Dark Mode */
+  body.dark-mode {
+    background: #121212;
+    color: #e0e0e0;
+  }
+  body.dark-mode header {
+    background: #000;
+  }
+  body.dark-mode nav a {
+    color: #ddd;
+  }
+  body.dark-mode .dropbtn {
+    background: #222;
+  }
+  body.dark-mode .dropdown-content {
+    background: #333;
+  }
+  body.dark-mode .dropdown-content a {
+    color: #fff;
+  }
+  body.dark-mode .dropdown-content a:hover {
+    background: #555;
+  } 
+    .posts { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; }
+    .post { border: 1px solid #ccc; border-radius: 6px; padding: 10px; width: 30%; }
+    .post img { max-width: 100%; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <header>
+  <h1>My Blog</h1>
+  <nav>
+    <a href="../index.html">Home</a>
+    <a href="technology.html">Tech</a>
+    <a href="health.html">Health</a>
+    <a href="sports.html">Sports</a>
+    <a href="business.html">Business</a>
+    <a href="education.html">Education</a>
+    <a href="entertainment.html">Entertainment</a>
+    <a href="lifestyle.html">Lifestyle</a>
+    <a href="politics.html">Politics</a>
+  </nav>
+
+  <!-- User Dropdown -->
+  <div class="user-dropdown">
+    <button class="dropbtn">☰ User</button>
+    <div class="dropdown-content">
+      <a href="../html/login.html">Login</a>
+      <a href="../html/signup.html">Signup</a>
+      <a href="../html/admin.html">Admin</a>
+      <a href="#" id="toggleTheme">Toggle Dark/Light</a>
+    </div>
+  </div>
+</header>
+  <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
+  <div id="categoryPosts" class="posts"></div>
+
+<script>
+  const API_URL = "http://localhost:5000/api/posts";
+
+  // Hardcode the category for this page
+  const CATEGORY = "Health"; // Change this for each category page
+
+  async function loadCategory() {
+    try {
+      const res = await fetch(API_URL);
+      const posts = await res.json();
+
+      // Sort newest first
+      const sortedPosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+      // Filter posts by this page's category only
+      const categoryPosts = sortedPosts.filter(p => p.category.toLowerCase() === CATEGORY.toLowerCase() && p.status === "published");
+
+      document.getElementById("categoryTitle").innerText = CATEGORY + " Posts";
+
+      document.getElementById("categoryPosts").innerHTML = categoryPosts.map(p => `
+        <div class="post">
+          <h3>${p.title}</h3>
+          ${p.image ? `<img src="${p.image}" alt="preview">` : ""}
+          <p>${p.body.substring(0,150)}...</p>
+          <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
+        </div>
+      `).join("");
+    } catch(err) {
+      console.error(err);
+      document.getElementById("categoryPosts").innerHTML = "<p>Failed to load posts.</p>";
+    }
+  }
+
+  loadCategory();
+
+  // Dark/Light toggle
+  document.getElementById("toggleTheme").addEventListener("click", (e) => {
+    e.preventDefault();
+    document.body.classList.toggle("dark-mode");
+  });
+</script>
+</body>
+</html>
+
+
