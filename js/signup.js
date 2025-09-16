@@ -165,7 +165,7 @@ async function signup() {
   const msgEl = document.getElementById("msg");
 
   try {
-    const res = await fetch("https://admin-blog-mauve.vercel.app/api/signup", {
+    const res = await fetch("api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
