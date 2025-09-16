@@ -33,7 +33,7 @@
         document.getElementById("categories").appendChild(section);
       } catch (err) {
         console.error(`Error loading ${categoryKey}:`, err);
-        // document.getElementById("categories").innerHTML = `<h1 style="font-size: 3rem; text-align:center !important;color:rgb(65, 29, 4);width:100%; background:gray; padding:4rem 2rem;font-weight: lighter;" >Failed to load posts <br> Check your internet connection...</h1>`.toUpperCase();
+        document.getElementById("categories").innerHTML = `<h1 style="font-size: 3rem; text-align:center !important;color:rgb(65, 29, 4);width:100%; background:gray; padding:4rem 2rem;font-weight: lighter;" >Failed to load posts <br> Check your internet connection...</h1>`.toUpperCase();
       }
     }
 
