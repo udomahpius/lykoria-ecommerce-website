@@ -1,15 +1,17 @@
 // ============================
 // Imports
 // ============================
-const express = require("express");
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const multer = require("multer");
-const fs = require("fs");
-const cloudinary = require("cloudinary").v2;
-require("dotenv").config();
+import express from "express";
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import multer from "multer";
+import fs from "fs";
+import cloudinary from "cloudinary";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // ============================
 // Initialize App
@@ -26,7 +28,7 @@ const MONGO_URI = process.env.MONGO_URI;
 // ============================
 // Cloudinary Config
 // ============================
-cloudinary.config({
+cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
@@ -41,7 +43,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 const corsOptions = {
   origin: [
     "http://127.0.0.1:5500",
-    "https://admin-blog-mauve.vercel.app/",
+    "https://admin-blog-mauve.vercel.app",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
@@ -57,7 +59,7 @@ const upload = multer({ dest: "/tmp", limits: { fileSize: 5 * 1024 * 1024 } });
 // MongoDB Connection
 // ============================
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB error:", err));
 
@@ -171,7 +173,7 @@ app.post("/api/posts", authMiddleware, upload.single("image"), async (req, res) 
     let imageUrl = "";
 
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
         folder: "lykoria_uploads",
       });
       fs.unlinkSync(req.file.path); // clean up temp file
@@ -198,7 +200,7 @@ app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, re
     let imageUrl = existingPost.image;
 
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
         folder: "lykoria_uploads",
       });
       fs.unlinkSync(req.file.path);
