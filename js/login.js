@@ -1,34 +1,41 @@
+// ====== LOGIN FORM ======
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const email = document.getElementById("email").value;
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
   try {
-    const res = await fetch("http://localhost:5000/api/login", {
+    const res = await fetch("/api/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+      body: JSON.stringify({ email, password }),
     });
 
-    // If server sends invalid response
+    // Handle server/network errors
     if (!res.ok) {
-      const errorMsg = await res.text();
-      alert("Login failed: " + errorMsg);
+      let msg;
+      try {
+        const errorData = await res.json();
+        msg = errorData.error || "Login failed.";
+      } catch {
+        msg = await res.text();
+      }
+      alert("Login failed: " + msg);
       return;
     }
 
     const data = await res.json();
 
-    if (data.success) {
-      localStorage.setItem("token", data.token); // store token
-      alert("Login successful!");
-      window.location.href = "admin.html"; // 🔑 redirect here
+    if (data.success && data.token) {
+      localStorage.setItem("token", data.token); // store JWT
+      alert("✅ Login successful!");
+      window.location.href = "admin.html"; // redirect to dashboard
     } else {
-      alert(data.error || "Invalid email or password");
+      alert(data.error || "Invalid email or password.");
     }
   } catch (err) {
     console.error("Login error:", err);
-    alert("An error occurred while logging in");
+    alert("⚠️ Unable to login. Please try again later.");
   }
 });

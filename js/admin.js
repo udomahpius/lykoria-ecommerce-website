@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:5000/api/posts";
+// ====== API BASE ======
+const API_URL = "/api/posts";   // works in dev + production
+const UPLOAD_URL = "/api/upload"; // Cloudinary uploader
 
 // ====== ELEMENTS ======
 const postForm = document.getElementById("postForm");
@@ -35,6 +37,22 @@ imageInput.addEventListener("change", () => {
   }
 });
 
+// ====== UPLOAD IMAGE TO CLOUDINARY ======
+async function uploadImage(file) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(UPLOAD_URL, {
+    method: "POST",
+    body: formData
+  });
+
+  if (!res.ok) throw new Error("Image upload failed");
+
+  const data = await res.json();
+  return data.url; // Cloudinary secure_url
+}
+
 // ====== CREATE / UPDATE POST ======
 postForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -45,23 +63,29 @@ postForm.addEventListener("submit", async e => {
   const endpoint = postId ? `${API_URL}/${postId}` : API_URL;
   const method = postId ? "PUT" : "POST";
 
-  const formData = new FormData();
-  formData.append("title", titleInput.value);
-  formData.append("body", bodyInput.value);
-  formData.append("url", urlInput.value);
-  formData.append("urlText", urlTextInput.value);
-  formData.append("category", categorySelect.value);
-  formData.append("status", "published");
-
-  if (imageInput.files[0]) {
-    formData.append("image", imageInput.files[0]);
-  }
-
   try {
+    let imageUrl = null;
+    if (imageInput.files[0]) {
+      imageUrl = await uploadImage(imageInput.files[0]);
+    }
+
+    const body = {
+      title: titleInput.value,
+      body: bodyInput.value,
+      url: urlInput.value,
+      urlText: urlTextInput.value,
+      category: categorySelect.value,
+      status: "published",
+      image: imageUrl || undefined
+    };
+
     const res = await fetch(endpoint, {
       method,
-      headers: { "Authorization": `Bearer ${TOKEN}` },
-      body: formData
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${TOKEN}`
+      },
+      body: JSON.stringify(body)
     });
 
     if (res.status === 401) {
@@ -71,15 +95,7 @@ postForm.addEventListener("submit", async e => {
       return;
     }
 
-    const contentType = res.headers.get("content-type");
-    let data;
-    if (contentType && contentType.includes("application/json")) {
-      data = await res.json();
-    } else {
-      const text = await res.text();
-      throw new Error("Server did not return JSON: " + text);
-    }
-
+    const data = await res.json();
     if (data.success) {
       alert(postId ? "Post updated!" : "Post created!");
       postForm.reset();
@@ -129,7 +145,7 @@ async function loadPosts() {
         <small>Category: ${post.category}</small><br>
         <a href="${post.url}" target="_blank">${post.urlText || "Read more"}</a>
         <div class="actions">
-          <button  onclick="editPost('${post._id}')">✏️ Edit</button>
+          <button onclick="editPost('${post._id}')">✏️ Edit</button>
           <button onclick="deletePost('${post._id}')">🗑️ Delete</button>
         </div>
       `;
@@ -150,13 +166,6 @@ async function editPost(id) {
     const res = await fetch(API_URL, {
       headers: { "Authorization": `Bearer ${TOKEN}` }
     });
-
-    if (res.status === 401) {
-      alert("Unauthorized! Please log in again.");
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-      return;
-    }
 
     const posts = await res.json();
     const post = posts.find(p => p._id === id);
@@ -194,13 +203,6 @@ async function deletePost(id) {
       method: "DELETE",
       headers: { "Authorization": `Bearer ${TOKEN}` }
     });
-
-    if (res.status === 401) {
-      alert("Unauthorized! Please log in again.");
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-      return;
-    }
 
     const data = await res.json();
     if (data.success) {
