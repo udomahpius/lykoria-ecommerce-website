@@ -38,7 +38,7 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 const corsOptions = {
-  origin: ["http://127.0.0.1:5500","https://admin-blog-mauve.vercel.app/index.html"],
+  origin: ["http://127.0.0.1:5500","https://admin-blog-mauve.vercel.app"],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
   optionsSuccessStatus: 204
