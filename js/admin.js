@@ -1,6 +1,6 @@
 // ====== API BASE ======
-const API_URL = "/api/posts";   // works in dev + production
-const UPLOAD_URL = "/api/upload"; // Cloudinary uploader
+const API_URL = "https://adminblog-3.onrender.com/api/posts";   // works in dev + production
+const UPLOAD_URL = "https://adminblog-3.onrender.com/api/upload"; // Cloudinary uploader
 
 // ====== ELEMENTS ======
 const postForm = document.getElementById("postForm");

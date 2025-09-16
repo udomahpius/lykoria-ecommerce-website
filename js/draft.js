@@ -1,5 +1,5 @@
 // ====== API BASE ======
-const API_URL = "/api/posts";  // works in dev + Vercel
+const API_URL = "https://adminblog-3.onrender.com/api/posts";  // works in dev + Vercel
 const draftContainer = document.getElementById("draftContainer");
 
 // ====== CHECK LOGIN ======

@@ -1,6 +1,6 @@
 import nextConnect from "next-connect";
 import multer from "multer";
-import cloudinary from "./cloudinary.js";
+import cloudinary from "../utils/cloudinary.js";
 import fs from "fs";
 
 const upload = multer({ dest: "/tmp" }); // temporary in Vercel’s lambda
