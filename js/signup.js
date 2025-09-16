@@ -163,9 +163,13 @@ countries.forEach((c) => {
 // =================== SIGNUP HANDLER ===================
 async function signup() {
   const msgEl = document.getElementById("msg");
+  const btn = document.getElementById("signupBtn");
+  btn.disabled = true;
+  msgEl.innerText = "⏳ Signing up...";
+  msgEl.style.color = "blue";
 
   try {
-    const res = await fetch("api/signup", {
+    const res = await fetch("https://admin-blog-mauve.vercel.app/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -178,29 +182,20 @@ async function signup() {
       }),
     });
 
-    let data;
-    try {
-      data = await res.json();
-    } catch {
-      data = {};
-    }
+    const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
       msgEl.innerText = data.error || "Signup failed.";
       msgEl.style.color = "red";
-      return;
+    } else {
+      msgEl.innerText = data.message || "✅ Signup successful!";
+      msgEl.style.color = "green";
+      setTimeout(() => (window.location.href = "login.html"), 2000);
     }
-
-    msgEl.innerText = data.message || "✅ Signup successful!";
-    msgEl.style.color = "green";
-
-    // Redirect after 2s
-    setTimeout(() => {
-      window.location.href = "login.html";
-    }, 2000);
   } catch (err) {
-    console.error("Signup error:", err);
     msgEl.innerText = "⚠️ Failed to connect: " + err.message;
     msgEl.style.color = "red";
+  } finally {
+    btn.disabled = false;
   }
 }
