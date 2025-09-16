@@ -4,63 +4,128 @@
   <meta charset="UTF-8">
   <title>Signup</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
+   /* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    .signup-container {
-      background: white;
-      padding: 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      width: 350px;
-    }
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #f4f4f9, #e9ecef);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
 
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #333;
-    }
+.signup-container {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  width: 100%;
+  max-width: 400px; /* responsive instead of fixed 350px */
+  transition: transform 0.2s ease;
+}
 
-    input, select {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-      box-sizing: border-box;
-    }
+.signup-container:hover {
+  transform: translateY(-4px);
+}
 
-    button {
-      width: 100%;
-      padding: 10px;
-      background: #28a745;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: background 0.3s ease;
-    }
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
 
-    button:hover {
-      background: #218838;
-    }
+input, select {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
 
-    #msg {
-      text-align: center;
-      font-size: 14px;
-      margin-top: 10px;
-      color: #d9534f;
-    }
+input:focus, select:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+  outline: none;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  transition: background 0.3s ease, transform 0.15s ease;
+}
+
+button:hover {
+  background: #218838;
+  transform: scale(1.02);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+#msg {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 12px;
+  color: #d9534f;
+}
+
+/* Responsive tweaks */
+@media (max-width: 700px) {
+  .signup-container {
+    padding: 20px 15px;
+  }
+
+  h2 {
+    font-size: 20px;
+  }
+ .signup-link {
+    font-size: 13px;
+  }
+
+  input, select, button {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
+
+.signup-link {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.signup-link a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.signup-link a:hover {
+  color: #1d4ed8;
+}
+
+
   </style>
 </head>
 <body>
@@ -76,6 +141,9 @@
     <select id="region" required></select>
 
     <button onclick="signup()">Signup</button>
+    <div class="signup-link">
+      Already have an account? <a href="login.html">Login</a>
+    </div>
     <p id="msg"></p>
   </div>
 

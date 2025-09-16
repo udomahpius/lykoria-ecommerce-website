@@ -5,71 +5,286 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Shop</title>
 <style>
-  * { box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background:#f7f7f7; color:#333; }
-
-  /* Header */
-  header { display:flex; justify-content:space-between; align-items:center; background:#1e1e2f; padding:15px 20px; color:#fff; position:sticky; top:0; z-index:1000; }
-  header h1 { font-size:24px; font-weight:bold; }
-
-  /* Navigation */
-  nav { display:flex; gap:15px; align-items:center; flex-wrap:wrap; }
-  nav a { color:#fff; text-decoration:none; font-weight:500; padding:6px 12px; border-radius:6px; transition:0.3s; }
-  nav a:hover { background:rgba(255,255,255,0.2); }
-
-  /* Dropdown */
-  .user-dropdown { position:relative; }
-  .dropbtn { background:#444; padding:6px 12px; border:none; border-radius:6px; cursor:pointer; color:#fff; font-weight:500; }
-  .dropdown-content { display:none; position:absolute; right:0; background:#fff; min-width:160px; border-radius:6px; box-shadow:0 6px 12px rgba(0,0,0,0.15); }
-  .dropdown-content a { display:block; color:#333; text-decoration:none; padding:10px; transition:0.3s; }
-  .dropdown-content a:hover { background:#f1f1f1; }
-  .user-dropdown:hover .dropdown-content { display:block; }
-
-  /* Mobile nav toggle */
-  .nav-toggle { display:none; font-size:26px; cursor:pointer; margin-left:10px; }
-  @media(max-width:768px){
-    nav { display:none; flex-direction:column; width:100%; background:#1e1e2f; margin-top:10px; }
-    nav.active { display:flex; }
-    .nav-toggle { display:block; }
+ /* -------------------------
+     THEME VARIABLES
+     ------------------------- */
+  :root{
+    --bg-color: #ffffff;
+    --text-color: #1e1e2f;
+    --header-bg: #030346;
+    --header-text: #ffffff;
+    --accent: #007BFF;
+    --accent-2: #00CFFF;
+    --dropdown-bg: #ffffff;
+    --dropdown-text: #333333;
+    --dropdown-hover-bg: var(--accent);
+    --dropdown-hover-text: #ffffff;
+    --link-hover: rgba(0,0,0,0.06);
+    --card-bg: #ffffff;
+    --card-text: #1e1e2f;
+    --card-desc: #555555;
+    --footer-bg: #1e1e2f;
+    --footer-text: #ffffff;
+    --banner-overlay: linear-gradient(rgba(3, 41, 51, 0.831), rgba(19, 2, 2, 0.731));
+    --banner-text: #ffffff;
+    --text-shadow:2px 2px 8px rgba(0,0,0,0.7);
+    --border-bottom:1px solid rgba(255,255,255,0.1);
+   
   }
 
-  /* Banner */
-  .banner { background:url('https://via.placeholder.com/1200x350?text=Shop+The+Best+Products') center/cover no-repeat; height:350px; display:flex; justify-content:center; align-items:center; font-size:36px; color:#fff; text-shadow:2px 2px 6px #000; margin-bottom:30px; font-weight:bold; border-radius:12px; }
+  body.dark-mode{
+    --bg-color: #000000da;
+    --text-color: #e6e6e6;
+    --header-bg: #0b0d10;
+    --header-text: #ffffff;
+    --dropdown-bg: #1f2226;
+    --dropdown-text: #e6e6e6;
+    --dropdown-hover-bg: #2f3438;
+    --dropdown-hover-text: #ffffff;
+    --link-hover: rgba(255,255,255,0.06);
+    --card-bg: #131417;
+    --card-text: #e6e6e6;
+    --card-desc: #bfbfbf;
+    --footer-bg: #0b0d10;
+    --footer-text: #ffffff;
+    --banner-overlay: linear-gradient(rgba(1, 17, 21, 0.954), rgba(19, 2, 2, 0.731));
+    --banner-text: #ffffff;
+    --text-shadow:2px 2px 8px rgba(0,0,0,0.7)
+  } 
+
+  /* body.dark-mode {
+      background: #121212;
+      color: #eaeaea;
+    } */
+
+  #toggleTheme {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007BFF;
+      color: #fff;
+      border-radius:0;
+      text-decoration: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+  /* -------------------------
+     GLOBAL
+     ------------------------- */
+  *{box-sizing:border-box;margin:0;padding:0;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+  html,body{height:100%;}
+  body{
+    background:var(--bg-color);
+    color:var(--text-color);
+    transition: background .25s ease, color .25s ease;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  
+  
+  /* Header */
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background: var(--header-bg);
+  color: var(--header-text);
+  padding:15px 20px;
+  position:fixed;
+  top:0;
+  z-index:1000;
+  width: 100%;
+}
+.scrollBg{
+  background-color:#021c42;
+  padding:25px 30px;
+    transition:0.7s ease-in-out;
+box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+
+}
+
+header h1 {
+  margin:0;
+  font-size:24px;
+}
+
+/* Nav links */
+nav {
+  display:flex;
+  gap:13px;
+  align-items:center;
+  z-index:1000;
+}
+
+nav a {
+  color: var(--header-text);
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:6px;
+  transition:0.3s;
+}
+
+nav a:hover {
+  background: var(--link-hover);
+}
+
+/* User dropdown */
+.dropdown-content{
+    background-color: var(--bg-color);
+    width:300px;
+    position:relative;
+  
+  }
+.dropbtn {
+  background: var(--dropdown-hover-bg);
+  color:var(--header-text);
+  border:none;
+  padding:8px 12px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.dropdown-content {
+  display:none;
+  position:absolute;
+  right:0;
+  background:var(--bg-color);
+  min-width:160px;
+  box-shadow:var(--text-shadow);
+  z-index:2000;
+}
+
+.dropdown-content a {
+  display:block;
+  padding:10px;
+  color:var(--dropdown-text);
+}
+
+.dropdown-content a:hover {
+  background:var(--dropdown-hover-bg);
+  color:var(--header-text);
+}
+
+.user-dropdown:hover .dropdown-content {
+  display:block;
+}
+
+/* Toggle button */
+.nav-toggle {
+  display:none;
+  font-size:28px;
+  cursor:pointer;
+  background:var(--dropdown-hover-bg);
+  color:var(--header-text);
+  padding:6px 12px;
+  border-radius:6px;
+  transition:0.3s;
+}
+
+.nav-toggle:hover {
+  background:var(--dropdown-hover-bg);
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:var(--header-bg);
+  opacity: 0.9;
+  display:none;
+  z-index:900;
+  opacity:0;
+  transition: opacity 0.3s ease;
+}
+
+.overlay.show {
+  display:block;
+  opacity:1;
+  opacity: 0.9;
+}
+
+/* Mobile */
+@media(max-width:768px){
+  nav {
+    position:fixed;
+    top:0;
+    right:-100%;
+    height:100%;
+    width:70%;
+    overflow-y: scroll;
+    max-width:280px;
+    background: var(--header-bg);
+    flex-direction:column;
+    align-items:flex-start;
+    padding:80px 20px;
+    gap:20px;
+    transition:right 0.4s ease-in-out;
+
+    box-shadow:var(--text-shadow);
+  }
+
+  nav.active { right:0; }
+
+  nav a {
+    width:100%;
+    border-bottom:var(--border-bottom);
+  }
+
+  .nav-toggle { display:block; }
+
+  .user-dropdown{
+    width: 100%;
+    background-color: var(--dropdown-hover-bg);
+  }
+  .dropdown-content{
+    background-color: var(--bg-color);
+    width: 100%;
+  }
+}
+
+
+
+/* Banner */
+  .banner { background:url('https://via.placeholder.com/1200x350?text=Shop+The+Best+Products') center/cover no-repeat; height:350px; display:flex; justify-content:center; align-items:center; font-size:36px; color:var(--header-text); text-shadow:var(--text-shadow); margin-bottom:30px; font-weight:bold; border-radius:12px; }
 
   /* Container */
   .container { max-width:1200px; margin:0 auto; padding:20px; }
 
   /* Category Section */
   .category-section { margin-bottom:50px; }
-  .category-section h2 { font-size:28px; margin-bottom:20px; color:#1e1e2f; }
-  .category-section h2 a { text-decoration:none; color:#007BFF; transition:0.3s; }
-  .category-section h2 a:hover { color:#0056b3; }
+  .category-section h2 { font-size:28px; margin-bottom:20px; color:var(--card-text); }
+  .category-section h2 a { text-decoration:none; color:var(--card-text); transition:0.3s; }
+  .category-section h2 a:hover { color:var(--dropdown-hover-bg); }
 
 /* Posts Grid */
 .posts-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 25px;
   width: 100%;
 }
 
 /* Redesigned Post Card */
 .post-card {
-  background: #fff;
+  background:var(--bg-color);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
   transition: transform 0.3s, box-shadow 0.3s;
   display: flex;
   flex-direction: column;
   position: relative;
   padding: 15px;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
   
 }
 
 .post-card:hover {
   transform: translateY(-7px);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+  box-shadow: var(--text-shadow);
 }
 
 /* Badge for category or status */
@@ -77,8 +292,8 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background: #007BFF;
-  color: #fff;
+  background: var(--dropdown-hover-bg);
+  color:var(--header-text);
   font-size: 12px;
   font-weight: bold;
   padding: 5px 10px;
@@ -91,7 +306,7 @@
   width: 100%;
   height: 180px;
   object-fit: cover;
-  border-bottom: 1px solid #eee;
+  border-bottom:var(--border-bottom);
   transition: transform 0.3s;
 }
 
@@ -111,14 +326,14 @@
 .post-card h3 {
   font-size: 18px;
   font-weight: 600;
-  color: #1e1e2f;
+  color: var(--card-text);
   margin: 0;
 }
 
 /* Description */
 .post-card p {
   font-size: 14px;
-  color: #555;
+  color: var(--card-desc);
   line-height: 1.5;
   flex-grow: 1;
 }
@@ -127,8 +342,8 @@
 .post-card .read-more {
   text-decoration: none;
   text-align: center;
-  background: #007BFF;
-  color: #fff;
+  background: var(--dropdown-hover-bg);
+  color: var(--header-text);
   padding: 10px 0;
   border-radius: 8px;
   font-weight: 600;
@@ -136,110 +351,189 @@
 }
 
 .post-card .read-more:hover {
-  background: #0056b3;
+  background: var(--dropdown-hover-bg);
 }
   /* Footer */
-  footer { background:#1e1e2f; color:#fff; text-align:center; padding:25px 10px; border-radius:12px 12px 0 0; margin-top:40px; }
-  footer a { color:#fff; margin:0 8px; text-decoration:none; transition:0.3s; }
-  footer a:hover { color:#007BFF; }
+  footer { background:var(--footer-bg); color:var(--header-text); text-align:center; padding:25px 10px; border-radius:12px 12px 0 0; margin-top:40px; }
+  footer a { color:var(--dropdown-hover-text); margin:0 8px; text-decoration:none; transition:0.3s; }
+  footer a:hover { color:var(--dropdown-hover-bg); }
 
   /* Responsive */
-  @media(max-width:700px){
+  @media screen and (max-width:700px){
     .banner { font-size:26px; height:200px; }
     .post-card img { height:100%;width: 100%; }
     .category-section h2 { font-size:22px; }
     .post-card h3 { font-size:16px; }
     .post-card p { font-size:13px; }
+   
   }
-    /* Banner */
-  .banner {
-    position: relative;
-    background: linear-gradient(rgba(10, 61, 77, 0.811), rgba(0,0,0,0.4)), url('https://via.placeholder.com/1400x500?text=Affiliate+Home+Banner') center/cover no-repeat;
-    height: 500px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius:0;
-    /* margin: 30px auto; */
-    width: 100%;
-    overflow: hidden;
-  }
+/* Banner with video */
+.banner {
+  position: relative;
+  height: 500px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-  .banner-content {
-    text-align: center;
-    color: #fff;
-    padding: 20px;
-    animation: fadeInUp 1s ease forwards;
-  }
+.banner-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
 
-  .banner h1 {
-    font-size: 48px;
-    font-weight: 700;
-    margin-bottom: 20px;
-    text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
-  }
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--banner-overlay);
+  background-blend-mode: soft-light;
+  z-index: 2;
+}
+.banner-overlay.dark-mode{
+  background: var(--banner-overlay);
+}
+.banner-content {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  color: var(--banner-text);
+  padding: 20px;
+  animation: fadeInUp 1s ease forwards;
+}
+/* Modern primary banner call-to-action button */
+.banner-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;                         /* space for optional icon + text */
+  padding: 14px 28px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--banner-text);
+  text-decoration: none;
+  border-radius: 999px;              /* pill shape */
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 -2px 0 rgba(255,255,255,0.06);
+  transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease, filter .18s ease;
+  will-change: transform;
+  -webkit-tap-highlight-color: transparent;
+  border: 0;
+  cursor: pointer;
+}
 
-  .banner p {
-    font-size: 20px;
-    margin-bottom: 30px;
-    text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
-  }
+/* Hover / focus states */
+.banner-btn:hover,
+.banner-btn:focus {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+  outline: none;
+  filter: saturate(1.05);
+}
 
+/* Active (pressed) */
+.banner-btn:active {
+  transform: translateY(-1px) scale(.995);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
+}
+
+/* Focus-visible for keyboard users */
+.banner-btn:focus-visible {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 0 0 4px rgba(0,123,255,0.14);
+  outline: none;
+}
+
+/* Disabled state (if you add aria-disabled or .disabled) */
+.banner-btn[aria-disabled="true"],
+.banner-btn.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+  filter: grayscale(.05);
+}
+
+/* Optional: small icon inside the button */
+.banner-btn .icon {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+/* Make CTA full-width on small screens for easier tapping */
+@media (max-width: 480px) {
   .banner-btn {
-    display: inline-block;
-    padding: 14px 30px;
-    font-size: 18px;
-    font-weight: 600;
-    color: #fff;
-    background: linear-gradient(90deg, #007BFF, #00CFFF);
-    border-radius: 50px;
-    text-decoration: none;
-    transition: 0.3s;
-    box-shadow: 0 6px 15px rgba(0,123,255,0.4);
+    display: block;
+    width: calc(100% - 40px);
+    margin: 0 auto;
+    padding: 12px 20px;
+    font-size: 16px;
   }
+}
 
-  .banner-btn:hover {
-    background: linear-gradient(90deg, #0056b3, #00a3cc);
-    box-shadow: 0 8px 20px rgba(0,123,255,0.6);
-    transform: translateY(-3px);
+/* Logo container (h1) */
+.logo {
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+/* Logo image */
+.logo img {
+  max-width:110px;        /* reasonable default size */
+  height: auto;            /* keeps aspect ratio */
+  display: block;          /* remove inline gaps */
+  object-fit: contain;     /* prevents distortion */
+  transition: transform .2s ease, filter .2s ease;
+  cursor: pointer;         /* optional, makes it clickable if linked */
+}
+
+/* Hover effect for desktop */
+.logo img:hover {
+  transform: scale(1.05);
+  filter: brightness(1.05);
+}
+
+/* Tablet screens */
+@media (max-width: 992px) {
+  .logo img {
+    max-width: 150px;
   }
+}
 
-  @keyframes fadeInUp {
-    0% { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
+/* Mobile screens */
+@media (max-width: 600px) {
+  .logo img {
+    max-width: 120px;
   }
+}
 
-  /* Responsive */
-  @media(max-width:768px){
-    .banner { height: 350px; }
-    .banner h1 { font-size: 32px; }
-    .banner p { font-size: 16px; }
-    .banner-btn { font-size: 16px; padding: 12px 25px; }
+/* Extra small devices */
+@media (max-width: 400px) {
+  .logo img {
+    max-width: 100px;
   }
+}
 
-  @media(max-width:480px){
-    .banner { height: 280px; }
-    .banner h1 { font-size: 24px; }
-    .banner p { font-size: 14px; }
-    .banner-btn { font-size: 14px; padding: 10px 20px; }
-  }
 
-  /* Dark Mode */
-  body.dark-mode { background:#121212; color:#e0e0e0; }
-  body.dark-mode header { background:#000; }
-  body.dark-mode nav a { color:#ddd; }
-  body.dark-mode .dropbtn { background:#222; }
-  body.dark-mode .dropdown-content { background:#333; }
-  body.dark-mode .dropdown-content a { color:#fff; }
-  body.dark-mode .dropdown-content a:hover { background:#555; }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>My Shop</h1>
-  <div class="nav-toggle" id="navToggle">☰</div>
-  <nav id="navMenu">
+<header class="h">
+  <h1 class="logo"><img src="./assets/logo.png" alt="" srcset=""></h1>
+  <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
+
+  <nav id="navMenu" aria-label="Main navigation">
     <a href="index.html">Home</a>
     <a href="./product-category/technology.html">Technology</a>
     <a href="./product-category/health.html">Health</a>
@@ -249,23 +543,35 @@
     <a href="./product-category/entertainment.html">Entertainment</a>
     <a href="./product-category/lifestyle.html">Lifestyle</a>
     <a href="./product-category/politics.html">Politics</a>
-    <div class="user-dropdown">
-      <button class="dropbtn">User</button>
-      <div class="dropdown-content">
+
+    <div class="user-dropdown" id="userDropdown">
+      <button class="dropbtn" id="userDropBtn" aria-haspopup="true" aria-expanded="false">User ▾</button>
+      <div class="dropdown-content" id="userDropdownContent">
         <a href="./html/login.html">Login</a>
         <a href="./html/signup.html">Signup</a>
         <a href="./html/admin.html">Admin</a>
-        <a href="#" id="toggleTheme">Dark Mode</a>
+        <a href="#" id="toggleTheme">🌙 Dark Mode</a>
       </div>
     </div>
+
   </nav>
 </header>
+
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
 <!-- Banner Section -->
 <div class="banner">
+  <video autoplay muted loop playsinline class="banner-video">
+    <source src="./assets/b.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+
+  <div class="banner-overlay"></div>
   <div class="banner-content">
     <h1>Boost Your Income with Top Affiliate Programs</h1>
-    <p>Discover the best products to promote and start earning today!</p>
-    <a href="#categories" class="banner-btn">Explore Programs</a>
+    <p>Join or promote the best affiliate programs & start earning today!</p>
+    <a href="./html/signup.html" class="banner-btn">Get Started</a>
   </div>
 </div>
 
@@ -297,17 +603,82 @@
 
 <script src="./js/index.js"></script>
 <script>
-  // Mobile nav toggle
-  const navToggle = document.getElementById("navToggle");
-  const navMenu = document.getElementById("navMenu");
-  navToggle.addEventListener("click", () => navMenu.classList.toggle("active"));
+/* ======== INIT & HELPERS ======== */
+document.addEventListener('DOMContentLoaded', () => {
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  const overlay = document.getElementById('overlay');
+  const toggleThemeBtn = document.getElementById('toggleTheme');
+  const userDropdown = document.getElementById('userDropdown');
+  const userDropBtn = document.getElementById('userDropBtn');
 
-  // Dark mode toggle
-  document.getElementById("toggleTheme").addEventListener("click", e => {
-    e.preventDefault();
-    document.body.classList.toggle("dark-mode");
+
+
+  // Toggle mobile nav
+  navToggle.addEventListener('click', () => {
+    const active = navMenu.classList.toggle('active');
+    overlay.classList.toggle('show', active);
   });
-</script>
+
+  function closeMenu(){
+    navMenu.classList.remove('active');
+    overlay.classList.remove('show');
+  }
+
+  // Close when clicking links inside nav
+  document.querySelectorAll('#navMenu a').forEach(a => a.addEventListener('click', closeMenu));
+
+  // Click overlay to close
+  overlay.addEventListener('click', closeMenu);
+
+  // Click outside to close nav (desktop too)
+  document.addEventListener('click', (e) => {
+    if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
+      closeMenu();
+    }
+  });
+
+  // Function to apply theme
+  let changeTheme = true
+  toggleThemeBtn.addEventListener("click", () =>{
+if (changeTheme == true) {
+        document.body.classList.add("dark-mode");
+        toggleThemeBtn.innerHTML = "☀️ Light Mode";
+        changeTheme = false
+      } else {
+        document.body.classList.remove("dark-mode");
+        toggleThemeBtn.innerHTML = "🌙 Dark Mode";
+        changeTheme = true
+      }
+    
+  })
+
+
+
+  // Mobile-friendly dropdown: toggle on click when viewport is small
+  if (userDropBtn) {
+    userDropBtn.addEventListener('click', (e) => {
+      // if mobile, toggle inline
+      if (window.innerWidth <= 768) {
+        e.preventDefault();
+        userDropdown.classList.toggle('open');
+        const expanded = userDropdown.classList.contains('open');
+        userDropBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      }
+    });
+  }
+window.addEventListener("scroll", () =>{
+  if(window.scrollY >= 200){
+    document.querySelector(".h").classList.add("scrollBg")
+  }else{
+        document.querySelector(".h").classList.remove("scrollBg")
+
+  }
+})
+  // If other scripts exist and might conflict, console note:
+  console.debug('Theme/init script loaded. Current theme:', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+});
+  </script>
 
 </body>
 </html>
