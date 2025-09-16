@@ -169,7 +169,7 @@ async function signup() {
   msgEl.style.color = "blue";
 
   try {
-    const res = await fetch("https://admin-blog-mauve.vercel.app/api/signup", {
+    const res = await fetch("https://adminblog-backend.onrender.com/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
