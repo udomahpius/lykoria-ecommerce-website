@@ -41,12 +41,19 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 
-const corsOptions = {
-  origin: process.env.FRONTEND_URL ,// Frontend URL
-  methods: ["GET", "POST", "PUT", "DELETE" , "PATCH"],
-  credentials: true,
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: process.env.FRONTEND_URL ,// Frontend URL
+//   methods: ["GET", "POST", "PUT", "DELETE" , "PATCH"],
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
+
+
+import cors from "cors";
+app.use(cors({
+  origin:  process.env.FRONTEND_URL ,
+  credentials: true
+}));
 
 // ============================
 // Multer: File Uploads (temp dir only)
