@@ -171,7 +171,7 @@ async function signup() {
   msgEl.style.color = "blue";
 
   try {
-    const res = await fetch(BASE_URL, {
+    const res = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
