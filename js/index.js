@@ -15,6 +15,7 @@ const categories = [
   { key: "politics", label: "Politics" },
 ];
 
+
 // ====== LOAD CATEGORY POSTS ======
 async function loadCategory(categoryKey, categoryLabel) {
   try {
