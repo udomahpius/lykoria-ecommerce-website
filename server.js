@@ -40,22 +40,11 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-import cors from "cors";
-
-const allowedOrigins = [
-  "http://localhost:5000",              // your local frontend
-  "https://lykoria.netlify.app/" // deployed frontend
-];
-
 const corsOptions = {
-  origin: (origin, callback) => {
-    // allow requests with no origin (like Postman) or from allowed origins
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("CORS not allowed for this origin: " + origin));
-    }
-  },
+  origin: [
+    process.env.FRONTEND_URL, 
+    "https://lykoria.netlify.app"
+  ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
