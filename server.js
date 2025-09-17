@@ -42,7 +42,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 const corsOptions = {
   origin: [
-    "http://127.0.0.1:5500",
+    "http://127.0.0.1:5000",
     "https://admin-blog-mauve.vercel.app/index.html",
   ],
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
@@ -254,4 +254,7 @@ app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
 // ============================
 // Start Server
 // ============================
-app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log("✅ MongoDB connected");
+});
