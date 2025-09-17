@@ -169,7 +169,7 @@ async function signup() {
   msgEl.style.color = "blue";
 
   try {
-    const res = await fetch("https://adminblog-3.onrender.com/api/signup", {
+    const res = await fetch("/api/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
