@@ -40,12 +40,10 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
+
 const corsOptions = {
-  origin: [
-    "http://127.0.0.1:5000",
-    "https://admin-blog-mauve.vercel.app/",
-  ],
-  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  origin: process.env.FRONTEND_URL || "http://localhost:5000", // Frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE" , "PATCH"],
   credentials: true,
 };
 app.use(cors(corsOptions));

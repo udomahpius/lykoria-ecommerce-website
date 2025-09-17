@@ -161,6 +161,7 @@ countries.forEach((c) => {
 });
 
 // =================== SIGNUP HANDLER ===================
+const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
 async function signup() {
   const msgEl = document.getElementById("msg");
   const btn = document.getElementById("signupBtn");
@@ -169,7 +170,7 @@ async function signup() {
   msgEl.style.color = "blue";
 
   try {
-    const res = await fetch("/api/signup", {
+    const res = await fetch(`${BASE_URL}/api/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
