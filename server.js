@@ -44,7 +44,7 @@ import cors from "cors";
 
 const allowedOrigins = [
   "http://localhost:5000",              // your local frontend
-  "https://admin-blog-mauve.vercel.app" // deployed frontend
+  "https://lykoria.netlify.app/" // deployed frontend
 ];
 
 const corsOptions = {
