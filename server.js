@@ -42,7 +42,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "http://localhost:5000", // Frontend URL
+  origin: process.env.FRONTEND_URL ,// Frontend URL
   methods: ["GET", "POST", "PUT", "DELETE" , "PATCH"],
   credentials: true,
 };
