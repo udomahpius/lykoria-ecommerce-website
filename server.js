@@ -40,23 +40,27 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
+import cors from "cors";
+
 const allowedOrigins = [
-  "http://localhost:5000", // your local frontend
-  "https://admin-blog-mauve.vercel.app"
+  "http://localhost:5000",              // your local frontend
+  "https://admin-blog-mauve.vercel.app" // deployed frontend
 ];
 
 const corsOptions = {
   origin: (origin, callback) => {
+    // allow requests with no origin (like Postman) or from allowed origins
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("CORS not allowed"));
+      callback(new Error("CORS not allowed for this origin: " + origin));
     }
   },
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
-app.use(cors(corsOptions));
-// ============================
+
+app.use(cors(corsOptions));// ============================
 // Multer: File Uploads (temporary directory)
 // ============================
 const upload = multer({ dest: "tmp", limits: { fileSize: 5 * 1024 * 1024 } });
