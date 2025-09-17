@@ -41,16 +41,12 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 const corsOptions = {
-  origin: [
-    "https://lykoria.netlify.app", // your Netlify frontend
-    "http://localhost:3000" // optional local dev
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  origin: ["https://lykoria.netlify.app"], // frontend origin
+  methods: ["GET","POST","PUT","DELETE","PATCH"],
   credentials: true,
 };
 
 app.use(cors(corsOptions));
-
 
 // ============================
 // Multer: File Uploads (temporary directory)
