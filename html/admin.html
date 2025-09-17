@@ -402,7 +402,7 @@ button#submitBtn:active {
   function updateClock() {
     const now = new Date();
     const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    document.getElementById("clock").textContent = `🕒 ${timeString}`;
+    document.getElementById("clock").innerHTML = `🕒 ${timeString}`;
   }
 
   // Fetch user profile and show welcome
