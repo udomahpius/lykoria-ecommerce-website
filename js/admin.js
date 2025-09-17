@@ -1,7 +1,6 @@
 // ====== API BASE ======
-const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BASE_URL = process.env.BACKEND_URL || "http://localhost:3000";
 const API_URL = `${BASE_URL}/api/posts`;   // works in dev + production
-const UPLOAD_URL = `${BASE_URL}/api/upload`; // Cloudinary uploader
 
 // ====== ELEMENTS ======
 const postForm = document.getElementById("postForm");
@@ -38,22 +37,6 @@ imageInput.addEventListener("change", () => {
   }
 });
 
-// ====== UPLOAD IMAGE TO CLOUDINARY ======
-async function uploadImage(file) {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(UPLOAD_URL, {
-    method: "POST",
-    body: formData
-  });
-
-  if (!res.ok) throw new Error("Image upload failed");
-
-  const data = await res.json();
-  return data.url; // Cloudinary secure_url
-}
-
 // ====== CREATE / UPDATE POST ======
 postForm.addEventListener("submit", async e => {
   e.preventDefault();
@@ -65,28 +48,23 @@ postForm.addEventListener("submit", async e => {
   const method = postId ? "PUT" : "POST";
 
   try {
-    let imageUrl = null;
-    if (imageInput.files[0]) {
-      imageUrl = await uploadImage(imageInput.files[0]);
-    }
+    // Use FormData for text + file in one request
+    const formData = new FormData();
+    formData.append("title", titleInput.value);
+    formData.append("body", bodyInput.value);
+    formData.append("url", urlInput.value);
+    formData.append("urlText", urlTextInput.value);
+    formData.append("category", categorySelect.value);
+    formData.append("status", "published");
 
-    const body = {
-      title: titleInput.value,
-      body: bodyInput.value,
-      url: urlInput.value,
-      urlText: urlTextInput.value,
-      category: categorySelect.value,
-      status: "published",
-      image: imageUrl || undefined
-    };
+    if (imageInput.files[0]) {
+      formData.append("image", imageInput.files[0]);
+    }
 
     const res = await fetch(endpoint, {
       method,
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${TOKEN}`
-      },
-      body: JSON.stringify(body)
+      headers: { "Authorization": `Bearer ${TOKEN}` },
+      body: formData
     });
 
     if (res.status === 401) {
@@ -164,13 +142,12 @@ async function editPost(id) {
   if (!TOKEN) return;
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_URL}/${id}`, {
       headers: { "Authorization": `Bearer ${TOKEN}` }
     });
 
-    const posts = await res.json();
-    const post = posts.find(p => p._id === id);
-    if (!post) return alert("Post not found");
+    const post = await res.json();
+    if (!post || !post._id) return alert("Post not found");
 
     titleInput.value = post.title;
     bodyInput.value = post.body;
