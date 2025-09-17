@@ -48,13 +48,12 @@ postForm.addEventListener("submit", async e => {
   const method = postId ? "PUT" : "POST";
 
   try {
-    // Use FormData for text + file in one request
     const formData = new FormData();
     formData.append("title", titleInput.value);
     formData.append("body", bodyInput.value);
     formData.append("url", urlInput.value);
     formData.append("urlText", urlTextInput.value);
-    formData.append("category", categorySelect.value);
+    formData.append("category", categorySelect.value); // ✅ already lowercase
     formData.append("status", "published");
 
     if (imageInput.files[0]) {
@@ -66,13 +65,6 @@ postForm.addEventListener("submit", async e => {
       headers: { "Authorization": `Bearer ${TOKEN}` },
       body: formData
     });
-
-    if (res.status === 401) {
-      alert("Unauthorized! Please log in again.");
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-      return;
-    }
 
     const data = await res.json();
     if (data.success) {
@@ -90,49 +82,36 @@ postForm.addEventListener("submit", async e => {
   }
 });
 
-// ====== LOAD POSTS ======
-async function loadPosts() {
+// ====== EDIT POST ======
+async function editPost(id) {
   const TOKEN = checkToken();
   if (!TOKEN) return;
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(`${API_URL}/${id}`, {
       headers: { "Authorization": `Bearer ${TOKEN}` }
     });
 
-    if (res.status === 401) {
-      alert("Unauthorized! Please log in again.");
-      localStorage.removeItem("token");
-      window.location.href = "login.html";
-      return;
+    const post = await res.json();
+    if (!post || !post._id) return alert("Post not found");
+
+    titleInput.value = post.title;
+    bodyInput.value = post.body;
+    urlInput.value = post.url;
+    urlTextInput.value = post.urlText;
+    categorySelect.value = post.category; // ✅ no need to .toLowerCase()
+
+    if (post.image) {
+      previewImg.src = post.image;
+      previewImg.style.display = "block";
+    } else {
+      previewImg.style.display = "none";
     }
 
-    const posts = await res.json();
-    if (!Array.isArray(posts)) {
-      postsContainer.innerHTML = "<p>Error loading posts</p>";
-      return;
-    }
-
-    postsContainer.innerHTML = "";
-    posts.forEach(post => {
-      const card = document.createElement("div");
-      card.className = "post-card";
-      card.innerHTML = `
-        <h3>${post.title}</h3>
-        <img src="${post.image || ''}" alt="" style="max-width:200px; display:${post.image ? "block" : "none"}">
-        <p>${post.body}</p>
-        <small>Category: ${post.category}</small><br>
-        <a href="${post.url}" target="_blank">${post.urlText || "Read more"}</a>
-        <div class="actions">
-          <button onclick="editPost('${post._id}')">✏️ Edit</button>
-          <button onclick="deletePost('${post._id}')">🗑️ Delete</button>
-        </div>
-      `;
-      postsContainer.appendChild(card);
-    });
+    postForm.dataset.editingId = id;
   } catch (err) {
-    console.error("Error loading posts:", err);
-    postsContainer.innerHTML = "<p>Failed to load posts</p>";
+    console.error(err);
+    alert("Failed to load post for editing");
   }
 }
 
