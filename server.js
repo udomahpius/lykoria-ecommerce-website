@@ -41,19 +41,16 @@ app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 
-// const corsOptions = {
-//   origin: process.env.FRONTEND_URL ,// Frontend URL
-//   methods: ["GET", "POST", "PUT", "DELETE" , "PATCH"],
-//   credentials: true,
-// };
-// app.use(cors(corsOptions));
+const corsOptions = {
+  origin: [
+    process.env.FRONTEND_URL, 
+    "https://admin-blog-mauve.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
-
-import cors from "cors";
-app.use(cors({
-  origin:  process.env.FRONTEND_URL ,
-  credentials: true
-}));
 
 // ============================
 // Multer: File Uploads (temp dir only)
@@ -225,12 +222,12 @@ app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, re
   }
 });
 
-// Get Posts
 app.get("/api/posts", async (req, res) => {
   try {
-    const { category, limit } = req.query;
+    const { category, limit, status } = req.query;
     let query = {};
     if (category) query.category = category;
+    if (status) query.status = status; // filter by published/draft
 
     let postsQuery = Post.find(query).sort({ createdAt: -1 });
     if (limit) postsQuery = postsQuery.limit(parseInt(limit));
@@ -238,7 +235,6 @@ app.get("/api/posts", async (req, res) => {
     const posts = await postsQuery.exec();
     res.json(posts);
   } catch (err) {
-    console.error("GET /api/posts error:", err);
     res.status(500).json({ error: err.message });
   }
 });
