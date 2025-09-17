@@ -331,8 +331,10 @@ nav a:hover {
 
 
 <script>
+  const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
   // Use relative API path (works both locally + on Vercel)
-  const API_URL = "/api/posts";
+  const API_URL = `${BASE_URL}/api/posts`;
+
 
   // Hardcode the category for this page
   const CATEGORY = "Education"; // Change this for each category page

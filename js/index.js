@@ -1,5 +1,7 @@
 // ====== API BASE ======
-const API_URL = "/api/posts"; // works in dev + Vercel
+const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
+
+const API_URL =`${BASE_URL}/api/posts` ; // works in dev + Vercel
 
 // ====== CATEGORIES ======
 const categories = [
