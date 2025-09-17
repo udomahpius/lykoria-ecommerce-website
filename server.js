@@ -21,7 +21,7 @@ const app = express();
 // ============================
 // Config
 // ============================
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.JWT_SECRET || "mySuperSecretKey";
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -40,10 +40,9 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-
 const corsOptions = {
   origin: [
-    process.env.FRONTEND_URL, 
+    process.env.FRONTEND_URL || "*",
     "https://admin-blog-mauve.vercel.app"
   ],
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -51,11 +50,10 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
 // ============================
-// Multer: File Uploads (temp dir only)
+// Multer: File Uploads (temporary directory)
 // ============================
-const upload = multer({ dest: "/tmp", limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({ dest: "tmp", limits: { fileSize: 5 * 1024 * 1024 } });
 
 // ============================
 // MongoDB Connection
@@ -63,7 +61,7 @@ const upload = multer({ dest: "/tmp", limits: { fileSize: 5 * 1024 * 1024 } });
 mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // ============================
 // Schemas
@@ -120,14 +118,7 @@ app.post("/api/signup", async (req, res) => {
     if (existing) return res.status(400).json({ error: "Email already exists" });
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = new User({
-      firstName,
-      lastName,
-      email,
-      passwordHash,
-      phone,
-      region,
-    });
+    const newUser = new User({ firstName, lastName, email, passwordHash, phone, region });
     await newUser.save();
 
     res.json({ success: true, message: "User registered successfully" });
@@ -175,15 +166,12 @@ app.post("/api/posts", authMiddleware, upload.single("image"), async (req, res) 
     let imageUrl = "";
 
     if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: "lykoria_uploads",
-      });
-      fs.unlinkSync(req.file.path); // clean up temp file
+      const result = await cloudinary.v2.uploader.upload(req.file.path, { folder: "lykoria_uploads" });
+      fs.unlinkSync(req.file.path);
       imageUrl = result.secure_url;
     }
 
-    const postData = { ...req.body, image: imageUrl };
-    const newPost = new Post(postData);
+    const newPost = new Post({ ...req.body, image: imageUrl });
     await newPost.save();
 
     res.json({ success: true, data: newPost });
@@ -202,18 +190,12 @@ app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, re
     let imageUrl = existingPost.image;
 
     if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, {
-        folder: "lykoria_uploads",
-      });
+      const result = await cloudinary.v2.uploader.upload(req.file.path, { folder: "lykoria_uploads" });
       fs.unlinkSync(req.file.path);
       imageUrl = result.secure_url;
     }
 
-    const updatedPost = await Post.findByIdAndUpdate(
-      req.params.id,
-      { ...req.body, image: imageUrl },
-      { new: true }
-    );
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id, { ...req.body, image: imageUrl }, { new: true });
 
     res.json({ success: true, data: updatedPost });
   } catch (err) {
@@ -222,12 +204,13 @@ app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, re
   }
 });
 
+// Get Posts
 app.get("/api/posts", async (req, res) => {
   try {
     const { category, limit, status } = req.query;
     let query = {};
     if (category) query.category = category;
-    if (status) query.status = status; // filter by published/draft
+    if (status) query.status = status;
 
     let postsQuery = Post.find(query).sort({ createdAt: -1 });
     if (limit) postsQuery = postsQuery.limit(parseInt(limit));
@@ -255,7 +238,6 @@ app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
 // ============================
 // Start Server
 // ============================
-// app.listen(PORT, () => {
-//   console.log(`🚀 Server running on http://localhost:${PORT}`);
-//   console.log("✅ MongoDB connected");
-// });
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
