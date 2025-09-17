@@ -5,7 +5,7 @@ const API_URL =`${BASE_URL}/api/posts` ; // works in dev + Vercel
 
 // ====== CATEGORIES ======
 const categories = [
-  { key: "tech", label: "Tech" },
+  { key: "technology", label: "Tech" },
   { key: "health", label: "Health" },
   { key: "sports", label: "Sports" },
   { key: "business", label: "Business" },

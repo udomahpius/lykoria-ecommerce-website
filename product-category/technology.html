@@ -325,9 +325,9 @@ nav a:hover {
 <!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
+
   <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
   <div id="categoryPosts" class="posts"></div>
-
 <script>
   const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
   // Use relative API path (works both locally + on Vercel)
@@ -335,7 +335,7 @@ nav a:hover {
 
 
   // Hardcode the category for this page
-  const CATEGORY = "sports"; // Change this for each category page
+  const CATEGORY = "technology"; // Change this for each category page
 
   async function loadCategory() {
     const postsContainer = document.getElementById("categoryPosts");
@@ -491,6 +491,7 @@ nav a:hover {
     );
   });
 </script>
+
 
 </body>
 </html>
