@@ -255,7 +255,7 @@ app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
 // ============================
 // Start Server
 // ============================
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log("✅ MongoDB connected");
-});
+// app.listen(PORT, () => {
+//   console.log(`🚀 Server running on http://localhost:${PORT}`);
+//   console.log("✅ MongoDB connected");
+// });

@@ -1,5 +1,5 @@
 // ====== API BASE ======
-const BASE_URL = process.env.BACKEND_URL;
+const BASE_URL = "https://adminblog-zk87.onrender.com";
 
 const API_URL = `${BASE_URL}/api/posts`;  // works in dev + Vercel
 const draftContainer = document.getElementById("draftContainer");
