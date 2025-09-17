@@ -40,18 +40,18 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
+// CORS setup for frontend
 const corsOptions = {
-  origin: ["https://lykoria.netlify.app"], // frontend origin
-  methods: ["GET","POST","PUT","DELETE","PATCH"],
+  origin: process.env.FRONTEND_URL || "https://lykoria.netlify.app",
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
-
 app.use(cors(corsOptions));
 
 // ============================
 // Multer: File Uploads (temporary directory)
 // ============================
-const upload = multer({ dest: "tmp", limits: { fileSize: 5 * 1024 * 1024 } });
+const upload = multer({ dest: "/tmp", limits: { fileSize: 5 * 1024 * 1024 } });
 
 // ============================
 // MongoDB Connection
@@ -155,23 +155,18 @@ app.get("/api/profile", authMiddleware, async (req, res) => {
 });
 
 // ============================
-// POSTS
+// Posts
 // ============================
-
-// Create Post with Cloudinary Upload
 app.post("/api/posts", authMiddleware, upload.single("image"), async (req, res) => {
   try {
     let imageUrl = "";
-
     if (req.file) {
       const result = await cloudinary.v2.uploader.upload(req.file.path, { folder: "lykoria_uploads" });
       fs.unlinkSync(req.file.path);
       imageUrl = result.secure_url;
     }
-
     const newPost = new Post({ ...req.body, image: imageUrl });
     await newPost.save();
-
     res.json({ success: true, data: newPost });
   } catch (err) {
     console.error("POST /api/posts error:", err);
@@ -179,14 +174,12 @@ app.post("/api/posts", authMiddleware, upload.single("image"), async (req, res) 
   }
 });
 
-// Update Post with Cloudinary Upload
 app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, res) => {
   try {
     const existingPost = await Post.findById(req.params.id);
     if (!existingPost) return res.status(404).json({ success: false, error: "Post not found" });
 
     let imageUrl = existingPost.image;
-
     if (req.file) {
       const result = await cloudinary.v2.uploader.upload(req.file.path, { folder: "lykoria_uploads" });
       fs.unlinkSync(req.file.path);
@@ -194,7 +187,6 @@ app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, re
     }
 
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, { ...req.body, image: imageUrl }, { new: true });
-
     res.json({ success: true, data: updatedPost });
   } catch (err) {
     console.error("PUT /api/posts/:id error:", err);
@@ -202,7 +194,6 @@ app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, re
   }
 });
 
-// Get Posts
 app.get("/api/posts", async (req, res) => {
   try {
     const { category, limit, status } = req.query;
@@ -212,7 +203,6 @@ app.get("/api/posts", async (req, res) => {
 
     let postsQuery = Post.find(query).sort({ createdAt: -1 });
     if (limit) postsQuery = postsQuery.limit(parseInt(limit));
-
     const posts = await postsQuery.exec();
     res.json(posts);
   } catch (err) {
@@ -220,12 +210,10 @@ app.get("/api/posts", async (req, res) => {
   }
 });
 
-// Delete Post
 app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
   try {
     const deletedPost = await Post.findByIdAndDelete(req.params.id);
     if (!deletedPost) return res.status(404).json({ success: false, error: "Post not found" });
-
     res.json({ success: true, message: "Post deleted" });
   } catch (err) {
     console.error("DELETE /api/posts/:id error:", err);
