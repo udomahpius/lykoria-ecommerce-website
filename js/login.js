@@ -1,5 +1,5 @@
 // ====== LOGIN FORM ======
-const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BASE_URL = process.env.BACKEND_URL;
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 

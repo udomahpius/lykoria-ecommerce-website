@@ -394,6 +394,10 @@ button#submitBtn:active {
   const welcomeMessage = document.getElementById('welcomeMessage');
   const welcomeClock = document.getElementById('welcomeClock');
 
+   const BASE_URL = process.env.BACKEND_URL;
+  // Use relative API path (works both locally + on Vercel)
+  const API_URL = `${BASE_URL}/api/profile`;
+
   // Mobile nav toggle
   navToggle.addEventListener('click', () => {
     navMenu.classList.toggle('show');
@@ -416,7 +420,7 @@ button#submitBtn:active {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/profile", {
+      const response = await fetch(API_URL, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,

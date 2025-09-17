@@ -1,5 +1,5 @@
 // ====== API BASE ======
-const BASE_URL = process.env.BACKEND_URL || "http://localhost:5000";
+const BASE_URL = process.env.BACKEND_URL;
 
 const API_URL =`${BASE_URL}/api/posts` ; // works in dev + Vercel
 
