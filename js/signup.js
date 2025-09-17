@@ -162,7 +162,7 @@ countries.forEach((c) => {
 
 // =================== SIGNUP HANDLER ===================
 const BASE_URL = "https://adminblog-zk87.onrender.com";
-API_URL = `${BASE_URL}/api/signup`; 
+const API_URL = `${BASE_URL}/api/signup`; 
 async function signup() {
   const msgEl = document.getElementById("msg");
   const btn = document.getElementById("signupBtn");

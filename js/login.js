@@ -1,6 +1,6 @@
 // ====== LOGIN FORM ======
 const BASE_URL = "https://adminblog-zk87.onrender.com";
-API_URL = `${BASE_URL}/api/login`; 
+const API_URL = `${BASE_URL}/api/login`; 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
