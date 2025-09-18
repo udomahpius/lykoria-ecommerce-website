@@ -1,43 +1,42 @@
-// ====== LOGIN FORM ======
 const BASE_URL = "https://adminblog-zk87.onrender.com";
-const API_URL = `${BASE_URL}/api/login`; 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+const LOGIN_URL = `${BASE_URL}/api/login`;
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+async function login() {
+  const msgEl = document.getElementById("msg");
+  const btn = document.getElementById("loginBtn");
+  btn.disabled = true;
+  msgEl.innerText = "⏳ Logging in...";
+  msgEl.style.color = "blue";
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(LOGIN_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({
+        email: document.getElementById("email").value.trim(),
+        password: document.getElementById("password").value,
+      }),
     });
 
-    // Handle server/network errors
+    const data = await res.json().catch(() => ({}));
+
     if (!res.ok) {
-      let msg;
-      try {
-        const errorData = await res.json();
-        msg = errorData.error || "Login failed.";
-      } catch {
-        msg = await res.text();
-      }
-      alert("Login failed: " + msg);
-      return;
-    }
-
-    const data = await res.json();
-
-    if (data.success && data.token) {
-      localStorage.setItem("token", data.token); // store JWT
-      alert("✅ Login successful!");
-      window.location.href = "admin.html"; // redirect to dashboard
+      msgEl.innerText = data.error || "⚠️ Login failed.";
+      msgEl.style.color = "red";
     } else {
-      alert(data.error || "Invalid email or password.");
+      msgEl.innerText = "✅ Login successful!";
+      msgEl.style.color = "green";
+
+      // Save JWT for authenticated requests
+      localStorage.setItem("token", data.token);
+
+      // Redirect to dashboard/home after login
+      setTimeout(() => (window.location.href = "index.html"), 2000);
     }
   } catch (err) {
-    console.error("Login error:", err);
-    alert("⚠️ Unable to login. Please try again later.");
+    msgEl.innerText = "⚠️ Failed to connect. Please try again.";
+    msgEl.style.color = "red";
+  } finally {
+    btn.disabled = false;
   }
-});
+}

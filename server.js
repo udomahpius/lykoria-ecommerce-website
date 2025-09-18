@@ -21,7 +21,7 @@ const app = express();
 // ============================
 // Config
 // ============================
-const PORT = process.env.PORT || "https://adminblog-zk87.onrender.com";
+const PORT = process.env.PORT || 5000;  // ✅ FIXED: must be number, not URL
 const SECRET_KEY = process.env.JWT_SECRET || "mySuperSecretKey";
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -40,7 +40,7 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// CORS setup for frontend
+// ✅ CORS setup
 const corsOptions = {
   origin: process.env.FRONTEND_URL || "https://lykoria.netlify.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
@@ -104,9 +104,7 @@ function authMiddleware(req, res, next) {
 // ============================
 // Routes
 // ============================
-
-// Test route
-app.get("/", (req, res) => res.send("Server is alive"));
+app.get("/", (req, res) => res.send("✅ Server is alive"));
 
 // Signup
 app.post("/api/signup", async (req, res) => {
@@ -144,7 +142,7 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-// Get Profile
+// Profile
 app.get("/api/profile", authMiddleware, async (req, res) => {
   try {
     const user = await User.findById(req.userId).select("-passwordHash");

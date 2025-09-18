@@ -162,7 +162,7 @@ countries.forEach((c) => {
 
 // =================== SIGNUP HANDLER ===================
 const BASE_URL = "https://adminblog-zk87.onrender.com";
-const API_URL = `${BASE_URL}/api/signup`;
+const SIGNUP_URL = `${BASE_URL}/api/signup`;
 
 async function signup() {
   const msgEl = document.getElementById("msg");
@@ -172,7 +172,7 @@ async function signup() {
   msgEl.style.color = "blue";
 
   try {
-    const res = await fetch(API_URL, {
+    const res = await fetch(SIGNUP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -188,7 +188,7 @@ async function signup() {
     const data = await res.json().catch(() => ({}));
 
     if (!res.ok) {
-      msgEl.innerText = data.error || "Signup failed.";
+      msgEl.innerText = data.error || "⚠️ Signup failed.";
       msgEl.style.color = "red";
     } else {
       msgEl.innerText = data.message || "✅ Signup successful!";
@@ -196,7 +196,7 @@ async function signup() {
       setTimeout(() => (window.location.href = "login.html"), 2000);
     }
   } catch (err) {
-    msgEl.innerText = "⚠️ Failed to connect: " + err.message;
+    msgEl.innerText = "⚠️ Failed to connect. Please try again.";
     msgEl.style.color = "red";
   } finally {
     btn.disabled = false;
