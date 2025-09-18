@@ -21,7 +21,7 @@ const app = express();
 // ============================
 // Config
 // ============================
-const PORT = process.env.PORT || "https://lykoria.netlify.app";
+const PORT = process.env.PORT || "https://adminblog-zk87.onrender.com";
 const SECRET_KEY = process.env.JWT_SECRET || "mySuperSecretKey";
 const MONGO_URI = process.env.MONGO_URI;
 
