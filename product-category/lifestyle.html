@@ -331,89 +331,158 @@ nav a:hover {
 
   <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
   <div id="categoryPosts" class="posts"></div>
-<script>
-    const BASE_URL = "https://adminblog-zk87.onrender.com";
+  <script>
+const BASE_URL = "https://adminblog-zk87.onrender.com";
+const API_URL = `${BASE_URL}/api/posts`;
 
-  // Use relative API path (works both locally + on Vercel)
-  const API_URL = `${BASE_URL}/api/posts`;
+// 👇 Automatically detect category from filename
+const CATEGORY = window.location.pathname
+  .split("/")
+  .pop()
+  .replace(".html", "")
+  .toLowerCase();
 
+async function loadCategory() {
+  const postsContainer = document.getElementById("categoryPosts");
+  const titleEl = document.getElementById("categoryTitle");
 
-  // Hardcode the category for this page
-  const CATEGORY = "lifestyle"; // Change this for each category page
+  try {
+    const res = await fetch(`${API_URL}?category=${CATEGORY}&status=published`);
+    if (!res.ok) throw new Error("Failed to fetch posts");
 
-  async function loadCategory() {
-    const postsContainer = document.getElementById("categoryPosts");
-    const titleEl = document.getElementById("categoryTitle");
+    const posts = await res.json();
+    const sortedPosts = posts.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
 
-    try {
-      const res = await fetch(API_URL);
+    // Capitalize first letter for display
+    const categoryLabel = CATEGORY.charAt(0).toUpperCase() + CATEGORY.slice(1);
 
-      let posts = [];
-      try {
-        posts = await res.json();
-      } catch {
-        posts = [];
-      }
+    // ✅ Update h2 title
+    titleEl.innerText = `${categoryLabel} Posts`;
 
-      if (!res.ok) {
-        throw new Error(posts.error || "Failed to fetch posts");
-      }
+    // ✅ Update page <title>
+    document.title = `${categoryLabel} - Lykoria`;
 
-      // Sort newest first
-      const sortedPosts = posts.sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-
-      // Filter by this category + published only
-      const categoryPosts = sortedPosts.filter(
-        (p) =>
-          p.category?.toLowerCase() === CATEGORY.toLowerCase() &&
-          p.status === "published"
-      );
-
-      titleEl.innerText = CATEGORY + " Posts";
-
-      if (!categoryPosts.length) {
-        postsContainer.innerHTML = `
-          <p style="width:100%; text-align:center; padding:2rem; color:#555;">
-            No posts found for ${CATEGORY}.
-          </p>
-        `;
-        return;
-      }
-
-      postsContainer.innerHTML = categoryPosts
-        .map(
-          (p) => `
-        <div class="post">
-          <h3>${p.title}</h3>
-          ${p.image ? `<img src="${p.image}" alt="preview">` : ""}
-          <p>${p.body.substring(0,150)}...</p>
-          <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
-        </div>
-      `
-        )
-        .join("");
-    } catch (err) {
-      console.error("Category load error:", err);
+    if (!sortedPosts.length) {
       postsContainer.innerHTML = `
-        <h1 style="
-          font-size:2rem;
-          text-align:center;
-          color:rgb(65, 29, 4);
-          width:100%;
-          background:lightgray;
-          padding:3rem 1rem;
-          font-weight:lighter;
-        ">
-          ⚠️ Failed to load posts.<br>
-          ${err.message || "Check your internet connection..."}
-        </h1>
+        <p style="width:100%; text-align:center; padding:2rem; color:#555;">
+          No posts found for ${categoryLabel}.
+        </p>
       `;
+      return;
     }
-  }
 
-  loadCategory();
+    postsContainer.innerHTML = sortedPosts
+      .map(
+        (p) => `
+      <div class="post">
+        <h3>${p.title}</h3>
+        ${p.image ? `<img src="${p.image}" alt="preview">` : ""}
+        <p>${p.body.substring(0,150)}...</p>
+        <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
+      </div>
+    `
+      )
+      .join("");
+  } catch (err) {
+    console.error("Category load error:", err);
+    postsContainer.innerHTML = `
+      <h1 style="font-size:2rem; text-align:center; color:rgb(65, 29, 4);
+                 width:100%; background:lightgray; padding:3rem 1rem; font-weight:lighter;">
+        ⚠️ Failed to load posts.<br>
+        ${err.message || "Check your internet connection..."}
+      </h1>
+    `;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadCategory);
+</script>
+
+<script>
+  //   const BASE_URL = "https://adminblog-zk87.onrender.com";
+
+  // // Use relative API path (works both locally + on Vercel)
+  // const API_URL = `${BASE_URL}/api/posts`;
+
+
+  // // Hardcode the category for this page
+  // const CATEGORY = "lifestyle"; // Change this for each category page
+
+  // async function loadCategory() {
+  //   const postsContainer = document.getElementById("categoryPosts");
+  //   const titleEl = document.getElementById("categoryTitle");
+
+  //   try {
+  //     const res = await fetch(API_URL);
+
+  //     let posts = [];
+  //     try {
+  //       posts = await res.json();
+  //     } catch {
+  //       posts = [];
+  //     }
+
+  //     if (!res.ok) {
+  //       throw new Error(posts.error || "Failed to fetch posts");
+  //     }
+
+  //     // Sort newest first
+  //     const sortedPosts = posts.sort(
+  //       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  //     );
+
+  //     // Filter by this category + published only
+  //     const categoryPosts = sortedPosts.filter(
+  //       (p) =>
+  //         p.category?.toLowerCase() === CATEGORY.toLowerCase() &&
+  //         p.status === "published"
+  //     );
+
+  //     titleEl.innerText = CATEGORY + " Posts";
+
+  //     if (!categoryPosts.length) {
+  //       postsContainer.innerHTML = `
+  //         <p style="width:100%; text-align:center; padding:2rem; color:#555;">
+  //           No posts found for ${CATEGORY}.
+  //         </p>
+  //       `;
+  //       return;
+  //     }
+
+  //     postsContainer.innerHTML = categoryPosts
+  //       .map(
+  //         (p) => `
+  //       <div class="post">
+  //         <h3>${p.title}</h3>
+  //         ${p.image ? `<img src="${p.image}" alt="preview">` : ""}
+  //         <p>${p.body.substring(0,150)}...</p>
+  //         <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
+  //       </div>
+  //     `
+  //       )
+  //       .join("");
+  //   } catch (err) {
+  //     console.error("Category load error:", err);
+  //     postsContainer.innerHTML = `
+  //       <h1 style="
+  //         font-size:2rem;
+  //         text-align:center;
+  //         color:rgb(65, 29, 4);
+  //         width:100%;
+  //         background:lightgray;
+  //         padding:3rem 1rem;
+  //         font-weight:lighter;
+  //       ">
+  //         ⚠️ Failed to load posts.<br>
+  //         ${err.message || "Check your internet connection..."}
+  //       </h1>
+  //     `;
+  //   }
+  // }
+
+  // loadCategory();
 
   /* ======== INIT & HELPERS ======== */
   document.addEventListener("DOMContentLoaded", () => {
