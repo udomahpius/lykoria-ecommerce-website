@@ -1,4 +1,4 @@
-const BASE_URL = "https://adminblog-zk87.onrender.com";
+  const BASE_URL = "https://adminblog-1y6d.onrender.com";
 const LOGIN_URL = `${BASE_URL}/api/login`;
 
 async function login() {
