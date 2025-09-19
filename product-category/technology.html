@@ -329,47 +329,31 @@ nav a:hover {
   <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
   <div id="categoryPosts" class="posts"></div>
 <script>
-  const BASE_URL = "https://adminblog-zk87.onrender.com";
-  // Use relative API path (works both locally + on Vercel)
+const BASE_URL = "https://adminblog-zk87.onrender.com";
   const API_URL = `${BASE_URL}/api/posts`;
 
-
-  // Hardcode the category for this page
-  const CATEGORY = "technology"; // Change this for each category page
+  // 👇 Change this per page
+  const CATEGORY = "technology"; // For health.html → "health", sports.html → "sports", etc.
 
   async function loadCategory() {
     const postsContainer = document.getElementById("categoryPosts");
     const titleEl = document.getElementById("categoryTitle");
 
     try {
-      const res = await fetch(API_URL);
+      // ✅ Ask backend for ONLY this category + published posts
+      const res = await fetch(`${API_URL}?category=${CATEGORY}&status=published`);
+      if (!res.ok) throw new Error("Failed to fetch posts");
 
-      let posts = [];
-      try {
-        posts = await res.json();
-      } catch {
-        posts = [];
-      }
-
-      if (!res.ok) {
-        throw new Error(posts.error || "Failed to fetch posts");
-      }
+      const posts = await res.json();
 
       // Sort newest first
       const sortedPosts = posts.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
 
-      // Filter by this category + published only
-      const categoryPosts = sortedPosts.filter(
-        (p) =>
-          p.category?.toLowerCase() === CATEGORY.toLowerCase() &&
-          p.status === "published"
-      );
+      titleEl.innerText = CATEGORY.charAt(0).toUpperCase() + CATEGORY.slice(1) + " Posts";
 
-      titleEl.innerText = CATEGORY + " Posts";
-
-      if (!categoryPosts.length) {
+      if (!sortedPosts.length) {
         postsContainer.innerHTML = `
           <p style="width:100%; text-align:center; padding:2rem; color:#555;">
             No posts found for ${CATEGORY}.
@@ -378,7 +362,7 @@ nav a:hover {
         return;
       }
 
-      postsContainer.innerHTML = categoryPosts
+      postsContainer.innerHTML = sortedPosts
         .map(
           (p) => `
         <div class="post">
@@ -410,7 +394,7 @@ nav a:hover {
   }
 
   loadCategory();
-
+  
   /* ======== INIT & HELPERS ======== */
   document.addEventListener("DOMContentLoaded", () => {
     const navToggle = document.getElementById("navToggle");
