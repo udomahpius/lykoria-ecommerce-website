@@ -42,7 +42,7 @@ app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 // ✅ CORS setup
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || "https://admin-blog-mauve.vercel.app/",
+  origin: process.env.FRONTEND_URL || "https://admin-blog-mauve.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
   credentials: true,
 };
