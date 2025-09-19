@@ -4,7 +4,7 @@ const API_URL = `${BASE_URL}/api/posts`;
 
 // ====== CATEGORIES (map backend keys to labels) ======
 const categories = [
-  { key: "technology", label: "tech" },
+  { key: "tech", label: "Tech" },
   { key: "health", label: "Health" },
   { key: "sports", label: "Sports" },
   { key: "business", label: "Business" },
