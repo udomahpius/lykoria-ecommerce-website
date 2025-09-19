@@ -11,6 +11,7 @@ const categories = [
   { key: "entertainment", label: "Entertainment" },
   { key: "lifestyle", label: "Lifestyle" },
   { key: "politics", label: "Politics" },
+  { key: "travel", label: "Travel" },
 ];
 
 // ====== LOAD CATEGORY POSTS ======

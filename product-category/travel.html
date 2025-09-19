@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -310,8 +308,7 @@ nav a:hover {
     <a href="entertainment.html">Entertainment</a>
     <a href="lifestyle.html">Lifestyle</a>
     <a href="politics.html">Politics</a>
-        <a href="travel.html">Travel</a>
-
+    <a href="travel.html">Travel</a>
 
     <div class="user-dropdown" id="userDropdown">
       <button class="dropbtn" id="userDropBtn" aria-haspopup="true" aria-expanded="false">User ▾</button>
@@ -328,8 +325,10 @@ nav a:hover {
 <!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
+
   <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
   <div id="categoryPosts" class="posts"></div>
+
   <script>
 const BASE_URL = "https://adminblog-zk87.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
@@ -399,16 +398,14 @@ async function loadCategory() {
 document.addEventListener("DOMContentLoaded", loadCategory);
 </script>
 
-
 <script>
-  //   const BASE_URL = "https://adminblog-zk87.onrender.com";
-
+  // const BASE_URL = "https://adminblog-zk87.onrender.com";
   // // Use relative API path (works both locally + on Vercel)
   // const API_URL = `${BASE_URL}/api/posts`;
 
 
   // // Hardcode the category for this page
-  // const CATEGORY = "health"; // Change this for each category page
+  // const CATEGORY = "sports"; // Change this for each category page
 
   // async function loadCategory() {
   //   const postsContainer = document.getElementById("categoryPosts");
@@ -565,7 +562,6 @@ document.addEventListener("DOMContentLoaded", loadCategory);
   });
 </script>
 
+
 </body>
 </html>
-
-
