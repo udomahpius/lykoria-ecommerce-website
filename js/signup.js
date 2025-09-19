@@ -161,7 +161,7 @@ countries.forEach((c) => {
 });
 
 // =================== SIGNUP HANDLER ===================
-  const BASE_URL = "https://adminblog-1y6d.onrender.com";
+const BASE_URL = "https://adminblog-1y6d.onrender.com";
 const SIGNUP_URL = `${BASE_URL}/api/signup`;
 
 async function signup() {
@@ -175,6 +175,7 @@ async function signup() {
     const res = await fetch(SIGNUP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",   // ✅ Important for CORS cookies/session
       body: JSON.stringify({
         firstName: document.getElementById("firstName").value.trim(),
         lastName: document.getElementById("lastName").value.trim(),
@@ -196,6 +197,7 @@ async function signup() {
       setTimeout(() => (window.location.href = "login.html"), 2000);
     }
   } catch (err) {
+    console.error("Signup error:", err);
     msgEl.innerText = "⚠️ Failed to connect. Please try again.";
     msgEl.style.color = "red";
   } finally {

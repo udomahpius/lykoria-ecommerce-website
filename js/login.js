@@ -1,4 +1,5 @@
-  const BASE_URL = "https://adminblog-1y6d.onrender.com";
+// =================== LOGIN HANDLER ===================
+const BASE_URL = "https://adminblog-1y6d.onrender.com";
 const LOGIN_URL = `${BASE_URL}/api/login`;
 
 async function login() {
@@ -12,6 +13,7 @@ async function login() {
     const res = await fetch(LOGIN_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",   // ✅ Important for CORS
       body: JSON.stringify({
         email: document.getElementById("email").value.trim(),
         password: document.getElementById("password").value,
@@ -24,16 +26,18 @@ async function login() {
       msgEl.innerText = data.error || "⚠️ Login failed.";
       msgEl.style.color = "red";
     } else {
-      msgEl.innerText = "✅ Login successful!";
+      msgEl.innerText = data.message || "✅ Login successful!";
       msgEl.style.color = "green";
 
-      // Save JWT for authenticated requests
-      localStorage.setItem("token", data.token);
+      // ✅ store token if your backend returns it
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+      }
 
-      // Redirect to dashboard/home after login
-      setTimeout(() => (window.location.href = "index.html"), 2000);
+      setTimeout(() => (window.location.href = "dashboard.html"), 2000);
     }
   } catch (err) {
+    console.error("Login error:", err);
     msgEl.innerText = "⚠️ Failed to connect. Please try again.";
     msgEl.style.color = "red";
   } finally {
