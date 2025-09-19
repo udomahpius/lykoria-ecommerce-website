@@ -333,7 +333,7 @@ const BASE_URL = "https://adminblog-zk87.onrender.com";
   const API_URL = `${BASE_URL}/api/posts`;
 
   // 👇 Change this per page
-  const CATEGORY = "technology"; // For health.html → "health", sports.html → "sports", etc.
+  const CATEGORY = "tech"; // For health.html → "health", sports.html → "sports", etc.
 
   async function loadCategory() {
     const postsContainer = document.getElementById("categoryPosts");
@@ -394,8 +394,7 @@ const BASE_URL = "https://adminblog-zk87.onrender.com";
   }
 
   loadCategory();
-  
-  /* ======== INIT & HELPERS ======== */
+    /* ======== INIT & HELPERS ======== */
   document.addEventListener("DOMContentLoaded", () => {
     const navToggle = document.getElementById("navToggle");
     const navMenu = document.getElementById("navMenu");
