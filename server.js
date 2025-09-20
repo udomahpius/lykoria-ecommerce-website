@@ -235,6 +235,41 @@ app.get("/api/categories", (req, res) => {
 });
 
 // ============================
+// Admin: Fix Categories (remove "tech")
+// ============================
+import Post from "./models/Post.js"; // adjust path if needed
+
+app.put("/api/admin/fix-categories", async (req, res) => {
+  try {
+    // 🔑 make sure only logged-in admin can run this
+    const authHeader = req.headers.authorization;
+    if (!authHeader) return res.status(401).json({ error: "Unauthorized" });
+
+    const token = authHeader.split(" ")[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (!decoded.isAdmin) {
+      return res.status(403).json({ error: "Forbidden: Admins only" });
+    }
+
+    // ✅ update all posts with category "tech" → "business" (or any other)
+    const result = await Post.updateMany(
+      { category: "tech" },
+      { $set: { category: "travel" } }
+    );
+
+    res.json({
+      success: true,
+      message: `"tech" categories updated to "business"`,
+      modifiedCount: result.modifiedCount,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ============================
 // Start Server
 // ============================
 app.listen(PORT, () => {
