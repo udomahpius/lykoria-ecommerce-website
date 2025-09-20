@@ -367,8 +367,10 @@ button#submitBtn:active {
     <input type="text" id="url" placeholder="Link URL">
     <input type="text" id="urlText" placeholder="Link Text">
    <label for="category">Category</label>
+<label for="category">Category</label>
 <select id="category" name="category" required>
   <option value="">-- Select Category --</option>
+   <option value="">-- Select Category --</option>
   <option value="health">Health</option>
   <option value="sports">Sports</option>
   <option value="business">Business</option>
@@ -377,7 +379,6 @@ button#submitBtn:active {
   <option value="lifestyle">Lifestyle</option>
   <option value="politics">Politics</option>
   <option value="travel">Travel</option>
-
 </select>
 
     <input type="file" id="image" accept="image/*">
@@ -385,7 +386,7 @@ button#submitBtn:active {
     <button type="submit" id="submitBtn">Save Post</button>
   </form>
 
-  <h2>All Posts</h2>
+<h2>All Posts</h2>
   <div id="postsContainer"></div>
 
   <script src="../js/admin.js"></script>
@@ -466,7 +467,33 @@ button#submitBtn:active {
 </script>
 
 
+ <!-- Category dropdown script -->
   <script>
+    const categories = [
+      { key: "health", label: "Health" },
+      { key: "sports", label: "Sports" },
+      { key: "business", label: "Business" },
+      { key: "education", label: "Education" },
+      { key: "entertainment", label: "Entertainment" },
+      { key: "lifestyle", label: "Lifestyle" },
+      { key: "politics", label: "Politics" },
+      { key: "travel", label: "Travel" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const select = document.getElementById("category");
+
+      // Clear old options except the first placeholder
+      select.innerHTML = `<option value="">-- Select Category --</option>`;
+
+      // Add categories dynamically
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.key;
+        option.textContent = cat.label;
+        select.appendChild(option);
+      });
+    });
   </script>
 </body>
 </html>

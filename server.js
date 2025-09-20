@@ -217,6 +217,22 @@ app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+// ============================
+// Categories API
+// ============================
+app.get("/api/categories", (req, res) => {
+  const categories = [
+    { key: "health", label: "Health" },
+    { key: "sports", label: "Sports" },
+    { key: "business", label: "Business" },
+    { key: "education", label: "Education" },
+    { key: "entertainment", label: "Entertainment" },
+    { key: "lifestyle", label: "Lifestyle" },
+    { key: "politics", label: "Politics" },
+    { key: "travel", label: "Travel" }
+  ];
+  res.json(categories);
+});
 
 // ============================
 // Start Server

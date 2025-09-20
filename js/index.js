@@ -1,18 +1,7 @@
 // ====== API BASE ======
-  const BASE_URL = "https://adminblog-1y6d.onrender.com";
+const BASE_URL = "https://adminblog-1y6d.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
-
-// ====== CATEGORIES (map backend keys to labels) ======
-const categories = [
-  { key: "health", label: "Health" },
-  { key: "sports", label: "Sports" },
-  { key: "business", label: "Business" },
-  { key: "education", label: "Education" },
-  { key: "entertainment", label: "Entertainment" },
-  { key: "lifestyle", label: "Lifestyle" },
-  { key: "politics", label: "Politics" },
-  { key: "travel", label: "Travel" },
-];
+const CATEGORY_API = `${BASE_URL}/api/categories`;
 
 // ====== LOAD CATEGORY POSTS ======
 async function loadCategory(categoryKey, categoryLabel) {
@@ -62,6 +51,15 @@ async function loadCategory(categoryKey, categoryLabel) {
 }
 
 // ====== INIT ======
-document.addEventListener("DOMContentLoaded", () => {
-  categories.forEach((cat) => loadCategory(cat.key, cat.label));
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch(CATEGORY_API);
+    if (!res.ok) throw new Error("Failed to fetch categories");
+    const categories = await res.json();
+
+    // loop through categories dynamically
+    categories.forEach((cat) => loadCategory(cat.key, cat.label));
+  } catch (err) {
+    console.error("Error loading categories:", err);
+  }
 });
