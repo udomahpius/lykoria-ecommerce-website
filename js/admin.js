@@ -176,3 +176,105 @@ async function deletePost(id) {
 
 // ====== INIT ======
 loadPosts();
+
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  const welcomeMessage = document.getElementById('welcomeMessage');
+  const welcomeClock = document.getElementById('welcomeClock');
+
+
+  // Mobile nav toggle
+  navToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('show');
+  });
+
+
+  // Live clock
+  function updateClock() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    document.getElementById("clock").innerHTML = `🕒 ${timeString}`;
+  }
+
+  // Fetch user profile and show welcome
+  async function showWelcome() {
+    try {
+      const token = localStorage.getItem("token"); // Token saved after login
+      if (!token) {
+        welcomeMessage.textContent = "👋 Welcome back!";
+        return;
+      }
+
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (!response.ok) throw new Error("Failed to fetch user");
+
+      const data = await response.json();
+      const username =   `${data.firstName} ${data.lastName}` || "Admin";
+
+      welcomeMessage.textContent = `👋 Welcome back, ${username}!`;
+    } catch (error) {
+      console.error("Error fetching user:", error);
+      welcomeMessage.textContent = "👋 Welcome back!";
+    }
+  }
+
+  // Init
+  window.addEventListener("DOMContentLoaded", () => {
+    // Insert clock
+    const clockEl = document.createElement("div");
+    clockEl.id = "clock";
+    clockEl.style.textAlign = "center";
+    clockEl.style.margin = "10px 0";
+    clockEl.style.fontWeight = "bold";
+    clockEl.style.fontSize = "2rem";
+    document.body.prepend(clockEl);
+
+    showWelcome();
+    updateClock();
+    setInterval(updateClock, 1000);
+  });
+
+  // Run on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    showWelcome();
+    updateClock();
+    setInterval(updateClock, 60000); // update every 1 min
+  });
+
+
+
+
+
+    const categories = [
+      { key: "health", label: "Health" },
+      { key: "sports", label: "Sports" },
+      { key: "business", label: "Business" },
+      { key: "education", label: "Education" },
+      { key: "entertainment", label: "Entertainment" },
+      { key: "lifestyle", label: "Lifestyle" },
+      { key: "politics", label: "Politics" },
+      { key: "travel", label: "Travel" }
+    ];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const select = document.getElementById("category");
+
+      // Clear old options except the first placeholder
+      select.innerHTML = `<option value="">-- Select Category --</option>`;
+
+      // Add categories dynamically
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.key;
+        option.textContent = cat.label;
+        select.appendChild(option);
+      });
+    });
+
