@@ -133,13 +133,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/udomahpius/adminBlog.git"
+    "url": "git+https://github.com/udomahpius/lykoria-ecommerce-website.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/udomahpius/adminBlog/issues"
+    "url": "https://github.com/udomahpius/lykoria-ecommerce-website/issues"
   },
-  "homepage": "https://github.com/udomahpius/adminBlog#readme",
+  "homepage": "https://github.com/udomahpius/lykoria-ecommerce-website#readme",
   "description": ""
 }
