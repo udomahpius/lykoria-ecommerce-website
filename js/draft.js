@@ -1,5 +1,5 @@
 // ====== API BASE ======
-  const BASE_URL = "https://adminblog-1y6d.onrender.com";
+  const BASE_URL = "http://localhost:5000";
 
 const API_URL = `${BASE_URL}/api/posts`;  // works in dev + Vercel
 const draftContainer = document.getElementById("draftContainer");

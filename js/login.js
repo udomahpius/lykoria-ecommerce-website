@@ -1,5 +1,5 @@
 // =================== LOGIN HANDLER ===================
-const BASE_URL = "https://adminblog-1y6d.onrender.com";
+const BASE_URL = "http://localhost:5000";
 const LOGIN_URL = `${BASE_URL}/api/login`;
 
 async function login() {

@@ -161,7 +161,7 @@ countries.forEach((c) => {
 });
 
 // =================== SIGNUP HANDLER ===================
-const BASE_URL = "https://adminblog-1y6d.onrender.com";
+const BASE_URL = "http://localhost:5000";
 const SIGNUP_URL = `${BASE_URL}/api/signup`;
 
 async function signup() {
