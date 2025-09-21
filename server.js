@@ -40,12 +40,12 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-const corsOptions = {
-  origin: "https://admin-blog-mauve.vercel.app", // ✅ no slash
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-  credentials: true, // ✅ allow cookies/tokens
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: process.env.FRONTEND_URL || "https://admin-blog-mauve.vercel.app", 
+//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
+//   credentials: true, 
+// };
+// app.use(cors(corsOptions));
 
 // ============================
 // Multer: File Uploads (temporary directory)
