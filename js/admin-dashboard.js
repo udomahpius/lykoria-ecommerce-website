@@ -1,20 +1,22 @@
+// ====== BASE URL ======
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 
+// ====== TOKEN & ROLE CHECK ======
 function getTokenAndRole() {
   const token = localStorage.getItem("token");
-  const role = localStorage.getItem("role");
+  const role = (localStorage.getItem("role") || "").trim().toLowerCase();
   if (!token || role !== "admin") {
-    window.location.href = "login.html"; // silent redirect
+    alert("⚠️ Access denied. Admins only!");
+    window.location.href = "login.html";
     return null;
   }
   return token;
 }
 
 const token = getTokenAndRole();
-if (!token) return; // stop execution if no token
+if (!token) return;
 
-// Elements
-const logoutBtn = document.getElementById("logoutBtn");
+// ====== ELEMENTS ======
 const totalPostsEl = document.getElementById("totalPosts");
 const totalViewsEl = document.getElementById("totalViews");
 const totalReactionsEl = document.getElementById("totalReactions");
@@ -23,8 +25,9 @@ const postsChartCtx = document.getElementById("postsChart")?.getContext("2d");
 const startDateInput = document.getElementById("startDate");
 const endDateInput = document.getElementById("endDate");
 const filterBtn = document.getElementById("filterBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
-logoutBtn.addEventListener("click", () => {
+logoutBtn?.addEventListener("click", () => {
   localStorage.removeItem("token");
   localStorage.removeItem("role");
   window.location.href = "login.html";
@@ -32,6 +35,7 @@ logoutBtn.addEventListener("click", () => {
 
 let postsChart;
 
+// ====== FETCH POSTS ANALYTICS ======
 async function fetchPostAnalytics(startDate, endDate) {
   const token = getTokenAndRole();
   if (!token) return;
@@ -42,10 +46,9 @@ async function fetchPostAnalytics(startDate, endDate) {
 
     const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) throw new Error("Failed to fetch posts");
-
     const posts = await res.json();
-    let totalViews = 0, totalReactions = 0;
 
+    let totalViews = 0, totalReactions = 0;
     postsTable.innerHTML = "";
 
     const labels = [], viewsData = [], reactionsData = [];
@@ -58,7 +61,12 @@ async function fetchPostAnalytics(startDate, endDate) {
       reactionsData.push(post.reactions || 0);
 
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${post.title}</td><td>${post.views || 0}</td><td>${post.reactions || 0}</td><td>${new Date(post.createdAt).toLocaleDateString()}</td>`;
+      tr.innerHTML = `
+        <td>${post.title}</td>
+        <td>${post.views || 0}</td>
+        <td>${post.reactions || 0}</td>
+        <td>${new Date(post.createdAt).toLocaleDateString()}</td>
+      `;
       postsTable.appendChild(tr);
     });
 
@@ -77,19 +85,24 @@ async function fetchPostAnalytics(startDate, endDate) {
             { label: "Reactions", data: reactionsData, backgroundColor: "rgba(40, 167, 69, 0.7)" },
           ]
         },
-        options: { responsive: true, plugins: { legend: { position: "top" } }, scales: { y: { beginAtZero: true } } }
+        options: {
+          responsive: true,
+          plugins: { legend: { position: "top" } },
+          scales: { y: { beginAtZero: true } }
+        }
       });
     }
 
   } catch (err) {
     console.error("Error fetching post analytics:", err);
+    postsTable.innerHTML = "<tr><td colspan='4' style='color:red'>Failed to load posts analytics</td></tr>";
   }
 }
 
-// Initial fetch
+// ====== INITIAL FETCH ======
 fetchPostAnalytics();
 
-// Filter button
+// ====== FILTER BUTTON ======
 filterBtn?.addEventListener("click", () => {
   const startDate = startDateInput.value;
   const endDate = endDateInput.value;

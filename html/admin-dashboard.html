@@ -2,64 +2,101 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Analytics</title>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; }
-    header { background: #2563eb; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-    header h1 { margin: 0; font-size: 20px; }
-    header button { background: #fff; color: #2563eb; border: none; padding: 8px 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    * { box-sizing: border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
+    body { background: linear-gradient(135deg, #ffffff, #e0eaf4); color:#333; padding:80px 20px 20px; min-height:100vh;}
 
-    .container { padding: 20px; }
-    .stats-cards { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px; }
-    .card { flex: 1 1 200px; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; }
-    .card h2 { font-size: 24px; color: #2563eb; margin-bottom: 5px; }
-    .card p { font-size: 16px; color: #555; }
+    /* ========== Navbar ========== */
+    nav {
+      position: fixed; top:0; left:0; right:0; background:#007BFF;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:12px 20px; box-shadow:0 3px 10px rgba(0,0,0,0.1); z-index:1000;
+    }
+    nav h1 { color:#fff; font-size:20px; }
+    nav ul { display:flex; list-style:none; gap:20px; }
+    nav ul li a { color:#fff; text-decoration:none; font-weight:500; }
+    nav ul li a:hover { color:#ffd166; }
+    .nav-toggle { display:none; font-size:24px; color:#fff; cursor:pointer; }
+    @media(max-width:768px){
+      .nav-toggle { display:block; }
+      nav ul { position:absolute; top:60px; right:0; background:#007BFF; flex-direction:column; gap:15px; width:200px; padding:15px; border-radius:0 0 8px 8px; display:none; }
+      nav ul.show { display:flex; }
+    }
 
-    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 30px; }
-    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; }
-    th { background: #2563eb; color: #fff; }
+    /* ========== Welcome ========== */
+    #welcomeMessage { text-align:center; margin:20px 0; font-size:20px; font-weight:600; color:#1e293b; }
+    #welcomeClock { text-align:center; font-size:16px; color:#555; margin-bottom:20px; }
 
-    .filter-section { margin-bottom: 20px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
-    .filter-section input, .filter-section select { padding: 6px 10px; border-radius: 5px; border: 1px solid #ccc; }
+    /* ========== Stats Cards ========== */
+    #statsContainer { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
+    .stat-card {
+      background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08);
+      min-width:150px; text-align:center;
+    }
+    .stat-card h3 { font-size:16px; color:#1e293b; margin-bottom:10px; }
+    .stat-card p { font-size:20px; font-weight:bold; color:#007BFF; }
 
-    canvas { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    /* ========== Filter Section ========== */
+    .filter-section { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
+    .filter-section label { display:flex; flex-direction:column; font-size:14px; }
+    .filter-section input, .filter-section button { padding:6px 10px; border-radius:5px; border:1px solid #ccc; }
+    .filter-section button { background:#007BFF; color:white; border:none; cursor:pointer; }
+    .filter-section button:hover { background:#0056b3; }
 
-    @media(max-width: 700px){ .stats-cards { flex-direction: column; } }
+    /* ========== Posts Table ========== */
+    table { width:100%; border-collapse: collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin-bottom:30px; }
+    th, td { padding:12px 15px; text-align:left; border-bottom:1px solid #eee; }
+    th { background:#007BFF; color:#fff; }
+
+    /* ========== Chart ========== */
+    canvas { background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:20px auto; max-width:700px; }
+
+    @media(max-width:768px){ .filter-section { flex-direction:column; align-items:center; } }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Admin Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
-    <button ><a href="./admin.html">Admin</a></button>
-  </header>
+  <nav>
+    <h1>Admin Panel</h1>
+    <div class="nav-toggle" id="navToggle">☰</div>
+    <ul id="navMenu">
+      <li><a href="admin.html">Manage Posts</a></li>
+      <li><a href="admin-dashboard.html">Analytics</a></li>
+      <li><a href="login.html" id="logoutNavBtn">Logout</a></li>
+    </ul>
+  </nav>
 
-  <div class="container">
-    <div class="stats-cards">
-      <div class="card"><h2 id="totalPosts">0</h2><p>Total Posts</p></div>
-      <div class="card"><h2 id="totalViews">0</h2><p>Total Views</p></div>
-      <div class="card"><h2 id="totalReactions">0</h2><p>Total Reactions</p></div>
-    </div>
+  <div id="welcomeMessage"></div>
+  <div id="welcomeClock"></div>
 
-    <div class="filter-section">
-      <label>From: <input type="date" id="startDate"></label>
-      <label>To: <input type="date" id="endDate"></label>
-      <button id="filterBtn">Filter</button>
-    </div>
-
-    <h3>Posts Analytics</h3>
-    <table>
-      <thead>
-        <tr><th>Post Title</th><th>Views</th><th>Reactions</th><th>Date</th></tr>
-      </thead>
-      <tbody id="postsTable"></tbody>
-    </table>
-
-    <h3>Engagement Chart</h3>
-    <canvas id="postsChart" width="400" height="200"></canvas>
+  <div id="statsContainer">
+    <div class="stat-card"><h3>Total Posts</h3><p id="totalPosts">0</p></div>
+    <div class="stat-card"><h3>Total Views</h3><p id="totalViews">0</p></div>
+    <div class="stat-card"><h3>Total Reactions</h3><p id="totalReactions">0</p></div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../js/admin-dashboard.js"></script>
+  <div class="filter-section">
+    <label>From: <input type="date" id="startDate"></label>
+    <label>To: <input type="date" id="endDate"></label>
+    <button id="filterBtn">Filter</button>
+  </div>
+
+  <h2>Posts Analytics</h2>
+  <table>
+    <thead>
+      <tr><th>Post Title</th><th>Views</th><th>Reactions</th><th>Date</th></tr>
+    </thead>
+    <tbody id="postsTable"></tbody>
+  </table>
+
+  <h2>Engagement Chart</h2>
+  <canvas id="postsChart" width="400" height="200"></canvas>
+
+  <script src="/js/admin-dashboard.js"></script>
 </body>
 </html>
