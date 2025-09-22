@@ -1,13 +1,17 @@
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 
-const token = localStorage.getItem("token");
-const role = localStorage.getItem("role");
-
-// Admin-only access
-if (!token || role !== "admin") {
-  alert("Access denied. Admins only.");
-  window.location.href = "login.html";
+function getTokenAndRole() {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
+  if (!token || role !== "admin") {
+    window.location.href = "login.html"; // silent redirect
+    return null;
+  }
+  return token;
 }
+
+const token = getTokenAndRole();
+if (!token) return; // stop execution if no token
 
 // Elements
 const logoutBtn = document.getElementById("logoutBtn");
@@ -15,7 +19,7 @@ const totalPostsEl = document.getElementById("totalPosts");
 const totalViewsEl = document.getElementById("totalViews");
 const totalReactionsEl = document.getElementById("totalReactions");
 const postsTable = document.getElementById("postsTable");
-const postsChartCtx = document.getElementById("postsChart").getContext("2d");
+const postsChartCtx = document.getElementById("postsChart")?.getContext("2d");
 const startDateInput = document.getElementById("startDate");
 const endDateInput = document.getElementById("endDate");
 const filterBtn = document.getElementById("filterBtn");
@@ -29,29 +33,26 @@ logoutBtn.addEventListener("click", () => {
 let postsChart;
 
 async function fetchPostAnalytics(startDate, endDate) {
+  const token = getTokenAndRole();
+  if (!token) return;
+
   try {
     let url = `${BASE_URL}/api/posts`;
-    if (startDate && endDate) {
-      url += `?start=${startDate}&end=${endDate}`;
-    }
+    if (startDate && endDate) url += `?start=${startDate}&end=${endDate}`;
 
     const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
     if (!res.ok) throw new Error("Failed to fetch posts");
 
     const posts = await res.json();
+    let totalViews = 0, totalReactions = 0;
 
-    let totalViews = 0;
-    let totalReactions = 0;
     postsTable.innerHTML = "";
 
-    const labels = [];
-    const viewsData = [];
-    const reactionsData = [];
+    const labels = [], viewsData = [], reactionsData = [];
 
     posts.forEach(post => {
       totalViews += post.views || 0;
       totalReactions += post.reactions || 0;
-
       labels.push(post.title);
       viewsData.push(post.views || 0);
       reactionsData.push(post.reactions || 0);
@@ -65,23 +66,20 @@ async function fetchPostAnalytics(startDate, endDate) {
     totalViewsEl.textContent = totalViews;
     totalReactionsEl.textContent = totalReactions;
 
-    // Update chart
-    if (postsChart) postsChart.destroy();
-    postsChart = new Chart(postsChartCtx, {
-      type: "bar",
-      data: {
-        labels,
-        datasets: [
-          { label: "Views", data: viewsData, backgroundColor: "rgba(37, 99, 235, 0.7)" },
-          { label: "Reactions", data: reactionsData, backgroundColor: "rgba(40, 167, 69, 0.7)" },
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: "top" } },
-        scales: { y: { beginAtZero: true } },
-      }
-    });
+    if (postsChartCtx) {
+      if (postsChart) postsChart.destroy();
+      postsChart = new Chart(postsChartCtx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [
+            { label: "Views", data: viewsData, backgroundColor: "rgba(37, 99, 235, 0.7)" },
+            { label: "Reactions", data: reactionsData, backgroundColor: "rgba(40, 167, 69, 0.7)" },
+          ]
+        },
+        options: { responsive: true, plugins: { legend: { position: "top" } }, scales: { y: { beginAtZero: true } } }
+      });
+    }
 
   } catch (err) {
     console.error("Error fetching post analytics:", err);
@@ -92,7 +90,7 @@ async function fetchPostAnalytics(startDate, endDate) {
 fetchPostAnalytics();
 
 // Filter button
-filterBtn.addEventListener("click", () => {
+filterBtn?.addEventListener("click", () => {
   const startDate = startDateInput.value;
   const endDate = endDateInput.value;
   fetchPostAnalytics(startDate, endDate);
