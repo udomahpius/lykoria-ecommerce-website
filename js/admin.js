@@ -1,6 +1,7 @@
 // ====== API BASE ======
-  const BASE_URL = "http://localhost:5000";
-const API_URL = `${BASE_URL}/api/posts`;   // works in dev + production
+const BASE_URL = "https://lykoria-ecommerce-website.onrender.com"; // 🔑 change to your Render URL in production
+const API_URL = `${BASE_URL}/api/posts`;
+const PROFILE_URL = `${BASE_URL}/api/profile`;
 
 // ====== ELEMENTS ======
 const postForm = document.getElementById("postForm");
@@ -12,17 +13,19 @@ const categorySelect = document.getElementById("category");
 const imageInput = document.getElementById("image");
 const previewImg = document.getElementById("preview");
 const postsContainer = document.getElementById("postsContainer");
+const navToggle = document.getElementById("navToggle");
+const navMenu = document.getElementById("navMenu");
+const welcomeMessage = document.getElementById("welcomeMessage");
 
-// ====== CHECK LOGIN ======
-function checkToken() {
-  const TOKEN = localStorage.getItem("token");
-  if (!TOKEN) {
-    alert("You must log in first!");
+// ====== PROTECT ADMIN PAGE ======
+(function protectAdminPage() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("⚠️ You must log in first!");
     window.location.href = "login.html";
-    return null;
   }
-  return TOKEN;
-}
+})();
+
 
 // ====== IMAGE PREVIEW ======
 imageInput.addEventListener("change", () => {
@@ -53,7 +56,7 @@ postForm.addEventListener("submit", async e => {
     formData.append("body", bodyInput.value);
     formData.append("url", urlInput.value);
     formData.append("urlText", urlTextInput.value);
-    formData.append("category", categorySelect.value); // ✅ already lowercase
+    formData.append("category", categorySelect.value);
     formData.append("status", "published");
 
     if (imageInput.files[0]) {
@@ -81,39 +84,6 @@ postForm.addEventListener("submit", async e => {
     alert("Request failed: " + err.message);
   }
 });
-
-// ====== EDIT POST ======
-async function editPost(id) {
-  const TOKEN = checkToken();
-  if (!TOKEN) return;
-
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      headers: { "Authorization": `Bearer ${TOKEN}` }
-    });
-
-    const post = await res.json();
-    if (!post || !post._id) return alert("Post not found");
-
-    titleInput.value = post.title;
-    bodyInput.value = post.body;
-    urlInput.value = post.url;
-    urlTextInput.value = post.urlText;
-    categorySelect.value = post.category; // ✅ no need to .toLowerCase()
-
-    if (post.image) {
-      previewImg.src = post.image;
-      previewImg.style.display = "block";
-    } else {
-      previewImg.style.display = "none";
-    }
-
-    postForm.dataset.editingId = id;
-  } catch (err) {
-    console.error(err);
-    alert("Failed to load post for editing");
-  }
-}
 
 // ====== EDIT POST ======
 async function editPost(id) {
@@ -174,107 +144,121 @@ async function deletePost(id) {
   }
 }
 
-// ====== INIT ======
-loadPosts();
+// ====== LOAD POSTS (Only logged-in user’s posts) ======
+async function loadPosts() {
+  const TOKEN = checkToken();
+  if (!TOKEN) return;
 
-  const navToggle = document.getElementById('navToggle');
-  const navMenu = document.getElementById('navMenu');
-  const welcomeMessage = document.getElementById('welcomeMessage');
-  const welcomeClock = document.getElementById('welcomeClock');
-
-
-  // Mobile nav toggle
-  navToggle.addEventListener('click', () => {
-    navMenu.classList.toggle('show');
-  });
-
-
-  // Live clock
-  function updateClock() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    document.getElementById("clock").innerHTML = `🕒 ${timeString}`;
-  }
-
-  // Fetch user profile and show welcome
-  async function showWelcome() {
-    try {
-      const token = localStorage.getItem("token"); // Token saved after login
-      if (!token) {
-        welcomeMessage.textContent = "👋 Welcome back!";
-        return;
-      }
-
-      const response = await fetch(API_URL, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!response.ok) throw new Error("Failed to fetch user");
-
-      const data = await response.json();
-      const username =   `${data.firstName} ${data.lastName}` || "Admin";
-
-      welcomeMessage.textContent = `👋 Welcome back, ${username}!`;
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      welcomeMessage.textContent = "👋 Welcome back!";
-    }
-  }
-
-  // Init
-  window.addEventListener("DOMContentLoaded", () => {
-    // Insert clock
-    const clockEl = document.createElement("div");
-    clockEl.id = "clock";
-    clockEl.style.textAlign = "center";
-    clockEl.style.margin = "10px 0";
-    clockEl.style.fontWeight = "bold";
-    clockEl.style.fontSize = "2rem";
-    document.body.prepend(clockEl);
-
-    showWelcome();
-    updateClock();
-    setInterval(updateClock, 1000);
-  });
-
-  // Run on page load
-  document.addEventListener('DOMContentLoaded', () => {
-    showWelcome();
-    updateClock();
-    setInterval(updateClock, 60000); // update every 1 min
-  });
-
-
-
-
-
-    const categories = [
-      { key: "health", label: "Health" },
-      { key: "sports", label: "Sports" },
-      { key: "business", label: "Business" },
-      { key: "education", label: "Education" },
-      { key: "entertainment", label: "Entertainment" },
-      { key: "lifestyle", label: "Lifestyle" },
-      { key: "politics", label: "Politics" },
-      { key: "travel", label: "Travel" }
-    ];
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const select = document.getElementById("category");
-
-      // Clear old options except the first placeholder
-      select.innerHTML = `<option value="">-- Select Category --</option>`;
-
-      // Add categories dynamically
-      categories.forEach(cat => {
-        const option = document.createElement("option");
-        option.value = cat.key;
-        option.textContent = cat.label;
-        select.appendChild(option);
-      });
+  try {
+    const res = await fetch(API_URL, {
+      headers: { "Authorization": `Bearer ${TOKEN}` }
     });
 
+    const posts = await res.json();
+    postsContainer.innerHTML = "";
+
+    if (!Array.isArray(posts) || posts.length === 0) {
+      postsContainer.innerHTML = "<p>No posts found for your account.</p>";
+      return;
+    }
+
+    posts.forEach(post => {
+      const div = document.createElement("div");
+      div.classList.add("post-card");
+
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p><strong>Category:</strong> ${post.category || "N/A"}</p>
+        <p>${post.body.substring(0, 100)}...</p>
+        ${post.image ? `<img src="${post.image}" width="150" />` : ""}
+        <div class="actions">
+          <button onclick="editPost('${post._id}')">Edit</button>
+          <button onclick="deletePost('${post._id}')">Delete</button>
+        </div>
+      `;
+      postsContainer.appendChild(div);
+    });
+  } catch (err) {
+    console.error("Failed to load posts:", err);
+    postsContainer.innerHTML = "<p style='color:red'>Error loading posts</p>";
+  }
+}
+
+// ====== NAV TOGGLE ======
+navToggle.addEventListener('click', () => {
+  navMenu.classList.toggle('show');
+});
+
+// ====== CLOCK ======
+function updateClock() {
+  const now = new Date();
+  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  document.getElementById("clock").innerHTML = `🕒 ${timeString}`;
+}
+
+// ====== SHOW WELCOME ======
+async function showWelcome() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      welcomeMessage.textContent = "👋 Welcome back!";
+      return;
+    }
+
+    const response = await fetch(PROFILE_URL, {
+      headers: { "Authorization": `Bearer ${token}` }
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch user");
+
+    const data = await response.json();
+    const username = `${data.firstName} ${data.lastName}` || "Admin";
+
+    welcomeMessage.textContent = `👋 Welcome back, ${username}!`;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    welcomeMessage.textContent = "👋 Welcome back!";
+  }
+}
+
+// ====== INIT ======
+window.addEventListener("DOMContentLoaded", () => {
+  // Insert clock
+  const clockEl = document.createElement("div");
+  clockEl.id = "clock";
+  clockEl.style.textAlign = "center";
+  clockEl.style.margin = "10px 0";
+  clockEl.style.fontWeight = "bold";
+  clockEl.style.fontSize = "2rem";
+  document.body.prepend(clockEl);
+
+  showWelcome();
+  updateClock();
+  setInterval(updateClock, 1000);
+  loadPosts(); // load posts immediately
+});
+
+// ====== CATEGORIES ======
+const categories = [
+  { key: "health", label: "Health" },
+  { key: "sports", label: "Sports" },
+  { key: "business", label: "Business" },
+  { key: "education", label: "Education" },
+  { key: "entertainment", label: "Entertainment" },
+  { key: "lifestyle", label: "Lifestyle" },
+  { key: "politics", label: "Politics" },
+  { key: "travel", label: "Travel" }
+];
+
+document.addEventListener("DOMContentLoaded", () => {
+  const select = document.getElementById("category");
+
+  select.innerHTML = `<option value="">-- Select Category --</option>`;
+
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat.key;
+    option.textContent = cat.label;
+    select.appendChild(option);
+  });
+});

@@ -11,6 +11,10 @@ import fs from "fs";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 
+// Routes
+import postRoutes from "./routes/postRoutes.js";
+import User from "./models/User.js";
+
 dotenv.config();
 
 // ============================
@@ -21,7 +25,7 @@ const app = express();
 // ============================
 // Config
 // ============================
-const PORT = process.env.PORT || 5000;  
+const PORT = process.env.PORT || 5000;
 const SECRET_KEY = process.env.JWT_SECRET || "mySuperSecretKey";
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -40,15 +44,29 @@ cloudinary.v2.config({
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// const corsOptions = {
-//   origin: process.env.FRONTEND_URL || "https://admin-blog-mauve.vercel.app", 
-//   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-//   credentials: true, 
-// };
-// app.use(cors(corsOptions));
+// ============================
+// CORS Config
+// ============================
+const allowedOrigins = [
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  process.env.FRONTEND_URL, // hosted frontend URL
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow Postman / curl
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("CORS policy does not allow access from this origin."), false);
+  },
+  credentials: true,
+}));
+
+// ✅ Fix preflight requests for all paths
+app.options(/.*/, cors());
 
 // ============================
-// Multer: File Uploads (temporary directory)
+// Multer (for file uploads)
 // ============================
 const upload = multer({ dest: "/tmp", limits: { fileSize: 5 * 1024 * 1024 } });
 
@@ -59,31 +77,6 @@ mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// ============================
-// Schemas
-// ============================
-const UserSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: { type: String, unique: true },
-  passwordHash: String,
-  phone: String,
-  region: String,
-});
-const User = mongoose.model("User", UserSchema);
-
-const PostSchema = new mongoose.Schema({
-  title: String,
-  body: String,
-  image: String,
-  url: String,
-  urlText: String,
-  category: String,
-  status: { type: String, enum: ["draft", "published"], default: "draft" },
-  createdAt: { type: Date, default: Date.now },
-});
-const Post = mongoose.model("Post", PostSchema);
 
 // ============================
 // Auth Middleware
@@ -103,23 +96,41 @@ function authMiddleware(req, res, next) {
 // ============================
 // Routes
 // ============================
+
+// Health check
 app.get("/", (req, res) => res.send("✅ Server is alive"));
 
 // Signup
 app.post("/api/signup", async (req, res) => {
   try {
     const { firstName, lastName, email, password, phone, region } = req.body;
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ error: "Email already exists" });
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = new User({ firstName, lastName, email, passwordHash, phone, region });
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: "All required fields must be filled" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = new User({
+      firstName,
+      lastName,
+      email,
+      passwordHash: hashedPassword,
+      phone,
+      region,
+    });
+
     await newUser.save();
 
-    res.json({ success: true, message: "User registered successfully" });
-  } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(201).json({ success: true, message: "User registered successfully" });
+  } catch (error) {
+    console.error("Signup error:", error.message);
+    res.status(500).json({ error: "Internal server error", details: error.message });
   }
 });
 
@@ -151,75 +162,7 @@ app.get("/api/profile", authMiddleware, async (req, res) => {
   }
 });
 
-// ============================
-// Posts
-// ============================
-app.post("/api/posts", authMiddleware, upload.single("image"), async (req, res) => {
-  try {
-    let imageUrl = "";
-    if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, { folder: "lykoria_uploads" });
-      fs.unlinkSync(req.file.path);
-      imageUrl = result.secure_url;
-    }
-    const newPost = new Post({ ...req.body, image: imageUrl });
-    await newPost.save();
-    res.json({ success: true, data: newPost });
-  } catch (err) {
-    console.error("POST /api/posts error:", err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.put("/api/posts/:id", authMiddleware, upload.single("image"), async (req, res) => {
-  try {
-    const existingPost = await Post.findById(req.params.id);
-    if (!existingPost) return res.status(404).json({ success: false, error: "Post not found" });
-
-    let imageUrl = existingPost.image;
-    if (req.file) {
-      const result = await cloudinary.v2.uploader.upload(req.file.path, { folder: "lykoria_uploads" });
-      fs.unlinkSync(req.file.path);
-      imageUrl = result.secure_url;
-    }
-
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, { ...req.body, image: imageUrl }, { new: true });
-    res.json({ success: true, data: updatedPost });
-  } catch (err) {
-    console.error("PUT /api/posts/:id error:", err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-app.get("/api/posts", async (req, res) => {
-  try {
-    const { category, limit, status } = req.query;
-    let query = {};
-    if (category) query.category = category;
-    if (status) query.status = status;
-
-    let postsQuery = Post.find(query).sort({ createdAt: -1 });
-    if (limit) postsQuery = postsQuery.limit(parseInt(limit));
-    const posts = await postsQuery.exec();
-    res.json(posts);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.delete("/api/posts/:id", authMiddleware, async (req, res) => {
-  try {
-    const deletedPost = await Post.findByIdAndDelete(req.params.id);
-    if (!deletedPost) return res.status(404).json({ success: false, error: "Post not found" });
-    res.json({ success: true, message: "Post deleted" });
-  } catch (err) {
-    console.error("DELETE /api/posts/:id error:", err);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-// ============================
-// Categories API
-// ============================
+// Categories
 app.get("/api/categories", (req, res) => {
   const categories = [
     { key: "health", label: "Health" },
@@ -229,45 +172,13 @@ app.get("/api/categories", (req, res) => {
     { key: "entertainment", label: "Entertainment" },
     { key: "lifestyle", label: "Lifestyle" },
     { key: "politics", label: "Politics" },
-    { key: "travel", label: "Travel" }
+    { key: "travel", label: "Travel" },
   ];
   res.json(categories);
 });
 
-// ============================
-// Admin: Fix Categories (remove "tech")
-// ============================
-// import Post from "./models/Post.js"; // adjust path if needed
-
-// app.put("/api/admin/fix-categories", async (req, res) => {
-//   try {
-//     // 🔑 make sure only logged-in admin can run this
-//     const authHeader = req.headers.authorization;
-//     if (!authHeader) return res.status(401).json({ error: "Unauthorized" });
-
-//     const token = authHeader.split(" ")[1];
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-//     if (!decoded.isAdmin) {
-//       return res.status(403).json({ error: "Forbidden: Admins only" });
-//     }
-
-//     // ✅ update all posts with category "tech" → "business" (or any other)
-//     const result = await Post.updateMany(
-//       { category: "tech" },
-//       { $set: { category: "travel" } }
-//     );
-
-//     res.json({
-//       success: true,
-//       message: `"tech" categories updated to "business"`,
-//       modifiedCount: result.modifiedCount,
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// });
+// Post routes
+app.use("/api/posts", postRoutes);
 
 // ============================
 // Start Server

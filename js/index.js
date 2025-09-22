@@ -1,5 +1,5 @@
 // ====== API BASE ======
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
 const CATEGORY_API = `${BASE_URL}/api/categories`;
 

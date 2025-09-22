@@ -1,4 +1,4 @@
-// =================== COUNTRY LIST POPULATION ===================
+// =================== COUNTRY LIST ===================
 const countries = [
   { name: "Afghanistan", code: "AF", flag: "🇦🇫" },
   { name: "Albania", code: "AL", flag: "🇦🇱" },
@@ -150,9 +150,33 @@ const countries = [
   { name: "Vietnam", code: "VN", flag: "🇻🇳" },
   { name: "Yemen", code: "YE", flag: "🇾🇪" },
   { name: "Zambia", code: "ZM", flag: "🇿🇲" },
-  { name: "Zimbabwe", code: "ZW", flag: "🇿🇼" },
+  { name: "Zimbabwe", code: "ZW", flag: "🇿🇼" }
 ];
+
+// =================== DOM READY ===================
+document.addEventListener("DOMContentLoaded", () => {
+  // Elements
+  const firstName = document.getElementById("firstName");
+  const lastName = document.getElementById("lastName");
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+  const phone = document.getElementById("phone");
+  const region = document.getElementById("region");
+  const signupBtn = document.getElementById("signupBtn");
+  const msg = document.getElementById("msg");
+
+  // Populate country dropdown
 const regionSelect = document.getElementById("region");
+
+// Add a placeholder option
+const placeholderOption = document.createElement("option");
+placeholderOption.value = "";
+placeholderOption.textContent = "🌍 Select your country";
+placeholderOption.disabled = true;
+placeholderOption.selected = true;
+regionSelect.appendChild(placeholderOption);
+
+// Populate countries
 countries.forEach((c) => {
   const opt = document.createElement("option");
   opt.value = c.name;
@@ -160,47 +184,79 @@ countries.forEach((c) => {
   regionSelect.appendChild(opt);
 });
 
-// =================== SIGNUP HANDLER ===================
-const BASE_URL = "http://localhost:5000";
-const SIGNUP_URL = `${BASE_URL}/api/signup`;
+  const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
+  const API_URL = `${BASE_URL}/api/signup`;
 
-async function signup() {
-  const msgEl = document.getElementById("msg");
-  const btn = document.getElementById("signupBtn");
-  btn.disabled = true;
-  msgEl.innerText = "⏳ Signing up...";
-  msgEl.style.color = "blue";
-
-  try {
-    const res = await fetch(SIGNUP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",   // ✅ Important for CORS cookies/session
-      body: JSON.stringify({
-        firstName: document.getElementById("firstName").value.trim(),
-        lastName: document.getElementById("lastName").value.trim(),
-        email: document.getElementById("email").value.trim(),
-        password: document.getElementById("password").value,
-        phone: document.getElementById("phone").value.trim(),
-        region: document.getElementById("region").value,
-      }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-
-    if (!res.ok) {
-      msgEl.innerText = data.error || "⚠️ Signup failed.";
-      msgEl.style.color = "red";
-    } else {
-      msgEl.innerText = data.message || "✅ Signup successful!";
-      msgEl.style.color = "green";
-      setTimeout(() => (window.location.href = "login.html"), 2000);
+  // ====== FORM VALIDATION ======
+  function validateForm() {
+    if (!firstName.value.trim() || !lastName.value.trim()) {
+      return "First and Last name are required.";
     }
-  } catch (err) {
-    console.error("Signup error:", err);
-    msgEl.innerText = "⚠️ Failed to connect. Please try again.";
-    msgEl.style.color = "red";
-  } finally {
-    btn.disabled = false;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value.trim())) return "Enter a valid email.";
+
+    if (password.value.trim().length < 6)
+      return "Password must be at least 6 characters.";
+
+    const phoneRegex = /^[0-9]{7,15}$/;
+    if (!phoneRegex.test(phone.value.trim()))
+      return "Enter a valid phone number (7–15 digits).";
+
+    if (!region.value) return "Please select a region.";
+
+    return null;
   }
-}
+
+  // ====== SIGNUP FUNCTION ======
+  async function signup() {
+    msg.style.color = "#555";
+    msg.textContent = "⏳ Checking...";
+
+    const error = validateForm();
+    if (error) {
+      msg.style.color = "red";
+      msg.textContent = "❌ " + error;
+      return;
+    }
+
+    signupBtn.disabled = true;
+
+    try {
+      const body = {
+        firstName: firstName.value.trim(),
+        lastName: lastName.value.trim(),
+        email: email.value.trim(),
+        password: password.value.trim(),
+        phone: phone.value.trim(),
+        region: region.value
+      };
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        msg.style.color = "green";
+        msg.textContent = "✅ Signup successful! Redirecting...";
+        setTimeout(() => window.location.href = "login.html", 1500);
+      } else {
+        msg.style.color = "red";
+        msg.textContent = data.error || "❌ Signup failed!";
+      }
+    } catch (err) {
+      console.error("Signup error:", err);
+      msg.style.color = "red";
+      msg.textContent = "❌ Network error, try again!";
+    } finally {
+      signupBtn.disabled = false;
+    }
+  }
+
+  // Bind click
+  signupBtn.addEventListener("click", signup);
+});

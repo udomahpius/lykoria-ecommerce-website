@@ -1,0 +1,101 @@
+{
+  "info": {
+    "name": "Lykoria Ecommerce API",
+    "_postman_id": "a9b6d5d2-5678-4321-bc12-123456789abc",
+    "description": "Collection for testing Lykoria Ecommerce API endpoints (Signup, Login, Profile, Posts CRUD).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\",\n    \"phone\": \"1234567890\",\n    \"region\": \"Nigeria\"\n}"
+        },
+        "url": { "raw": "{{BASE_URL}}/api/signup", "host": ["{{BASE_URL}}"], "path": ["api", "signup"] }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"password\": \"password123\"\n}"
+        },
+        "url": { "raw": "{{BASE_URL}}/api/login", "host": ["{{BASE_URL}}"], "path": ["api", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let res = pm.response.json();",
+              "if (res.token) {",
+              "   pm.environment.set(\"token\", res.token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{BASE_URL}}/api/profile", "host": ["{{BASE_URL}}"], "path": ["api", "profile"] }
+      }
+    },
+    {
+      "name": "Create Post",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "title", "value": "First Post", "type": "text" },
+            { "key": "body", "value": "This is my first post content", "type": "text" },
+            { "key": "category", "value": "business", "type": "text" },
+            { "key": "status", "value": "published", "type": "text" },
+            { "key": "image", "type": "file", "src": "" }
+          ]
+        },
+        "url": { "raw": "{{BASE_URL}}/api/posts", "host": ["{{BASE_URL}}"], "path": ["api", "posts"] }
+      }
+    },
+    {
+      "name": "Get Posts",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "{{BASE_URL}}/api/posts", "host": ["{{BASE_URL}}"], "path": ["api", "posts"] }
+      }
+    },
+    {
+      "name": "Update Post",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"title\": \"Updated Post Title\",\n    \"body\": \"This post has been updated\",\n    \"status\": \"draft\"\n}"
+        },
+        "url": { "raw": "{{BASE_URL}}/api/posts/{{postId}}", "host": ["{{BASE_URL}}"], "path": ["api", "posts", "{{postId}}"] }
+      }
+    },
+    {
+      "name": "Delete Post",
+      "request": {
+        "method": "DELETE",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{BASE_URL}}/api/posts/{{postId}}", "host": ["{{BASE_URL}}"], "path": ["api", "posts", "{{postId}}"] }
+      }
+    }
+  ]
+}

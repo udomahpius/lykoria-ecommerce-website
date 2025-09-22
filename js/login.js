@@ -1,5 +1,5 @@
 // =================== LOGIN HANDLER ===================
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const LOGIN_URL = `${BASE_URL}/api/login`;
 
 async function login() {
@@ -13,7 +13,6 @@ async function login() {
     const res = await fetch(LOGIN_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include",   // ✅ Important for CORS
       body: JSON.stringify({
         email: document.getElementById("email").value.trim(),
         password: document.getElementById("password").value,
@@ -26,15 +25,28 @@ async function login() {
       msgEl.innerText = data.error || "⚠️ Login failed.";
       msgEl.style.color = "red";
     } else {
-      msgEl.innerText = data.message || "✅ Login successful!";
+       window.location.href = "admin.html";
+      msgEl.innerText = "✅ Login successful!";
       msgEl.style.color = "green";
 
-      // ✅ store token if your backend returns it
+      // ✅ Save token & role in localStorage
       if (data.token) {
         localStorage.setItem("token", data.token);
+
+        // Decode JWT payload to extract role (client-side)
+        const payload = JSON.parse(atob(data.token.split(".")[1]));
+        localStorage.setItem("role", payload.role || "user");
       }
 
-      setTimeout(() => (window.location.href = "dashboard.html"), 2000);
+      // ✅ Redirect based on role
+      setTimeout(() => {
+        const role = localStorage.getItem("role");
+        if (role === "admin") {
+          window.location.href = "admin.html";
+        } else {
+          window.location.href = "dashboard.html";
+        }
+      }, 1500);
     }
   } catch (err) {
     console.error("Login error:", err);

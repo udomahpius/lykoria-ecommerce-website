@@ -4,128 +4,90 @@
   <meta charset="UTF-8">
   <title>Signup</title>
   <style>
-   /* Reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+    /* Reset */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #f4f4f9, #e9ecef);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
-}
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #f4f4f9, #e9ecef);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-.signup-container {
-  background: #fff;
-  padding: 30px 25px;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-  width: 100%;
-  max-width: 400px; /* responsive instead of fixed 350px */
-  transition: transform 0.2s ease;
-}
+    .signup-container {
+      background: #fff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      width: 100%;
+      max-width: 400px;
+      transition: transform 0.2s ease;
+    }
 
-.signup-container:hover {
-  transform: translateY(-4px);
-}
+    .signup-container:hover { transform: translateY(-4px); }
 
-h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: #333;
-  font-size: 24px;
-}
+    h2 { text-align: center; margin-bottom: 20px; color: #333; font-size: 24px; }
 
-input, select {
-  display: block;
-  width: 100%;
-  padding: 12px 14px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
+    input, select {
+      display: block;
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 15px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
 
-input:focus, select:focus {
-  border-color: #28a745;
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
-  outline: none;
-}
+    input:focus, select:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+      outline: none;
+    }
 
-button {
-  width: 100%;
-  padding: 12px;
-  background: #28a745;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 16px;
-  transition: background 0.3s ease, transform 0.15s ease;
-}
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background 0.3s ease, transform 0.15s ease;
+    }
 
-button:hover {
-  background: #218838;
-  transform: scale(1.02);
-}
+    button:hover { background: #218838; transform: scale(1.02); }
+    button:active { transform: scale(0.98); }
 
-button:active {
-  transform: scale(0.98);
-}
+    #msg { text-align: center; font-size: 14px; margin-top: 12px; color: #d9534f; }
 
-#msg {
-  text-align: center;
-  font-size: 14px;
-  margin-top: 12px;
-  color: #d9534f;
-}
+    @media (max-width: 700px) {
+      .signup-container { padding: 20px 15px; }
+      h2 { font-size: 20px; }
+      .signup-link { font-size: 13px; }
+      input, select, button { font-size: 14px; padding: 10px 12px; }
+    }
 
-/* Responsive tweaks */
-@media (max-width: 700px) {
-  .signup-container {
-    padding: 20px 15px;
-  }
+    .signup-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+    }
 
-  h2 {
-    font-size: 20px;
-  }
- .signup-link {
-    font-size: 13px;
-  }
+    .signup-link a {
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
 
-  input, select, button {
-    font-size: 14px;
-    padding: 10px 12px;
-  }
-}
-
-.signup-link {
-  text-align: center;
-  margin-top: 15px;
-  font-size: 14px;
-  color: #555;
-}
-
-.signup-link a {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.signup-link a:hover {
-  color: #1d4ed8;
-}
-
-
+    .signup-link a:hover { color: #1d4ed8; }
   </style>
 </head>
 <body>
@@ -140,14 +102,14 @@ button:active {
     <!-- Country dropdown -->
     <select id="region" required></select>
 
-    <button onclick="signup()">Signup</button>
+    <button id="signupBtn">Signup</button>
+
     <div class="signup-link">
       Already have an account? <a href="login.html">Login</a>
     </div>
     <p id="msg"></p>
   </div>
 
-  <script  src="../js/signup.js"></script> -
-  <!-- <script src="../server.js"></script> -->
+  <script src="../js/signup.js"></script>
 </body>
 </html>
