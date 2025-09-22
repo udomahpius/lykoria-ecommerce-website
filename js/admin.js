@@ -82,24 +82,7 @@ function getUserFromToken() {
   }
 }
 
-async function showWelcome() {
-  const user = getUserFromToken();
-  if (user && (user.firstName || user.lastName)) {
-    welcomeMessage.textContent = `👋 Welcome back, ${user.firstName || ""} ${user.lastName || ""}`;
-    return;
-  }
 
-  // fallback: fetch from API
-  try {
-    const res = await fetch(`${BASE_URL}/api/profile`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
-    const data = await res.json();
-    welcomeMessage.textContent = `👋 Welcome back, ${data.firstName || ""} ${data.lastName || ""}`.trim() || "Admin";
-  } catch {
-    welcomeMessage.textContent = "👋 Welcome back!";
-  }
-}
   // ====== CLOCK ======
   function updateClock() {
     welcomeClock.textContent = `🕒 ${new Date().toLocaleTimeString()}`;
