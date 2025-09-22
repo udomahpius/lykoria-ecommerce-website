@@ -70,27 +70,36 @@ function getTokenAndRole() {
     reader.readAsDataURL(file);
   });
 
-  // ====== WELCOME MESSAGE ======
-  async function showWelcome() {
-    try {
-      const res = await fetch(`${BASE_URL}/api/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("Failed to fetch user profile.");
-      const data = await res.json();
+function getUserFromToken() {
+  try {
+    const token = localStorage.getItem("token");
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload; // contains role, email, maybe firstName, lastName
+  } catch (err) {
+    console.error("Token decode error:", err);
+    return null;
+  }
+}
 
-      const first = data.firstName || "";
-      const last = data.lastName || "";
-      if (first || last) {
-        welcomeMessage.textContent = `👋 Welcome back, ${first} ${last}`;
-      } else {
-        welcomeMessage.textContent = "👋 Welcome back, Admin!";
-      }
-    } catch {
-      welcomeMessage.textContent = "👋 Welcome back!";
-    }
+async function showWelcome() {
+  const user = getUserFromToken();
+  if (user && (user.firstName || user.lastName)) {
+    welcomeMessage.textContent = `👋 Welcome back, ${user.firstName || ""} ${user.lastName || ""}`;
+    return;
   }
 
+  // fallback: fetch from API
+  try {
+    const res = await fetch(`${BASE_URL}/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    const data = await res.json();
+    welcomeMessage.textContent = `👋 Welcome back, ${data.firstName || ""} ${data.lastName || ""}`.trim() || "Admin";
+  } catch {
+    welcomeMessage.textContent = "👋 Welcome back!";
+  }
+}
   // ====== CLOCK ======
   function updateClock() {
     welcomeClock.textContent = `🕒 ${new Date().toLocaleTimeString()}`;
@@ -241,6 +250,40 @@ function getTokenAndRole() {
       alert("Failed to delete post");
     }
   }
+
+  async function loadProfile() {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("Session expired. Please login again.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) throw new Error("Failed to fetch profile");
+
+    const user = await res.json();
+    console.log("Profile data:", user);
+
+    const welcomeMessage = document.getElementById("welcomeMessage");
+    if (user.firstName && user.lastName) {
+      welcomeMessage.innerText = `👋 Welcome back, ${user.firstName} ${user.lastName}!`;
+    } else {
+      welcomeMessage.innerText = `👋 Welcome back, ${user.email}`;
+    }
+  } catch (err) {
+    console.error("Profile load error:", err);
+    alert("⚠️ Could not load profile. Please login again.");
+    window.location.href = "login.html";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", loadProfile);
+
 
   // ====== INITIALIZE ======
   showWelcome();

@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    passwordHash: {   // ✅ renamed to match server.js
+    passwordHash: {  
       type: String,
       required: true,
     },
