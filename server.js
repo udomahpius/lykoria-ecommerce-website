@@ -11,6 +11,7 @@ import fs from "fs";
 import cloudinary from "cloudinary";
 import dotenv from "dotenv";
 
+
 // Routes
 import postRoutes from "./routes/postRoutes.js";
 import User from "./models/User.js";

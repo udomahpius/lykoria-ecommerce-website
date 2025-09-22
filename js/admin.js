@@ -1,29 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ====== BASE URL ======
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 
-function getTokenAndRole() {
-  const token = localStorage.getItem("token");
-  const role = (localStorage.getItem("role") || "").trim().toLowerCase();
+  // ====== TOKEN & ROLE CHECK ======
+  function getTokenAndRole() {
+    const token = localStorage.getItem("token");
+    const role = (localStorage.getItem("role") || "").trim().toLowerCase();
 
-  console.log("DEBUG token:", token);
-  console.log("DEBUG role:", role);
-
-  if (!token) {
-    alert("⚠️ Token missing! Redirecting to login.");
-    window.location.href = "login.html";
-    return null;
+    if (!token) {
+      alert("⚠️ Token missing! Redirecting to login.");
+      window.location.href = "login.html";
+      return null;
+    }
+    if (role !== "admin") {
+      alert(`⚠️ Access denied. Role is '${role}', not admin.`);
+      window.location.href = "login.html";
+      return null;
+    }
+    return token;
   }
 
-  // Only redirect if the role really isn't admin
-  if (role !== "admin") {
-    alert(`⚠️ Access denied. Role is '${role}', not admin.`);
-    window.location.href = "login.html";
-    return null;
-  }
-
-  return token;
-}
+  const token = getTokenAndRole();
+  if (!token) return; // stop if no valid token
 
   // ====== ELEMENTS ======
   const postForm = document.getElementById("postForm");
@@ -61,7 +58,6 @@ function getTokenAndRole() {
       previewImg.src = "";
       return;
     }
-
     const reader = new FileReader();
     reader.onload = e => {
       previewImg.src = e.target.result;
@@ -69,19 +65,6 @@ function getTokenAndRole() {
     };
     reader.readAsDataURL(file);
   });
-
-function getUserFromToken() {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) return null;
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload; // contains role, email, maybe firstName, lastName
-  } catch (err) {
-    console.error("Token decode error:", err);
-    return null;
-  }
-}
-
 
   // ====== CLOCK ======
   function updateClock() {
@@ -101,7 +84,6 @@ function getUserFromToken() {
     { key: "politics", label: "Politics" },
     { key: "travel", label: "Travel" },
   ];
-
   categorySelect.innerHTML = `<option value="">-- Select Category --</option>`;
   categories.forEach(cat => {
     const option = document.createElement("option");
@@ -110,11 +92,49 @@ function getUserFromToken() {
     categorySelect.appendChild(option);
   });
 
+  // ====== LOAD PROFILE ======
+  async function loadProfile() {
+    try {
+      const res = await fetch(`${BASE_URL}/api/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch profile");
+
+      const user = await res.json();
+      if (user.firstName && user.lastName) {
+        welcomeMessage.innerText = `👋 Welcome back, ${user.firstName} ${user.lastName}!`;
+      } else {
+        welcomeMessage.innerText = `👋 Welcome back, ${user.email || "Admin"}`;
+      }
+    } catch (err) {
+      console.error("Profile load error:", err);
+      welcomeMessage.innerText = "👋 Welcome back!";
+    }
+  }
+
+  function showWelcome() {
+  const firstName = localStorage.getItem("firstName") || "";
+  const lastName = localStorage.getItem("lastName") || "";
+  const welcomeMessage = document.getElementById("welcomeMessage");
+
+  if (firstName && lastName) {
+    welcomeMessage.innerText = `👋 Welcome back, ${firstName} ${lastName}`;
+  } else {
+    welcomeMessage.innerText = `👋 Welcome back`;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  showWelcome();
+  // other init code...
+});
+
+
   // ====== LOAD POSTS ======
   async function loadPosts() {
     try {
       const res = await fetch(`${BASE_URL}/api/posts`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const posts = await res.json();
       postsContainer.innerHTML = "";
@@ -167,7 +187,7 @@ function getUserFromToken() {
       const res = await fetch(endpoint, {
         method,
         headers: { Authorization: `Bearer ${token}` },
-        body: formData
+        body: formData,
       });
       const data = await res.json();
 
@@ -186,11 +206,11 @@ function getUserFromToken() {
     }
   });
 
-  // ====== EDIT / DELETE POSTS ======
+  // ====== EDIT POST ======
   async function editPost(id) {
     try {
       const res = await fetch(`${BASE_URL}/api/posts/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const post = await res.json();
       if (!post._id) return alert("Post not found");
@@ -206,7 +226,6 @@ function getUserFromToken() {
       } else {
         previewImg.style.display = "none";
       }
-
       postForm.dataset.editingId = id;
     } catch (err) {
       console.error(err);
@@ -214,12 +233,13 @@ function getUserFromToken() {
     }
   }
 
+  // ====== DELETE POST ======
   async function deletePost(id) {
     if (!confirm("Are you sure?")) return;
     try {
       const res = await fetch(`${BASE_URL}/api/posts/${id}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (data.success) {
@@ -234,41 +254,7 @@ function getUserFromToken() {
     }
   }
 
-  async function loadProfile() {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    alert("Session expired. Please login again.");
-    window.location.href = "login.html";
-    return;
-  }
-
-  try {
-    const res = await fetch(`${BASE_URL}/api/profile`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) throw new Error("Failed to fetch profile");
-
-    const user = await res.json();
-    console.log("Profile data:", user);
-
-    const welcomeMessage = document.getElementById("welcomeMessage");
-    if (user.firstName && user.lastName) {
-      welcomeMessage.innerText = `👋 Welcome back, ${user.firstName} ${user.lastName}!`;
-    } else {
-      welcomeMessage.innerText = `👋 Welcome back, ${user.email}`;
-    }
-  } catch (err) {
-    console.error("Profile load error:", err);
-    alert("⚠️ Could not load profile. Please login again.");
-    window.location.href = "login.html";
-  }
-}
-
-document.addEventListener("DOMContentLoaded", loadProfile);
-
-
   // ====== INITIALIZE ======
-  showWelcome();
+  loadProfile();
   loadPosts();
 });

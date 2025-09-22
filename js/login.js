@@ -1,15 +1,13 @@
-// =================== CONFIG ===================
+// login.js
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const LOGIN_URL = `${BASE_URL}/api/login`;
 
-// =================== ELEMENTS ===================
 const loginForm = document.getElementById("loginForm");
 const emailInput = document.getElementById("email");
 const passwordInput = document.getElementById("password");
 const loginBtn = document.getElementById("loginBtn");
 const msgEl = document.getElementById("msg");
 
-// =================== LOGIN FUNCTION ===================
 async function login() {
   const email = emailInput.value.trim();
   const password = passwordInput.value;
@@ -18,13 +16,6 @@ async function login() {
   msgEl.innerText = "⏳ Logging in...";
   loginBtn.disabled = true;
 
-  if (!email || !password) {
-    msgEl.style.color = "red";
-    msgEl.innerText = "❌ Email and password are required.";
-    loginBtn.disabled = false;
-    return;
-  }
-
   try {
     const res = await fetch(LOGIN_URL, {
       method: "POST",
@@ -32,20 +23,25 @@ async function login() {
       body: JSON.stringify({ email, password }),
     });
 
-    const data = await res.json().catch(() => ({}));
-    console.log("Login response:", res.status, data);
-
+    const data = await res.json();
     if (!res.ok) {
       msgEl.style.color = "red";
       msgEl.innerText = data.error || "❌ Login failed.";
-    } else if (data.token) {
+      loginBtn.disabled = false;
+      return;
+    }
+
+    if (data.token) {
       localStorage.setItem("token", data.token);
 
-      // decode JWT to get role
+      // decode JWT
       let role = "user";
       try {
         const payload = JSON.parse(atob(data.token.split(".")[1]));
         role = payload.role || "user";
+        localStorage.setItem("firstName", payload.firstName || "");
+        localStorage.setItem("lastName", payload.lastName || "");
+        localStorage.setItem("email", payload.email || "");
       } catch {}
 
       localStorage.setItem("role", role);
@@ -55,14 +51,11 @@ async function login() {
 
       setTimeout(() => {
         if (role === "admin") {
-          window.location.href = "admin.html";
+          window.location.href = "admin.html"; // ✅ admin dashboard
         } else {
-          window.location.href = "admin-dashboard.html";
+          window.location.href = "admin-dashboard.html"; // ✅ normal user homepage
         }
       }, 1000);
-    } else {
-      msgEl.style.color = "red";
-      msgEl.innerText = "❌ Login failed: No token received.";
     }
   } catch (err) {
     console.error("Login error:", err);
@@ -73,7 +66,6 @@ async function login() {
   }
 }
 
-// =================== FORM SUBMISSION ===================
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault();
   login();

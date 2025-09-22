@@ -1,3 +1,4 @@
+// routes/profile.js
 import { connectDB } from "../utils/db.js";
 import User from "../models/User.js";
 import { verifyToken } from "../utils/auth.js";
