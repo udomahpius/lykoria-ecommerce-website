@@ -11,12 +11,12 @@ const msgEl = document.getElementById("msg");
 
 // =================== LOGIN FUNCTION ===================
 async function login() {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
   msgEl.style.color = "blue";
   msgEl.innerText = "⏳ Logging in...";
   loginBtn.disabled = true;
-
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
 
   if (!email || !password) {
     msgEl.style.color = "red";
@@ -33,30 +33,27 @@ async function login() {
     });
 
     const data = await res.json().catch(() => ({}));
-
-    console.log("Login response:", res.status, data); // ✅ Debug
+    console.log("Login response:", res.status, data);
 
     if (!res.ok) {
       msgEl.style.color = "red";
       msgEl.innerText = data.error || "❌ Login failed.";
     } else if (data.token) {
-      // Save token to localStorage
       localStorage.setItem("token", data.token);
 
-      // Decode JWT to extract role (optional)
+      // decode JWT to get role
+      let role = "user";
       try {
         const payload = JSON.parse(atob(data.token.split(".")[1]));
-        localStorage.setItem("role", payload.role || "user");
-      } catch {
-        localStorage.setItem("role", "user");
-      }
+        role = payload.role || "user";
+      } catch {}
+
+      localStorage.setItem("role", role);
 
       msgEl.style.color = "green";
       msgEl.innerText = "✅ Login successful! Redirecting...";
 
-      // Redirect after short delay
       setTimeout(() => {
-        const role = localStorage.getItem("role");
         if (role === "admin") {
           window.location.href = "admin.html";
         } else {
@@ -78,6 +75,6 @@ async function login() {
 
 // =================== FORM SUBMISSION ===================
 loginForm.addEventListener("submit", (e) => {
-  e.preventDefault(); // Prevent page reload
+  e.preventDefault();
   login();
 });
