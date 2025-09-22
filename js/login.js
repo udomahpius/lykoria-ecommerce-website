@@ -1,72 +1,74 @@
-// login.js
-const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
-const LOGIN_URL = `${BASE_URL}/api/login`;
+document.addEventListener("DOMContentLoaded", () => {
+  const email = document.getElementById("email");
+  const password = document.getElementById("password");
+  const loginBtn = document.getElementById("loginBtn");
+  const msg = document.getElementById("msg");
 
-const loginForm = document.getElementById("loginForm");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const loginBtn = document.getElementById("loginBtn");
-const msgEl = document.getElementById("msg");
+  const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
+  const API_URL = `${BASE_URL}/api/login`;
 
-async function login() {
-  const email = emailInput.value.trim();
-  const password = passwordInput.value;
+  async function login() {
+    msg.style.color = "#555";
+    msg.textContent = "⏳ Checking...";
 
-  msgEl.style.color = "blue";
-  msgEl.innerText = "⏳ Logging in...";
-  loginBtn.disabled = true;
-
-  try {
-    const res = await fetch(LOGIN_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      msgEl.style.color = "red";
-      msgEl.innerText = data.error || "❌ Login failed.";
-      loginBtn.disabled = false;
+    if (!email.value.trim() || !password.value.trim()) {
+      msg.style.color = "red";
+      msg.textContent = "❌ Email and password required!";
       return;
     }
 
-    if (data.token) {
-      localStorage.setItem("token", data.token);
+    loginBtn.disabled = true;
 
-      // decode JWT
-      let role = "user";
-      try {
-        const payload = JSON.parse(atob(data.token.split(".")[1]));
-        role = payload.role || "user";
-        localStorage.setItem("firstName", payload.firstName || "");
-        localStorage.setItem("lastName", payload.lastName || "");
-        localStorage.setItem("email", payload.email || "");
-      } catch {}
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.value.trim(),
+          password: password.value.trim(),
+        }),
+      });
 
-      localStorage.setItem("role", role);
+      const data = await res.json();
 
-      msgEl.style.color = "green";
-      msgEl.innerText = "✅ Login successful! Redirecting...";
+      if (res.ok && data.token) {
+        msg.style.color = "green";
+        msg.textContent = "✅ Login successful! Redirecting...";
 
-      setTimeout(() => {
-        if (role === "admin") {
-          window.location.href = "admin.html"; // ✅ admin dashboard
-        } else {
-          window.location.href = "admin-dashboard.html"; // ✅ normal user homepage
+        // Save token
+        localStorage.setItem("token", data.token);
+
+        // Decode role from token
+        let userRole = "user";
+        try {
+          const payload = JSON.parse(atob(data.token.split(".")[1]));
+          userRole = payload.role || "user";
+        } catch (e) {
+          console.warn("Token decode failed:", e);
         }
-      }, 1000);
-    }
-  } catch (err) {
-    console.error("Login error:", err);
-    msgEl.style.color = "red";
-    msgEl.innerText = "❌ Network error, please try again!";
-  } finally {
-    loginBtn.disabled = false;
-  }
-}
 
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-  login();
+        localStorage.setItem("role", userRole);
+
+        // Redirect based on role
+        setTimeout(() => {
+          if (userRole === "admin") {
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "index.html";
+          }
+        }, 1500);
+      } else {
+        msg.style.color = "red";
+        msg.textContent = data.error || "❌ Invalid credentials!";
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      msg.style.color = "red";
+      msg.textContent = "❌ Network error, try again!";
+    } finally {
+      loginBtn.disabled = false;
+    }
+  }
+
+  loginBtn.addEventListener("click", login);
 });

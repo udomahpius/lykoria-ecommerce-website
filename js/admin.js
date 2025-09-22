@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const token = getTokenAndRole();
-  if (!token) return; // stop if no valid token
+  if (!token) return;
 
   // ====== ELEMENTS ======
   const postForm = document.getElementById("postForm");
@@ -38,8 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ====== LOGOUT ======
   logoutBtn.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+    localStorage.clear();
     window.location.href = "login.html";
   });
 
@@ -48,14 +47,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const file = imageInput.files[0];
     if (!file) {
       previewImg.style.display = "none";
-      previewImg.src = "";
       return;
     }
     if (!file.type.startsWith("image/")) {
-      alert("Please select a valid image file.");
+      alert("❌ Please select a valid image.");
       imageInput.value = "";
       previewImg.style.display = "none";
-      previewImg.src = "";
       return;
     }
     const reader = new FileReader();
@@ -101,34 +98,19 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!res.ok) throw new Error("Failed to fetch profile");
 
       const user = await res.json();
-      if (user.firstName && user.lastName) {
-        welcomeMessage.innerText = `👋 Welcome back, ${user.firstName} ${user.lastName}!`;
-      } else {
-        welcomeMessage.innerText = `👋 Welcome back, ${user.email || "Admin"}`;
-      }
+
+      // save to localStorage for later use
+      if (user.firstName) localStorage.setItem("firstName", user.firstName);
+      if (user.lastName) localStorage.setItem("lastName", user.lastName);
+
+      welcomeMessage.innerText = user.firstName && user.lastName
+        ? `👋 Welcome back, ${user.firstName} ${user.lastName}!`
+        : `👋 Welcome back, ${user.email || "Admin"}`;
     } catch (err) {
       console.error("Profile load error:", err);
       welcomeMessage.innerText = "👋 Welcome back!";
     }
   }
-
-  function showWelcome() {
-  const firstName = localStorage.getItem("firstName") || "";
-  const lastName = localStorage.getItem("lastName") || "";
-  const welcomeMessage = document.getElementById("welcomeMessage");
-
-  if (firstName && lastName) {
-    welcomeMessage.innerText = `👋 Welcome back, ${firstName} ${lastName}`;
-  } else {
-    welcomeMessage.innerText = `👋 Welcome back`;
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  showWelcome();
-  // other init code...
-});
-
 
   // ====== LOAD POSTS ======
   async function loadPosts() {
@@ -175,14 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const method = postId ? "PUT" : "POST";
 
     try {
-      const formData = new FormData();
-      formData.append("title", titleInput.value);
-      formData.append("body", bodyInput.value);
-      formData.append("url", urlInput.value);
-      formData.append("urlText", urlTextInput.value);
-      formData.append("category", categorySelect.value);
+      const formData = new FormData(postForm);
       formData.append("status", "published");
-      if (imageInput.files[0]) formData.append("image", imageInput.files[0]);
 
       const res = await fetch(endpoint, {
         method,
@@ -192,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const data = await res.json();
 
       if (data.success) {
-        alert(postId ? "Post updated!" : "Post created!");
+        alert(postId ? "✅ Post updated!" : "✅ Post created!");
         postForm.reset();
         previewImg.style.display = "none";
         delete postForm.dataset.editingId;
@@ -243,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const data = await res.json();
       if (data.success) {
-        alert("Post deleted!");
+        alert("✅ Post deleted!");
         loadPosts();
       } else {
         alert("Error: " + (data.error || "Something went wrong"));

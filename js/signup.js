@@ -162,27 +162,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const password = document.getElementById("password");
   const phone = document.getElementById("phone");
   const region = document.getElementById("region");
+  const role = document.getElementById("role"); // ✅ role selector
   const signupBtn = document.getElementById("signupBtn");
   const msg = document.getElementById("msg");
 
   // Populate country dropdown
-const regionSelect = document.getElementById("region");
+  const regionSelect = document.getElementById("region");
 
-// Add a placeholder option
-const placeholderOption = document.createElement("option");
-placeholderOption.value = "";
-placeholderOption.textContent = "🌍 Select your country";
-placeholderOption.disabled = true;
-placeholderOption.selected = true;
-regionSelect.appendChild(placeholderOption);
+  const placeholderOption = document.createElement("option");
+  placeholderOption.value = "";
+  placeholderOption.textContent = "🌍 Select your country";
+  placeholderOption.disabled = true;
+  placeholderOption.selected = true;
+  regionSelect.appendChild(placeholderOption);
 
-// Populate countries
-countries.forEach((c) => {
-  const opt = document.createElement("option");
-  opt.value = c.name;
-  opt.textContent = `${c.flag} ${c.name}`;
-  regionSelect.appendChild(opt);
-});
+  countries.forEach((c) => {
+    const opt = document.createElement("option");
+    opt.value = c.name;
+    opt.textContent = `${c.flag} ${c.name}`;
+    regionSelect.appendChild(opt);
+  });
 
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
   const API_URL = `${BASE_URL}/api/signup`;
@@ -204,6 +203,7 @@ countries.forEach((c) => {
       return "Enter a valid phone number (7–15 digits).";
 
     if (!region.value) return "Please select a region.";
+    if (!role.value) return "Please select a role.";
 
     return null;
   }
@@ -229,7 +229,8 @@ countries.forEach((c) => {
         email: email.value.trim(),
         password: password.value.trim(),
         phone: phone.value.trim(),
-        region: region.value
+        region: region.value,
+        role: role.value // ✅ include role
       };
 
       const res = await fetch(API_URL, {
@@ -240,10 +241,29 @@ countries.forEach((c) => {
 
       const data = await res.json();
 
-      if (res.ok && data.success) {
+      if (res.ok && data.token) {
         msg.style.color = "green";
         msg.textContent = "✅ Signup successful! Redirecting...";
-        setTimeout(() => window.location.href = "login.html", 1500);
+
+        // Decode token to get role
+        let userRole = "user";
+        try {
+          const payload = JSON.parse(atob(data.token.split(".")[1]));
+          userRole = payload.role || "user";
+        } catch (e) {
+          console.warn("Token decode failed:", e);
+        }
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", userRole);
+
+        setTimeout(() => {
+          if (userRole === "admin") {
+            window.location.href = "admin.html";
+          } else {
+            window.location.href = "login.html"; // or index.html if you prefer
+          }
+        }, 1500);
       } else {
         msg.style.color = "red";
         msg.textContent = data.error || "❌ Signup failed!";

@@ -1,101 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin Dashboard - Analytics</title>
 
-  <!-- Chart.js CDN -->
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin:0; padding:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-    body { background: linear-gradient(135deg, #ffffff, #e0eaf4); color:#333; padding:80px 20px 20px; min-height:100vh;}
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Arial;}
+    body{background:linear-gradient(135deg,#fff,#eef3fb);padding:80px 18px 40px;color:#1f2937;min-height:100vh}
+    nav{position:fixed;top:0;left:0;right:0;background:#0b5ed7;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 18px;z-index:1000;box-shadow:0 3px 10px rgba(2,6,23,.08)}
+    nav h1{font-size:18px}
+    nav ul{display:flex;gap:14px;list-style:none}
+    nav a{color:#fff;text-decoration:none;font-weight:600}
+    nav a:hover{opacity:.9}
+    .container{max-width:1100px;margin:0 auto}
+    #welcome{margin:22px 0 6px;text-align:center}
+    #welcome h2{font-size:20px;color:#0f172a;margin-bottom:6px}
+    #welcome p{color:#475569;font-size:14px}
 
-    /* ========== Navbar ========== */
-    nav {
-      position: fixed; top:0; left:0; right:0; background:#007BFF;
-      display:flex; justify-content:space-between; align-items:center;
-      padding:12px 20px; box-shadow:0 3px 10px rgba(0,0,0,0.1); z-index:1000;
+    /* top controls */
+    .controls{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;margin:14px 0}
+    .controls input[type=date], .controls input[type=text], .controls select{padding:8px 10px;border-radius:8px;border:1px solid #d1d5db;background:#fff}
+    .controls button{padding:9px 12px;border-radius:8px;border:none;background:#0b5ed7;color:#fff;cursor:pointer;font-weight:600}
+    .controls button.secondary{background:#6c757d}
+    .controls .spacer{width:8px}
+
+    /* stats */
+    .stats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:18px}
+    .card{background:#fff;padding:16px;border-radius:12px;min-width:160px;box-shadow:0 6px 18px rgba(15,23,42,.06);text-align:center}
+    .card h3{font-size:13px;color:#64748b;margin-bottom:8px}
+    .card p{font-size:20px;color:#0b5ed7;font-weight:700}
+
+    /* table */
+    .panel{background:#fff;border-radius:12px;padding:12px;box-shadow:0 6px 20px rgba(15,23,42,.05);margin-bottom:20px}
+    .table-controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .table-controls .search{flex:1;min-width:220px}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px 8px;border-bottom:1px solid #eef2ff;text-align:left;font-size:14px}
+    th{background:#0b5ed7;color:#fff;font-weight:600}
+    tbody tr:hover{background:#fbfdff}
+    .small{font-size:12px;color:#6b7280}
+
+    /* pagination */
+    .pager{display:flex;gap:8px;justify-content:center;margin-top:12px}
+    .pager button{padding:6px 10px;border-radius:6px;border:1px solid #e6e9ef;background:#fff;cursor:pointer}
+    .pager button.active{background:#0b5ed7;color:#fff;border-color:#0b5ed7}
+
+    /* chart */
+    .chart-wrap{display:flex;justify-content:center;margin-top:14px}
+
+    @media (max-width:800px){
+      .controls{flex-direction:column;align-items:stretch}
+      .stats{justify-content:space-between}
     }
-    nav h1 { color:#fff; font-size:20px; }
-    nav ul { display:flex; list-style:none; gap:20px; }
-    nav ul li a { color:#fff; text-decoration:none; font-weight:500; }
-    nav ul li a:hover { color:#ffd166; }
-    .nav-toggle { display:none; font-size:24px; color:#fff; cursor:pointer; }
-    @media(max-width:768px){
-      .nav-toggle { display:block; }
-      nav ul { position:absolute; top:60px; right:0; background:#007BFF; flex-direction:column; gap:15px; width:200px; padding:15px; border-radius:0 0 8px 8px; display:none; }
-      nav ul.show { display:flex; }
-    }
-
-    /* ========== Welcome ========== */
-    #welcomeMessage { text-align:center; margin:20px 0; font-size:20px; font-weight:600; color:#1e293b; }
-    #welcomeClock { text-align:center; font-size:16px; color:#555; margin-bottom:20px; }
-
-    /* ========== Stats Cards ========== */
-    #statsContainer { display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
-    .stat-card {
-      background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08);
-      min-width:150px; text-align:center;
-    }
-    .stat-card h3 { font-size:16px; color:#1e293b; margin-bottom:10px; }
-    .stat-card p { font-size:20px; font-weight:bold; color:#007BFF; }
-
-    /* ========== Filter Section ========== */
-    .filter-section { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; margin-bottom:20px; }
-    .filter-section label { display:flex; flex-direction:column; font-size:14px; }
-    .filter-section input, .filter-section button { padding:6px 10px; border-radius:5px; border:1px solid #ccc; }
-    .filter-section button { background:#007BFF; color:white; border:none; cursor:pointer; }
-    .filter-section button:hover { background:#0056b3; }
-
-    /* ========== Posts Table ========== */
-    table { width:100%; border-collapse: collapse; background:#fff; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); margin-bottom:30px; }
-    th, td { padding:12px 15px; text-align:left; border-bottom:1px solid #eee; }
-    th { background:#007BFF; color:#fff; }
-
-    /* ========== Chart ========== */
-    canvas { background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.1); display:block; margin:20px auto; max-width:700px; }
-
-    @media(max-width:768px){ .filter-section { flex-direction:column; align-items:center; } }
   </style>
 </head>
 <body>
   <nav>
     <h1>Admin Panel</h1>
-    <div class="nav-toggle" id="navToggle">☰</div>
     <ul id="navMenu">
-      <li><a href="admin.html">Manage Posts</a></li>
+      <li><a href="admin.html">Manage posts</a></li>
       <li><a href="admin-dashboard.html">Analytics</a></li>
-      <li><a href="login.html" id="logoutNavBtn">Logout</a></li>
+      <li><a href="login.html" id="logoutBtn">Logout</a></li>
     </ul>
   </nav>
 
-  <div id="welcomeMessage"></div>
-  <div id="welcomeClock"></div>
+  <div class="container">
+    <section id="welcome">
+      <h2 id="welcomeTitle">👋 Welcome back</h2>
+      <p id="welcomeSubtitle" class="small">Loading profile…</p>
+    </section>
 
-  <div id="statsContainer">
-    <div class="stat-card"><h3>Total Posts</h3><p id="totalPosts">0</p></div>
-    <div class="stat-card"><h3>Total Views</h3><p id="totalViews">0</p></div>
-    <div class="stat-card"><h3>Total Reactions</h3><p id="totalReactions">0</p></div>
+    <section class="controls">
+      <div>
+        <label class="small">From</label><br>
+        <input type="date" id="startDate">
+      </div>
+      <div>
+        <label class="small">To</label><br>
+        <input type="date" id="endDate">
+      </div>
+
+      <div>
+        <label class="small">Search posts</label><br>
+        <input type="text" id="searchInput" placeholder="Search by title">
+      </div>
+
+      <div>
+        <label class="small">Rows</label><br>
+        <select id="rowsPerPage"><option>5</option><option selected>10</option><option>20</option></select>
+      </div>
+
+      <div style="display:flex;gap:8px;align-items:end">
+        <button id="filterBtn">Apply</button>
+        <button id="clearBtn" class="secondary">Clear</button>
+        <button id="exportCsv" class="secondary">Export CSV</button>
+        <button id="downloadChart" class="secondary">Download Chart</button>
+      </div>
+    </section>
+
+    <section class="stats" id="statsContainer">
+      <div class="card"><h3>Total posts</h3><p id="totalPosts">0</p></div>
+      <div class="card"><h3>Total views</h3><p id="totalViews">0</p></div>
+      <div class="card"><h3>Total reactions</h3><p id="totalReactions">0</p></div>
+      <div class="card"><h3>Total orders</h3><p id="totalOrders">-</p></div>
+      <div class="card"><h3>Total revenue</h3><p id="totalRevenue">-</p></div>
+    </section>
+
+    <div class="panel">
+      <div class="table-controls">
+        <div class="small">Posts analytics (filtered)</div>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Title</th><th>Views</th><th>Reactions</th><th>Date</th></tr>
+        </thead>
+        <tbody id="postsTable">
+          <tr><td colspan="4" class="small">Loading...</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pager" id="pager"></div>
+    </div>
+
+    <h3 style="text-align:center">Engagement chart</h3>
+    <div class="chart-wrap">
+      <canvas id="postsChart" width="800" height="360"></canvas>
+    </div>
   </div>
-
-  <div class="filter-section">
-    <label>From: <input type="date" id="startDate"></label>
-    <label>To: <input type="date" id="endDate"></label>
-    <button id="filterBtn">Filter</button>
-  </div>
-
-  <h2>Posts Analytics</h2>
-  <table>
-    <thead>
-      <tr><th>Post Title</th><th>Views</th><th>Reactions</th><th>Date</th></tr>
-    </thead>
-    <tbody id="postsTable"></tbody>
-  </table>
-
-  <h2>Engagement Chart</h2>
-  <canvas id="postsChart" width="400" height="200"></canvas>
 
   <script src="/js/admin-dashboard.js"></script>
 </body>
