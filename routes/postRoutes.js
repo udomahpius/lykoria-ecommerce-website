@@ -9,6 +9,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+
 const router = express.Router();
 
 
@@ -114,43 +115,54 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 });
 
 
-// SIGNUP
+// routes/signup.js
+
+
+// ===== Signup =====
 router.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password, phone, region, role } = req.body;
+
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ error: "Please fill all required fields" });
+    }
 
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: "Email already exists" });
+    if (existingUser) return res.status(400).json({ error: "Email already registered" });
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
 
-    const user = new User({
+    const newUser = new User({
       firstName,
       lastName,
       email,
       passwordHash,
-      role: role || "user", // only "user" unless you explicitly pass "admin"
+      phone,
+      region,
+      role: role || "user", // 👈 default user if nothing selected
     });
 
-    await user.save();
+    await newUser.save();
 
-    // generate JWT
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
+    // JWT token
+    const token = jwt.sign({ id: newUser._id, role: newUser.role }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.status(201).json({
+      message: "Signup successful",
+      token,
+      role: newUser.role,
+      user: {
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        role: newUser.role,
       },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
-
-    res.json({ token });
+    });
   } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: err.message });
   }
 });
 

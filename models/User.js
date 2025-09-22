@@ -9,11 +9,19 @@ const userSchema = new mongoose.Schema(
     passwordHash: { type: String, required: true },
     phone: { type: String, trim: true },
     region: { type: String, trim: true },
-    role: { type: String, enum: ["user", "admin"], default: "user" }, // ✅ role added
+
+    // 👇 NEW FIELD
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+
     createdAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );
 
 const User = mongoose.model("User", userSchema);
+
 export default User;

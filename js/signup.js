@@ -162,9 +162,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const password = document.getElementById("password");
   const phone = document.getElementById("phone");
   const region = document.getElementById("region");
-  const roleRadios = document.querySelectorAll("input[name='role']"); // ✅ radios for role
+  const roleSelect = document.getElementById("role"); // ✅ dropdown instead of radios
   const signupBtn = document.getElementById("signupBtn");
   const msg = document.getElementById("msg");
+
+  if (!firstName || !signupBtn) {
+    console.error("❌ Signup form elements not found in DOM.");
+    return;
+  }
 
   // Populate country dropdown
   const placeholderOption = document.createElement("option");
@@ -203,8 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!region.value) return "Please select a region.";
 
-    const roleChecked = [...roleRadios].find(r => r.checked);
-    if (!roleChecked) return "Please select a role.";
+    if (!roleSelect.value) return "Please select a role.";
 
     return null;
   }
@@ -223,7 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     signupBtn.disabled = true;
 
-    const role = [...roleRadios].find(r => r.checked)?.value;
+    const role = roleSelect.value;
 
     try {
       const body = {
@@ -264,7 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (userRole === "admin") {
             window.location.href = "admin.html";
           } else {
-            window.location.href = "login.html"; // normal users go to login
+            window.location.href = "login.html";
           }
         }, 1500);
       } else {
