@@ -1,5 +1,5 @@
 // ====== API BASE ======
-const BASE_URL = "https://lykoria-ecommerce-website.onrender.com"; // 🔑 change to your Render URL in production
+const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
 const PROFILE_URL = `${BASE_URL}/api/profile`;
 
@@ -17,20 +17,17 @@ const navToggle = document.getElementById("navToggle");
 const navMenu = document.getElementById("navMenu");
 const welcomeMessage = document.getElementById("welcomeMessage");
 
-// ====== PROTECT ADMIN PAGE ======
-(function protectAdminPage() {
+// ====== TOKEN CHECK (silent redirect) ======
+function getToken() {
   const token = localStorage.getItem("token");
-  if (!token) {
-    alert("⚠️ You must log in first!");
-    window.location.href = "login.html";
-  }
-})();
-
+  if (!token) window.location.href = "login.html";
+  return token;
+}
 
 // ====== IMAGE PREVIEW ======
 imageInput.addEventListener("change", () => {
   const file = imageInput.files[0];
-  if (file) {
+  if(file){
     const reader = new FileReader();
     reader.onload = e => {
       previewImg.src = e.target.result;
@@ -43,8 +40,8 @@ imageInput.addEventListener("change", () => {
 // ====== CREATE / UPDATE POST ======
 postForm.addEventListener("submit", async e => {
   e.preventDefault();
-  const TOKEN = checkToken();
-  if (!TOKEN) return;
+  const TOKEN = getToken();
+  if(!TOKEN) return;
 
   const postId = postForm.dataset.editingId;
   const endpoint = postId ? `${API_URL}/${postId}` : API_URL;
@@ -57,46 +54,37 @@ postForm.addEventListener("submit", async e => {
     formData.append("url", urlInput.value);
     formData.append("urlText", urlTextInput.value);
     formData.append("category", categorySelect.value);
-    formData.append("status", "published");
-
-    if (imageInput.files[0]) {
-      formData.append("image", imageInput.files[0]);
-    }
+    formData.append("status","published");
+    if(imageInput.files[0]) formData.append("image", imageInput.files[0]);
 
     const res = await fetch(endpoint, {
       method,
-      headers: { "Authorization": `Bearer ${TOKEN}` },
+      headers:{ "Authorization": `Bearer ${TOKEN}` },
       body: formData
     });
 
     const data = await res.json();
-    if (data.success) {
+    if(data.success){
       alert(postId ? "Post updated!" : "Post created!");
       postForm.reset();
-      previewImg.style.display = "none";
+      previewImg.style.display="none";
       delete postForm.dataset.editingId;
-      loadPosts();
-    } else {
-      alert("Error: " + (data.error || "Something went wrong"));
-    }
-  } catch (err) {
-    console.error("Request failed:", err);
-    alert("Request failed: " + err.message);
+      await loadPosts();
+      loadDashboard();
+    } else alert("Error: "+(data.error||"Something went wrong"));
+  } catch(err){
+    console.error(err);
+    alert("Request failed: "+err.message);
   }
 });
 
-// ====== EDIT POST ======
-async function editPost(id) {
-  const TOKEN = checkToken();
-  if (!TOKEN) return;
-
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      headers: { "Authorization": `Bearer ${TOKEN}` }
-    });
-
+// ====== EDIT / DELETE POSTS ======
+async function editPost(id){
+  const TOKEN = getToken(); if(!TOKEN) return;
+  try{
+    const res = await fetch(`${API_URL}/${id}`, { headers:{ "Authorization": `Bearer ${TOKEN}` }});
     const post = await res.json();
-    if (!post || !post._id) return alert("Post not found");
+    if(!post || !post._id) return alert("Post not found");
 
     titleInput.value = post.title;
     bodyInput.value = post.body;
@@ -104,73 +92,50 @@ async function editPost(id) {
     urlTextInput.value = post.urlText;
     categorySelect.value = post.category;
 
-    if (post.image) {
+    if(post.image){
       previewImg.src = post.image;
-      previewImg.style.display = "block";
-    } else {
-      previewImg.style.display = "none";
-    }
+      previewImg.style.display="block";
+    } else previewImg.style.display="none";
 
     postForm.dataset.editingId = id;
-  } catch (err) {
-    console.error(err);
-    alert("Failed to load post for editing");
-  }
+  } catch(err){ console.error(err); alert("Failed to load post for editing"); }
 }
 
-// ====== DELETE POST ======
-async function deletePost(id) {
-  const TOKEN = checkToken();
-  if (!TOKEN) return;
-
-  if (!confirm("Are you sure you want to delete this post?")) return;
-
-  try {
-    const res = await fetch(`${API_URL}/${id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${TOKEN}` }
-    });
-
+async function deletePost(id){
+  const TOKEN = getToken(); if(!TOKEN) return;
+  if(!confirm("Are you sure you want to delete this post?")) return;
+  try{
+    const res = await fetch(`${API_URL}/${id}`, { method:"DELETE", headers:{ "Authorization": `Bearer ${TOKEN}` }});
     const data = await res.json();
-    if (data.success) {
-      alert("Post deleted!");
-      loadPosts();
-    } else {
-      alert("Error: " + (data.error || "Something went wrong"));
-    }
-  } catch (err) {
-    console.error(err);
-    alert("Failed to delete post");
-  }
+    if(data.success){ 
+      alert("Post deleted!"); 
+      await loadPosts(); 
+      loadDashboard(); 
+    } else alert("Error: "+(data.error||"Something went wrong"));
+  } catch(err){ console.error(err); alert("Failed to delete post"); }
 }
 
-// ====== LOAD POSTS (Only logged-in user’s posts) ======
-async function loadPosts() {
-  const TOKEN = checkToken();
-  if (!TOKEN) return;
-
-  try {
-    const res = await fetch(API_URL, {
-      headers: { "Authorization": `Bearer ${TOKEN}` }
-    });
-
+// ====== LOAD POSTS ======
+async function loadPosts(){
+  const TOKEN = getToken(); if(!TOKEN) return;
+  try{
+    const res = await fetch(API_URL, { headers:{ "Authorization": `Bearer ${TOKEN}` }});
     const posts = await res.json();
-    postsContainer.innerHTML = "";
 
-    if (!Array.isArray(posts) || posts.length === 0) {
-      postsContainer.innerHTML = "<p>No posts found for your account.</p>";
-      return;
+    postsContainer.innerHTML = "";
+    if(!Array.isArray(posts) || posts.length===0){ 
+      postsContainer.innerHTML="<p>No posts found</p>"; 
+      return; 
     }
 
     posts.forEach(post => {
       const div = document.createElement("div");
       div.classList.add("post-card");
-
       div.innerHTML = `
         <h3>${post.title}</h3>
         <p><strong>Category:</strong> ${post.category || "N/A"}</p>
-        <p>${post.body.substring(0, 100)}...</p>
-        ${post.image ? `<img src="${post.image}" width="150" />` : ""}
+        <p>${post.body.substring(0,100)}...</p>
+        ${post.image?`<img src="${post.image}" width="150"/>`:""}
         <div class="actions">
           <button onclick="editPost('${post._id}')">Edit</button>
           <button onclick="deletePost('${post._id}')">Delete</button>
@@ -178,87 +143,84 @@ async function loadPosts() {
       `;
       postsContainer.appendChild(div);
     });
-  } catch (err) {
-    console.error("Failed to load posts:", err);
-    postsContainer.innerHTML = "<p style='color:red'>Error loading posts</p>";
-  }
+  } catch(err){ console.error(err); postsContainer.innerHTML="<p style='color:red'>Error loading posts</p>"; }
 }
 
 // ====== NAV TOGGLE ======
-navToggle.addEventListener('click', () => {
-  navMenu.classList.toggle('show');
-});
+navToggle.addEventListener('click',()=>{ navMenu.classList.toggle('show'); });
 
-// ====== CLOCK ======
-function updateClock() {
+// ====== CLOCK & WELCOME ======
+function updateClock(){
   const now = new Date();
-  const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  document.getElementById("clock").innerHTML = `🕒 ${timeString}`;
+  const timeString = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById("welcomeClock").innerText = `🕒 ${timeString}`;
 }
 
-// ====== SHOW WELCOME ======
-async function showWelcome() {
-  try {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      welcomeMessage.textContent = "👋 Welcome back!";
-      return;
+async function showWelcome(){
+  try{
+    const TOKEN = getToken();
+    const res = await fetch(PROFILE_URL,{ headers:{ "Authorization": `Bearer ${TOKEN}` }});
+    if(!res.ok) throw new Error("Failed to fetch user");
+    const data = await res.json();
+    const username = `${data.firstName} ${data.lastName}` || "Admin";
+    welcomeMessage.textContent = `👋 Welcome back, ${username}!`;
+  } catch(e){ console.error(e); welcomeMessage.textContent="👋 Welcome back!"; }
+}
+
+// ====== DASHBOARD ======
+async function loadDashboard(){
+  const TOKEN = getToken(); if(!TOKEN) return;
+  try{
+    const res = await fetch(API_URL,{ headers:{ "Authorization": `Bearer ${TOKEN}` }});
+    const posts = await res.json();
+
+    // Example stats (you need elements in HTML with these IDs)
+    if(document.querySelector("#totalPosts p")) document.querySelector("#totalPosts p").innerText = posts.length;
+    if(document.querySelector("#totalViews p")) document.querySelector("#totalViews p").innerText = posts.reduce((acc,p)=>acc+(p.views||0),0);
+    if(document.querySelector("#totalReactions p")) document.querySelector("#totalReactions p").innerText = posts.reduce((acc,p)=>acc+(p.reactions||0),0);
+
+    const ctx = document.getElementById('postsChart')?.getContext('2d');
+    if(ctx){
+      if(window.postsChartInstance) window.postsChartInstance.destroy();
+      window.postsChartInstance = new Chart(ctx, {
+        type:'bar',
+        data:{
+          labels: posts.map(p=>p.title),
+          datasets:[{ label:'Views', data:posts.map(p=>p.views||0), backgroundColor:'rgba(0,123,255,0.6)' }]
+        },
+        options:{
+          responsive:true,
+          plugins:{
+            legend:{ display:false },
+            title:{ display:true, text:'Post Views Overview' }
+          }
+        }
+      });
     }
 
-    const response = await fetch(PROFILE_URL, {
-      headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    if (!response.ok) throw new Error("Failed to fetch user");
-
-    const data = await response.json();
-    const username = `${data.firstName} ${data.lastName}` || "Admin";
-
-    welcomeMessage.textContent = `👋 Welcome back, ${username}!`;
-  } catch (error) {
-    console.error("Error fetching user:", error);
-    welcomeMessage.textContent = "👋 Welcome back!";
-  }
+  } catch(err){ console.error("Dashboard load error:",err); }
 }
-
-// ====== INIT ======
-window.addEventListener("DOMContentLoaded", () => {
-  // Insert clock
-  const clockEl = document.createElement("div");
-  clockEl.id = "clock";
-  clockEl.style.textAlign = "center";
-  clockEl.style.margin = "10px 0";
-  clockEl.style.fontWeight = "bold";
-  clockEl.style.fontSize = "2rem";
-  document.body.prepend(clockEl);
-
-  showWelcome();
-  updateClock();
-  setInterval(updateClock, 1000);
-  loadPosts(); // load posts immediately
-});
 
 // ====== CATEGORIES ======
 const categories = [
-  { key: "health", label: "Health" },
-  { key: "sports", label: "Sports" },
-  { key: "business", label: "Business" },
-  { key: "education", label: "Education" },
-  { key: "entertainment", label: "Entertainment" },
-  { key: "lifestyle", label: "Lifestyle" },
-  { key: "politics", label: "Politics" },
-  { key: "travel", label: "Travel" }
+  { key:"health", label:"Health" }, { key:"sports", label:"Sports" },
+  { key:"business", label:"Business" }, { key:"education", label:"Education" },
+  { key:"entertainment", label:"Entertainment" }, { key:"lifestyle", label:"Lifestyle" },
+  { key:"politics", label:"Politics" }, { key:"travel", label:"Travel" }
 ];
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", ()=>{
   const select = document.getElementById("category");
-
   select.innerHTML = `<option value="">-- Select Category --</option>`;
-
-  categories.forEach(cat => {
+  categories.forEach(cat=>{
     const option = document.createElement("option");
     option.value = cat.key;
     option.textContent = cat.label;
     select.appendChild(option);
   });
+
+  updateClock();
+  setInterval(updateClock, 1000);
+  showWelcome();
+  loadPosts().then(loadDashboard);
 });
