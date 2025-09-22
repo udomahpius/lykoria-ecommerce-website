@@ -1,44 +1,60 @@
-// =================== LOGIN HANDLER ===================
+// =================== CONFIG ===================
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const LOGIN_URL = `${BASE_URL}/api/login`;
 
+// =================== ELEMENTS ===================
+const loginForm = document.getElementById("loginForm");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const msgEl = document.getElementById("msg");
+
+// =================== LOGIN FUNCTION ===================
 async function login() {
-  const msgEl = document.getElementById("msg");
-  const btn = document.getElementById("loginBtn");
-  btn.disabled = true;
-  msgEl.innerText = "⏳ Logging in...";
   msgEl.style.color = "blue";
+  msgEl.innerText = "⏳ Logging in...";
+  loginBtn.disabled = true;
+
+  const email = emailInput.value.trim();
+  const password = passwordInput.value;
+
+  if (!email || !password) {
+    msgEl.style.color = "red";
+    msgEl.innerText = "❌ Email and password are required.";
+    loginBtn.disabled = false;
+    return;
+  }
 
   try {
     const res = await fetch(LOGIN_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: document.getElementById("email").value.trim(),
-        password: document.getElementById("password").value,
-      }),
+      body: JSON.stringify({ email, password }),
     });
 
     const data = await res.json().catch(() => ({}));
 
+    console.log("Login response:", res.status, data); // ✅ Debug
+
     if (!res.ok) {
-      msgEl.innerText = data.error || "⚠️ Login failed.";
       msgEl.style.color = "red";
-    } else {
-       window.location.href = "admin.html";
-      msgEl.innerText = "✅ Login successful!";
-      msgEl.style.color = "green";
+      msgEl.innerText = data.error || "❌ Login failed.";
+    } else if (data.token) {
+      // Save token to localStorage
+      localStorage.setItem("token", data.token);
 
-      // ✅ Save token & role in localStorage
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-
-        // Decode JWT payload to extract role (client-side)
+      // Decode JWT to extract role (optional)
+      try {
         const payload = JSON.parse(atob(data.token.split(".")[1]));
         localStorage.setItem("role", payload.role || "user");
+      } catch {
+        localStorage.setItem("role", "user");
       }
 
-      // ✅ Redirect based on role
+      msgEl.style.color = "green";
+      msgEl.innerText = "✅ Login successful! Redirecting...";
+
+      // Redirect after short delay
       setTimeout(() => {
         const role = localStorage.getItem("role");
         if (role === "admin") {
@@ -46,13 +62,22 @@ async function login() {
         } else {
           window.location.href = "dashboard.html";
         }
-      }, 1500);
+      }, 1000);
+    } else {
+      msgEl.style.color = "red";
+      msgEl.innerText = "❌ Login failed: No token received.";
     }
   } catch (err) {
     console.error("Login error:", err);
-    msgEl.innerText = "⚠️ Failed to connect. Please try again.";
     msgEl.style.color = "red";
+    msgEl.innerText = "❌ Network error, please try again!";
   } finally {
-    btn.disabled = false;
+    loginBtn.disabled = false;
   }
 }
+
+// =================== FORM SUBMISSION ===================
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault(); // Prevent page reload
+  login();
+});
