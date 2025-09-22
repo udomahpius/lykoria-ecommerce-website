@@ -2,26 +2,28 @@ document.addEventListener("DOMContentLoaded", () => {
   // ====== BASE URL ======
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 
-  // ====== TOKEN & ROLE CHECK ======
-  function getTokenAndRole() {
-    const token = localStorage.getItem("token");
-    const role = (localStorage.getItem("role") || "").trim().toLowerCase();
+function getTokenAndRole() {
+  const token = localStorage.getItem("token");
+  const role = (localStorage.getItem("role") || "").trim().toLowerCase();
 
-    if (!token) {
-      alert("⚠️ Token missing! Redirecting to login.");
-      window.location.href = "login.html";
-      return null;
-    }
-    if (role !== "admin") {
-      alert("⚠️ Access denied. Admins only!");
-      window.location.href = "login.html";
-      return null;
-    }
-    return token;
+  console.log("DEBUG token:", token);
+  console.log("DEBUG role:", role);
+
+  if (!token) {
+    alert("⚠️ Token missing! Redirecting to login.");
+    window.location.href = "login.html";
+    return null;
   }
 
-  const token = getTokenAndRole();
-  if (!token) return;
+  // Only redirect if the role really isn't admin
+  if (role !== "admin") {
+    alert(`⚠️ Access denied. Role is '${role}', not admin.`);
+    window.location.href = "login.html";
+    return null;
+  }
+
+  return token;
+}
 
   // ====== ELEMENTS ======
   const postForm = document.getElementById("postForm");
