@@ -1,24 +1,37 @@
 import bcrypt from "bcryptjs";
-import { connectDB } from "../utils/db.js";
 import User from "../models/User.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).end();
 
   try {
-    await connectDB();
+    const { firstName, lastName, email, password, phone, region, role } = req.body;
 
-    const { firstName, lastName, email, password, phone, region } = req.body;
+    if (!firstName || !lastName || !email || !password || !role) {
+      return res.status(400).json({ error: "All required fields must be filled" });
+    }
+
     const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ error: "Email already exists" });
+    if (existing) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const newUser = new User({ firstName, lastName, email, passwordHash, phone, region });
-    await newUser.save();
 
-    res.json({ success: true, message: "User registered successfully" });
+    const user = new User({
+      firstName,
+      lastName,
+      email,
+      passwordHash,
+      phone,
+      region,
+      role: role.toLowerCase() // admin or user
+    });
+
+    await user.save();
+
+    res.status(201).json({ message: "Signup successful" });
   } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: err.message });
   }
 }

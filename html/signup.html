@@ -1,122 +1,127 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Signup</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signup - Lykoria E-commerce</title>
   <style>
-    /* Reset */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #f4f4f9, #e9ecef);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff, #d9e6ff);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      margin: 0;
     }
-
     .signup-container {
       background: #fff;
-      padding: 30px 25px;
+      padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       width: 100%;
       max-width: 400px;
-      transition: transform 0.2s ease;
     }
-
-    .signup-container:hover { transform: translateY(-4px); }
-
-    h2 { text-align: center; margin-bottom: 20px; color: #333; font-size: 24px; }
-
-    input, select {
-      display: block;
-      width: 100%;
-      padding: 12px 14px;
+    .signup-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+    .form-group {
       margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 10px;
       border: 1px solid #ccc;
       border-radius: 6px;
-      font-size: 15px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input:focus, select:focus {
-      border-color: #28a745;
-      box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
       outline: none;
     }
-
+    .form-group input:focus {
+      border-color: #007bff;
+    }
+    .role-selection {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+    }
+    .role-selection label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
     button {
       width: 100%;
       padding: 12px;
-      background: #28a745;
-      color: #fff;
       border: none;
       border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
+      background: #007bff;
+      color: white;
       font-size: 16px;
-      transition: background 0.3s ease, transform 0.15s ease;
+      cursor: pointer;
     }
-
-    button:hover { background: #218838; transform: scale(1.02); }
-    button:active { transform: scale(0.98); }
-
-    #msg { text-align: center; font-size: 14px; margin-top: 12px; color: #d9534f; }
-
-    @media (max-width: 700px) {
-      .signup-container { padding: 20px 15px; }
-      h2 { font-size: 20px; }
-      .signup-link { font-size: 13px; }
-      input, select, button { font-size: 14px; padding: 10px 12px; }
+    button:hover {
+      background: #0056b3;
     }
-
-    .signup-link {
+    .redirect {
       text-align: center;
       margin-top: 15px;
       font-size: 14px;
-      color: #555;
     }
-
-    .signup-link a {
-      color: #2563eb;
+    .redirect a {
+      color: #007bff;
       text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s ease;
     }
-
-    .signup-link a:hover { color: #1d4ed8; }
   </style>
 </head>
 <body>
   <div class="signup-container">
-    <h2>Signup</h2>
-    <input id="firstName" placeholder="First Name" required>
-    <input id="lastName" placeholder="Last Name" required>
-    <input id="email" type="email" placeholder="Email" required>
-    <input id="password" type="password" placeholder="Password" required>
-    <input id="phone" placeholder="Phone Number" required>
+    <h2>Create Account</h2>
+    <form id="signupForm">
+      <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" id="firstName" required />
+      </div>
+      <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" id="lastName" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required />
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="text" id="phone" />
+      </div>
+      <div class="form-group">
+        <label for="region">Region</label>
+        <input type="text" id="region" />
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" required />
+      </div>
 
-    <!-- Country dropdown -->
-    <select id="region" required></select>
+      <!-- ✅ Role Selection -->
+      <div class="role-selection">
+        <label><input type="radio" name="role" value="user" required /> User</label>
+        <label><input type="radio" name="role" value="admin" required /> Admin</label>
+      </div>
 
-    <!-- ✅ Role dropdown -->
-    <select id="role" required>
-      <option value="">👤 Select Role</option>
-      <option value="user">User</option>
-      <option value="admin">Admin</option>
-    </select>
-
-    <button id="signupBtn">Signup</button>
-
-    <div class="signup-link">
-      Already have an account? <a href="login.html">Login</a>
-    </div>
-    <p id="msg"></p>
+      <button type="submit">Sign Up</button>
+      <div class="redirect">
+        Already have an account? <a href="login.html">Login</a>
+      </div>
+    </form>
   </div>
 
-  <script src="../js/signup.js"></script>
+  <script src="signup.js"></script>
 </body>
 </html>

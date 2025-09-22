@@ -162,34 +162,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const password = document.getElementById("password");
   const phone = document.getElementById("phone");
   const region = document.getElementById("region");
-  const role = document.getElementById("role"); // ✅ role selector
+  const roleRadios = document.querySelectorAll("input[name='role']"); // ✅ radios for role
   const signupBtn = document.getElementById("signupBtn");
   const msg = document.getElementById("msg");
 
   // Populate country dropdown
-  const regionSelect = document.getElementById("region");
-
   const placeholderOption = document.createElement("option");
   placeholderOption.value = "";
   placeholderOption.textContent = "🌍 Select your country";
   placeholderOption.disabled = true;
   placeholderOption.selected = true;
-  regionSelect.appendChild(placeholderOption);
+  region.appendChild(placeholderOption);
 
   countries.forEach((c) => {
     const opt = document.createElement("option");
     opt.value = c.name;
     opt.textContent = `${c.flag} ${c.name}`;
-    regionSelect.appendChild(opt);
+    region.appendChild(opt);
   });
 
+  // Config
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
   const API_URL = `${BASE_URL}/api/signup`;
 
   // ====== FORM VALIDATION ======
   function validateForm() {
     if (!firstName.value.trim() || !lastName.value.trim()) {
-      return "First and Last name are required.";
+      return "First and last name are required.";
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -203,7 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
       return "Enter a valid phone number (7–15 digits).";
 
     if (!region.value) return "Please select a region.";
-    if (!role.value) return "Please select a role.";
+
+    const roleChecked = [...roleRadios].find(r => r.checked);
+    if (!roleChecked) return "Please select a role.";
 
     return null;
   }
@@ -211,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ====== SIGNUP FUNCTION ======
   async function signup() {
     msg.style.color = "#555";
-    msg.textContent = "⏳ Checking...";
+    msg.textContent = "⏳ Signing up...";
 
     const error = validateForm();
     if (error) {
@@ -222,6 +223,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     signupBtn.disabled = true;
 
+    const role = [...roleRadios].find(r => r.checked)?.value;
+
     try {
       const body = {
         firstName: firstName.value.trim(),
@@ -230,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
         password: password.value.trim(),
         phone: phone.value.trim(),
         region: region.value,
-        role: role.value // ✅ include role
+        role: role // ✅ include selected role
       };
 
       const res = await fetch(API_URL, {
@@ -245,11 +248,11 @@ document.addEventListener("DOMContentLoaded", () => {
         msg.style.color = "green";
         msg.textContent = "✅ Signup successful! Redirecting...";
 
-        // Decode token to get role
-        let userRole = "user";
+        // Decode token to get role if backend embeds it
+        let userRole = role;
         try {
           const payload = JSON.parse(atob(data.token.split(".")[1]));
-          userRole = payload.role || "user";
+          if (payload.role) userRole = payload.role;
         } catch (e) {
           console.warn("Token decode failed:", e);
         }
@@ -261,7 +264,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (userRole === "admin") {
             window.location.href = "admin.html";
           } else {
-            window.location.href = "login.html"; // or index.html if you prefer
+            window.location.href = "login.html"; // normal users go to login
           }
         }, 1500);
       } else {
@@ -278,5 +281,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Bind click
-  signupBtn.addEventListener("click", signup);
+  signupBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    signup();
+  });
 });
