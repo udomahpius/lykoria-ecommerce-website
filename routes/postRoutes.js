@@ -9,6 +9,11 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
+import nodemailer from "nodemailer";
+
+
+
+
 
 const router = express.Router();
 
@@ -20,6 +25,145 @@ const upload = multer({
   dest: "/tmp",
   limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
+
+
+
+
+// ------------------------------
+// 📌 Setup Nodemailer Transport
+// ------------------------------
+const transporter = nodemailer.createTransport({
+  service: "gmail", // or use your SMTP
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// ------------------------------
+// 📌 Request Password Reset
+// ------------------------------
+router.post("/request-password-reset", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Generate reset token valid for 15 mins
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "15m",
+    });
+
+    // Build reset link
+    const resetLink = `${process.env.CLIENT_URL}/pages/new-password.html?token=${token}`;
+
+    // Send email
+    await transporter.sendMail({
+      from: `"Lykoria Support" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Password Reset Request",
+      html: `
+        <h3>Password Reset</h3>
+        <p>Hi ${user.firstName},</p>
+        <p>Click the link below to reset your password (valid for 15 minutes):</p>
+        <a href="${resetLink}" target="_blank">${resetLink}</a>
+        <p>If you didn’t request this, please ignore this email.</p>
+      `,
+    });
+
+    res.json({ message: "✅ Reset link sent to email" });
+  } catch (err) {
+    console.error("Password reset request error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+// ------------------------------
+// 📌 Reset Password
+// ------------------------------
+router.post("/reset-password", async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    if (!token || !password) {
+      return res.status(400).json({ error: "Token and password required" });
+    }
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(400).json({ error: "Invalid or expired token" });
+    }
+
+    const user = await User.findById(decoded.id);
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Hash new password
+    const hashed = await bcrypt.hash(password, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.json({ message: "✅ Password updated successfully" });
+  } catch (err) {
+    console.error("Reset password error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+  // === Forgot Password ===
+router.post("/api/forgot-password", async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: "Email is required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpiry = Date.now() + 1000 * 60 * 15; // 15 min expiry
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpiry = resetTokenExpiry;
+    await user.save();
+
+    // Reset link (frontend page)
+    const resetLink = `https://lykoria-ecommerce-website.vercel.app/pages/reset-password.html?token=${resetToken}&email=${email}`;
+    // replace with your deployed frontend URL
+
+    // Send email via nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail", // or use smtp.ethereal.email for testing
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: `"Lykoria" <${process.env.EMAIL_USER}>`,
+      to: email,
+      subject: "Password Reset Request",
+      html: `
+        <h2>Password Reset</h2>
+        <p>Hello ${user.firstName},</p>
+        <p>You requested to reset your password. Click the link below:</p>
+        <a href="${resetLink}" target="_blank">Reset Password</a>
+        <p>This link expires in 15 minutes.</p>
+      `,
+    });
+
+    res.json({ success: true, message: "Reset link sent to your email" });
+  } catch (err) {
+    console.error("Forgot password error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 
 // ============================
 // Create Post

@@ -13,7 +13,9 @@ import dotenv from "dotenv";
 
 
 // Routes
-import postRoutes from "./routes/postRoutes.js";
+// import router from "./routes/postRoutes.js";
+// app.use("/api", router);
+
 import User from "./models/User.js";
 
 dotenv.config();
@@ -78,6 +80,9 @@ mongoose
   .connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+
+
 
 // ============================
 // Auth Middleware
@@ -179,7 +184,8 @@ app.get("/api/categories", (req, res) => {
 });
 
 // Post routes
-app.use("/api/posts", postRoutes);
+// import authRoutes from "./routes/authRoutes.js"; // adjust path
+// app.use("/api", authRoutes);
 
 // ============================
 // Start Server

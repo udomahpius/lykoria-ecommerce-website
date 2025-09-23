@@ -9,6 +9,9 @@ const userSchema = new mongoose.Schema(
     passwordHash: { type: String, required: true },
     phone: { type: String, trim: true },
     region: { type: String, trim: true },
+    resetPasswordToken: { type: String },
+     resetPasswordExpiry: { type: Date },
+  
 
     // 👇 NEW FIELD
     role: {
@@ -21,6 +24,7 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
 
 const User = mongoose.model("User", userSchema);
 
