@@ -1,31 +1,18 @@
-// models/User.js
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
-  {
-    firstName: { type: String, required: true, trim: true },
-    lastName: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    passwordHash: { type: String, required: true },
-    phone: { type: String, trim: true },
-    region: { type: String, trim: true },
-    resetPasswordToken: { type: String },
-     resetPasswordExpiry: { type: Date },
-  
-
-    // 👇 NEW FIELD
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
-    },
-
-    createdAt: { type: Date, default: Date.now },
+const userSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  lastName:  { type: String, required: true },
+  email:     { type: String, required: true, unique: true },
+  passwordHash: { type: String, required: true },
+  phone:     { type: String },
+  region:    { type: String },
+  role: { 
+    type: String, 
+    enum: ["user", "admin"], 
+    default: "user" 
   },
-  { timestamps: true }
-);
-
+}, { timestamps: true });
 
 const User = mongoose.model("User", userSchema);
-
 export default User;

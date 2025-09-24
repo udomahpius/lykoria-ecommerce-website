@@ -1,3 +1,6 @@
+// ============================
+// login.js
+// ============================
 document.addEventListener("DOMContentLoaded", () => {
   const email = document.getElementById("email");
   const password = document.getElementById("password");
@@ -7,7 +10,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
   const API_URL = `${BASE_URL}/api/login`;
 
-  async function login() {
+  // ====== LOGIN FUNCTION ======
+  async function login(e) {
+    e.preventDefault();
+
     msg.style.color = "#555";
     msg.textContent = "⏳ Checking...";
 
@@ -38,25 +44,30 @@ document.addEventListener("DOMContentLoaded", () => {
         // Save token
         localStorage.setItem("token", data.token);
 
-        // Decode role from token
+        // Default role
         let userRole = "user";
+
+        // Decode token payload
         try {
           const payload = JSON.parse(atob(data.token.split(".")[1]));
-          userRole = payload.role || "user";
+          if (payload.role) {
+            userRole = payload.role.toLowerCase();
+          }
         } catch (e) {
-          console.warn("Token decode failed:", e);
+          console.warn("⚠️ Could not decode role from token:", e);
         }
 
+        // Save role
         localStorage.setItem("role", userRole);
 
-        // Redirect based on role
+        // Redirect by role
         setTimeout(() => {
           if (userRole === "admin") {
             window.location.href = "admin.html";
           } else {
             window.location.href = "index.html";
           }
-        }, 1500);
+        }, 1200);
       } else {
         msg.style.color = "red";
         msg.textContent = data.error || "❌ Invalid credentials!";
@@ -70,5 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // ====== EVENT LISTENERS ======
   loginBtn.addEventListener("click", login);
 });

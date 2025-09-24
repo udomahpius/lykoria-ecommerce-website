@@ -1,155 +1,141 @@
+// ============================
 // admin-dashboard.js
+// ============================
 (() => {
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 
-  // --- elements ---
-  const tokenAndRole = () => {
+  // ============================
+  // Auth check
+  // ============================
+  function getToken() {
     const token = localStorage.getItem("token");
-    const role = (localStorage.getItem("role") || "").trim().toLowerCase();
+    const role = (localStorage.getItem("role") || "").toLowerCase();
     if (!token || role !== "admin") {
       alert("⚠️ Access denied. Admins only.");
       window.location.href = "login.html";
       return null;
     }
     return token;
-  };
+  }
 
-  const token = tokenAndRole();
+  const token = getToken();
   if (!token) return;
 
+  // ============================
+  // Elements
+  // ============================
   const el = id => document.getElementById(id);
-  const totalPostsEl = el("totalPosts");
-  const totalViewsEl = el("totalViews");
-  const totalReactionsEl = el("totalReactions");
-  const totalOrdersEl = el("totalOrders");
-  const totalRevenueEl = el("totalRevenue");
-  const postsTableBody = el("postsTable");
-  const postsChartCanvas = el("postsChart");
-  const startDateInput = el("startDate");
-  const endDateInput = el("endDate");
-  const filterBtn = el("filterBtn");
-  const clearBtn = el("clearBtn");
-  const searchInput = el("searchInput");
-  const rowsPerPageSelect = el("rowsPerPage");
-  const pagerEl = el("pager");
-  const exportCsvBtn = el("exportCsv");
-  const downloadChartBtn = el("downloadChart");
-  const welcomeTitle = el("welcomeTitle");
-  const welcomeSubtitle = el("welcomeSubtitle");
-  const logoutBtn = el("logoutBtn");
+  const ui = {
+    totalPosts: el("totalPosts"),
+    totalViews: el("totalViews"),
+    totalReactions: el("totalReactions"),
+    totalOrders: el("totalOrders"),
+    totalRevenue: el("totalRevenue"),
+    postsTable: el("postsTable"),
+    postsChart: el("postsChart"),
+    startDate: el("startDate"),
+    endDate: el("endDate"),
+    filterBtn: el("filterBtn"),
+    clearBtn: el("clearBtn"),
+    searchInput: el("searchInput"),
+    rowsPerPage: el("rowsPerPage"),
+    pager: el("pager"),
+    exportCsv: el("exportCsv"),
+    downloadChart: el("downloadChart"),
+    welcomeTitle: el("welcomeTitle"),
+    welcomeSubtitle: el("welcomeSubtitle"),
+    logoutBtn: el("logoutBtn"),
+  };
 
-  logoutBtn?.addEventListener("click", () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("role");
+  ui.logoutBtn?.addEventListener("click", () => {
+    localStorage.clear();
     window.location.href = "login.html";
   });
 
-  // Chart instance
-  let postsChartInstance = null;
-
-  // Pagination & state
+  // ============================
+  // State
+  // ============================
   let allPosts = [];
   let filteredPosts = [];
   let currentPage = 1;
-  const getRowsPerPage = () => parseInt(rowsPerPageSelect.value || "10", 10);
+  const getRowsPerPage = () => parseInt(ui.rowsPerPage.value || "10", 10);
+  let postsChartInstance = null;
 
-  // Helper: format date
-  function fmtDate(iso) {
-    try {
-      return new Date(iso).toLocaleDateString();
-    } catch { return "-" }
+  // ============================
+  // Helpers
+  // ============================
+  const fmtDate = iso => {
+    try { return new Date(iso).toLocaleDateString(); }
+    catch { return "-"; }
+  };
+
+  const escapeHtml = (s = "") =>
+    String(s).replace(/[&<>"']/g, c =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])
+    );
+
+  // ============================
+  // API Calls
+  // ============================
+  async function fetchProfile() {
+    const res = await fetch(`${BASE_URL}/api/profile`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) throw new Error("Profile not available");
+    return res.json();
   }
 
-  // Attempt to load profile (to show welcome)
-  async function loadProfile() {
-    try {
-      const res = await fetch(`${BASE_URL}/api/profile`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (!res.ok) throw new Error("No profile");
-      const user = await res.json();
-      const name = (user.firstName && user.lastName) ? `${user.firstName} ${user.lastName}` : (user.email || "Admin");
-      welcomeTitle.textContent = `👋 Welcome back, ${name}`;
-      welcomeSubtitle.textContent = `Logged in as admin — ${user.email || ""}`;
-      // store small wins for offline
-      if (user.firstName) localStorage.setItem("firstName", user.firstName);
-      if (user.lastName) localStorage.setItem("lastName", user.lastName);
-    } catch (err) {
-      console.warn("Profile not available:", err);
-      welcomeTitle.textContent = "👋 Welcome back";
-      welcomeSubtitle.textContent = "Profile not available";
-    }
+  async function fetchOrders() {
+    const res = await fetch(`${BASE_URL}/api/orders`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return [];
+    return res.json();
   }
 
-  // Attempt to fetch extra e-commerce data (orders, revenue) — non-fatal
-  async function loadOrdersAndRevenue() {
-    try {
-      const res = await fetch(`${BASE_URL}/api/orders`, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error("orders endpoint not present");
-      const orders = await res.json();
-      // Example calculation — assumes orders is array of { total, createdAt, status }
-      const totalOrders = Array.isArray(orders) ? orders.length : 0;
-      const revenue = Array.isArray(orders) ? orders.reduce((s,o)=>s + (Number(o.total)||0), 0) : 0;
-      totalOrdersEl.textContent = totalOrders;
-      totalRevenueEl.textContent = revenue ? `₦${revenue.toFixed(2)}` : "₦0.00";
-    } catch (err) {
-      console.debug("Orders endpoint not available:", err);
-      totalOrdersEl.textContent = "-";
-      totalRevenueEl.textContent = "-";
-    }
+  async function fetchPosts(start, end) {
+    let url = `${BASE_URL}/api/posts`;
+    if (start && end) url += `?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error("Failed to fetch posts");
+    return res.json();
   }
 
-  // Load posts analytics
-  async function fetchPostAnalytics(start, end) {
-    try {
-      let url = `${BASE_URL}/api/posts`;
-      if (start && end) {
-        // backend expected query format ?start=YYYY-MM-DD&end=YYYY-MM-DD
-        const s = encodeURIComponent(start);
-        const e = encodeURIComponent(end);
-        url += `?start=${s}&end=${e}`;
-      }
-
-      const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) throw new Error("Failed to fetch posts");
-
-      const posts = await res.json();
-      if (!Array.isArray(posts)) {
-        throw new Error("Posts response not array");
-      }
-
-      allPosts = posts;
-      applyFiltersAndRender();
-      // basic totals
-      const totalViews = posts.reduce((s,p)=>s + (Number(p.views)||0), 0);
-      const totalReactions = posts.reduce((s,p)=>s + (Number(p.reactions)||0), 0);
-      totalPostsEl.textContent = posts.length;
-      totalViewsEl.textContent = totalViews;
-      totalReactionsEl.textContent = totalReactions;
-
-    } catch (err) {
-      console.error("fetchPostAnalytics error:", err);
-      postsTableBody.innerHTML = `<tr><td colspan="4" class="small">Failed to load posts analytics</td></tr>`;
-      totalPostsEl.textContent = "0";
-      totalViewsEl.textContent = "0";
-      totalReactionsEl.textContent = "0";
-      allPosts = [];
-      filteredPosts = [];
-      renderChart([], [], []);
-    }
+  // ============================
+  // Rendering
+  // ============================
+  function renderProfile(user) {
+    const name = user.firstName && user.lastName
+      ? `${user.firstName} ${user.lastName}`
+      : user.email || "Admin";
+    ui.welcomeTitle.textContent = `👋 Welcome back, ${name}`;
+    ui.welcomeSubtitle.textContent = `Logged in as admin — ${user.email || ""}`;
   }
 
-  // Apply search + pagination
+  function renderOrders(orders) {
+    const totalOrders = orders.length;
+    const revenue = orders.reduce((s, o) => s + (Number(o.total) || 0), 0);
+    ui.totalOrders.textContent = totalOrders;
+    ui.totalRevenue.textContent = `₦${revenue.toFixed(2)}`;
+  }
+
+  function renderPosts(posts) {
+    allPosts = Array.isArray(posts) ? posts : [];
+    applyFiltersAndRender();
+
+    ui.totalPosts.textContent = allPosts.length;
+    ui.totalViews.textContent = allPosts.reduce((s, p) => s + (Number(p.views) || 0), 0);
+    ui.totalReactions.textContent = allPosts.reduce((s, p) => s + (Number(p.reactions) || 0), 0);
+  }
+
   function applyFiltersAndRender() {
-    const q = (searchInput.value || "").trim().toLowerCase();
-    if (q) {
-      filteredPosts = allPosts.filter(p => (p.title || "").toLowerCase().includes(q));
-    } else {
-      filteredPosts = [...allPosts];
-    }
+    const q = (ui.searchInput.value || "").toLowerCase();
+    filteredPosts = q
+      ? allPosts.filter(p => (p.title || "").toLowerCase().includes(q))
+      : [...allPosts];
     currentPage = 1;
     renderTable();
-    renderChartFromFiltered();
+    renderChart();
   }
 
   function renderTable() {
@@ -157,162 +143,100 @@
     const startIdx = (currentPage - 1) * rowsPerPage;
     const pageItems = filteredPosts.slice(startIdx, startIdx + rowsPerPage);
 
-    if (!pageItems.length) {
-      postsTableBody.innerHTML = `<tr><td colspan="4" class="small">No posts found</td></tr>`;
-      renderPager();
-      return;
-    }
-
-    postsTableBody.innerHTML = "";
-    pageItems.forEach(post => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td><strong>${escapeHtml(post.title||"Untitled")}</strong><div class="small">${post.category||""}</div></td>
-        <td>${Number(post.views)||0}</td>
-        <td>${Number(post.reactions)||0}</td>
-        <td class="small">${fmtDate(post.createdAt||post.updatedAt||"")}</td>
-      `;
-      postsTableBody.appendChild(tr);
-    });
+    ui.postsTable.innerHTML = pageItems.length
+      ? pageItems.map(p => `
+          <tr>
+            <td><strong>${escapeHtml(p.title || "Untitled")}</strong><div class="small">${p.category || ""}</div></td>
+            <td>${Number(p.views) || 0}</td>
+            <td>${Number(p.reactions) || 0}</td>
+            <td class="small">${fmtDate(p.createdAt || p.updatedAt || "")}</td>
+          </tr>
+        `).join("")
+      : `<tr><td colspan="4" class="small">No posts found</td></tr>`;
 
     renderPager();
   }
 
   function renderPager() {
-    const rowsPerPage = getRowsPerPage();
-    const pages = Math.max(1, Math.ceil(filteredPosts.length / rowsPerPage));
-    pagerEl.innerHTML = "";
-    for (let i=1;i<=pages;i++){
-      const b = document.createElement("button");
-      b.textContent = i;
-      if (i===currentPage) b.classList.add("active");
-      b.addEventListener("click", ()=> { currentPage = i; renderTable(); });
-      pagerEl.appendChild(b);
+    const pages = Math.max(1, Math.ceil(filteredPosts.length / getRowsPerPage()));
+    ui.pager.innerHTML = "";
+    for (let i = 1; i <= pages; i++) {
+      const btn = document.createElement("button");
+      btn.textContent = i;
+      if (i === currentPage) btn.classList.add("active");
+      btn.addEventListener("click", () => { currentPage = i; renderTable(); });
+      ui.pager.appendChild(btn);
     }
   }
 
-  // Render chart from current filteredPosts
-  function renderChartFromFiltered() {
-    const labels = filteredPosts.map(p => p.title || "Untitled").slice(0, 50); // cap labels
-    const views = filteredPosts.map(p => Number(p.views)||0).slice(0, 50);
-    const reacts = filteredPosts.map(p => Number(p.reactions)||0).slice(0, 50);
-    renderChart(labels, views, reacts);
-  }
-
-  function renderChart(labels, views, reacts) {
-    if (!postsChartCanvas) return;
+  function renderChart() {
+    if (!ui.postsChart) return;
     if (postsChartInstance) postsChartInstance.destroy();
-    postsChartInstance = new Chart(postsChartCanvas, {
-      type: 'bar',
+
+    const labels = filteredPosts.map(p => p.title || "Untitled").slice(0, 50);
+    const views = filteredPosts.map(p => Number(p.views) || 0).slice(0, 50);
+    const reacts = filteredPosts.map(p => Number(p.reactions) || 0).slice(0, 50);
+
+    postsChartInstance = new Chart(ui.postsChart, {
+      type: "bar",
       data: {
         labels,
         datasets: [
-          { label: 'Views', data: views, backgroundColor: 'rgba(37,99,235,0.75)' },
-          { label: 'Reactions', data: reacts, backgroundColor: 'rgba(16,185,129,0.75)' }
-        ]
+          { label: "Views", data: views, backgroundColor: "rgba(37,99,235,0.75)" },
+          { label: "Reactions", data: reacts, backgroundColor: "rgba(16,185,129,0.75)" },
+        ],
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: false }
-        },
-        scales: { y: { beginAtZero: true } }
-      }
+      options: { responsive: true, plugins: { legend: { position: "top" } }, scales: { y: { beginAtZero: true } } },
     });
   }
 
-  // Export displayed (filtered and paged) table to CSV
-  function exportTableToCSV() {
-    // use filteredPosts current page
+  function exportCSV() {
     const rowsPerPage = getRowsPerPage();
     const startIdx = (currentPage - 1) * rowsPerPage;
     const pageItems = filteredPosts.slice(startIdx, startIdx + rowsPerPage);
 
-    const columns = ["title","category","views","reactions","date"];
-    const csvRows = [columns.join(",")];
-    pageItems.forEach(p => {
-      const row = [
-        `"${(p.title||"").replace(/"/g,'""')}"`,
-        `"${(p.category||"")}"`,
-        Number(p.views)||0,
-        Number(p.reactions)||0,
-        `"${fmtDate(p.createdAt||"")}"`,
-      ];
-      csvRows.push(row.join(","));
-    });
+    const header = ["title", "category", "views", "reactions", "date"];
+    const rows = pageItems.map(p => [
+      `"${(p.title || "").replace(/"/g, '""')}"`,
+      `"${p.category || ""}"`,
+      Number(p.views) || 0,
+      Number(p.reactions) || 0,
+      `"${fmtDate(p.createdAt || "")}"`,
+    ]);
 
-    const csv = csvRows.join("\n");
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const csv = [header.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `posts-analytics-${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
+    const a = Object.assign(document.createElement("a"), { href: url, download: "posts.csv" });
     a.click();
-    a.remove();
     URL.revokeObjectURL(url);
   }
 
-  // download chart as PNG
-  function downloadChartPNG() {
-    if (!postsChartCanvas) return alert("Chart not ready");
+  function downloadChart() {
+    if (!ui.postsChart) return;
     const link = document.createElement("a");
-    link.href = postsChartCanvas.toDataURL("image/png", 1);
-    link.download = `engagement-chart-${new Date().toISOString().slice(0,10)}.png`;
-    document.body.appendChild(link);
+    link.href = ui.postsChart.toDataURL("image/png", 1);
+    link.download = "posts-chart.png";
     link.click();
-    link.remove();
   }
 
-  // small escape helper
-  function escapeHtml(s="") {
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
+  // ============================
+  // Init
+  // ============================
+  (async function init() {
+    try {
+      renderProfile(await fetchProfile());
+    } catch { renderProfile({}); }
 
-  // initial load & attach handlers
-  (function init() {
-    // load profile and orders in background
-    loadProfile().catch(()=>{});
-    loadOrdersAndRevenue().catch(()=>{});
+    try { renderOrders(await fetchOrders()); } catch { renderOrders([]); }
+    try { renderPosts(await fetchPosts()); } catch { renderPosts([]); }
 
-    // initial posts fetch (no dates)
-    fetchPostAnalytics().catch(()=>{});
-
-    // handlers
-    filterBtn?.addEventListener("click", () => {
-      currentPage = 1;
-      const s = startDateInput.value;
-      const e = endDateInput.value;
-      fetchPostAnalytics(s,e).catch(()=>{});
-    });
-
-    clearBtn?.addEventListener("click", () => {
-      startDateInput.value = ""; endDateInput.value = ""; searchInput.value = ""; rowsPerPageSelect.value = "10";
-      currentPage = 1;
-      fetchPostAnalytics().catch(()=>{});
-    });
-
-    searchInput?.addEventListener("input", () => {
-      applyFiltersAndRender();
-    });
-
-    rowsPerPageSelect?.addEventListener("change", () => {
-      currentPage = 1; renderTable();
-    });
-
-    exportCsvBtn?.addEventListener("click", exportTableToCSV);
-    downloadChartBtn?.addEventListener("click", downloadChartPNG);
-
-    // small live clock in welcome section
-    setInterval(()=> {
-      const t = new Date();
-      welcomeSubtitle.textContent = `Server time: ${t.toLocaleString()}`;
-    }, 1000);
+    // event listeners
+    ui.filterBtn?.addEventListener("click", () => fetchPosts(ui.startDate.value, ui.endDate.value).then(renderPosts));
+    ui.clearBtn?.addEventListener("click", () => { ui.startDate.value = ui.endDate.value = ui.searchInput.value = ""; ui.rowsPerPage.value = "10"; fetchPosts().then(renderPosts); });
+    ui.searchInput?.addEventListener("input", applyFiltersAndRender);
+    ui.rowsPerPage?.addEventListener("change", () => { currentPage = 1; renderTable(); });
+    ui.exportCsv?.addEventListener("click", exportCSV);
+    ui.downloadChart?.addEventListener("click", downloadChart);
   })();
-
-  // expose for debugging
-  window.__adminAnalytics = {
-    fetchPostAnalytics, renderChart, getState: ()=>({allPosts,filteredPosts,currentPage})
-  };
 })();

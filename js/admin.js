@@ -1,11 +1,15 @@
+// ============================
+// admin.js
+// ============================
 document.addEventListener("DOMContentLoaded", () => {
   const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 
-  // ====== TOKEN & ROLE CHECK ======
-  function getTokenAndRole() {
+  // ============================
+  // Auth check
+  // ============================
+  function getToken() {
     const token = localStorage.getItem("token");
-    const role = (localStorage.getItem("role") || "").trim().toLowerCase();
-
+    const role = (localStorage.getItem("role") || "").toLowerCase();
     if (!token) {
       alert("⚠️ Token missing! Redirecting to login.");
       window.location.href = "login.html";
@@ -19,58 +23,48 @@ document.addEventListener("DOMContentLoaded", () => {
     return token;
   }
 
-  const token = getTokenAndRole();
+  const token = getToken();
   if (!token) return;
 
-  // ====== ELEMENTS ======
-  const postForm = document.getElementById("postForm");
-  const titleInput = document.getElementById("title");
-  const bodyInput = document.getElementById("body");
-  const urlInput = document.getElementById("url");
-  const urlTextInput = document.getElementById("urlText");
-  const categorySelect = document.getElementById("category");
-  const imageInput = document.getElementById("image");
-  const previewImg = document.getElementById("preview");
-  const postsContainer = document.getElementById("postsContainer");
-  const welcomeMessage = document.getElementById("welcomeMessage");
-  const welcomeClock = document.getElementById("welcomeClock");
-  const logoutBtn = document.getElementById("logoutBtn");
+  // ============================
+  // Elements
+  // ============================
+  const el = id => document.getElementById(id);
+  const ui = {
+    postForm: el("postForm"),
+    titleInput: el("title"),
+    bodyInput: el("body"),
+    urlInput: el("url"),
+    urlTextInput: el("urlText"),
+    categorySelect: el("category"),
+    imageInput: el("image"),
+    previewImg: el("preview"),
+    postsContainer: el("postsContainer"),
+    welcomeMessage: el("welcomeMessage"),
+    welcomeClock: el("welcomeClock"),
+    logoutBtn: el("logoutBtn"),
+  };
 
-  // ====== LOGOUT ======
-  logoutBtn.addEventListener("click", () => {
+  // ============================
+  // Logout
+  // ============================
+  ui.logoutBtn?.addEventListener("click", () => {
     localStorage.clear();
     window.location.href = "login.html";
   });
 
-  // ====== IMAGE PREVIEW ======
-  imageInput.addEventListener("change", () => {
-    const file = imageInput.files[0];
-    if (!file) {
-      previewImg.style.display = "none";
-      return;
-    }
-    if (!file.type.startsWith("image/")) {
-      alert("❌ Please select a valid image.");
-      imageInput.value = "";
-      previewImg.style.display = "none";
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = e => {
-      previewImg.src = e.target.result;
-      previewImg.style.display = "block";
-    };
-    reader.readAsDataURL(file);
-  });
-
-  // ====== CLOCK ======
+  // ============================
+  // Clock
+  // ============================
   function updateClock() {
-    welcomeClock.textContent = `🕒 ${new Date().toLocaleTimeString()}`;
+    ui.welcomeClock.textContent = `🕒 ${new Date().toLocaleTimeString()}`;
   }
   setInterval(updateClock, 1000);
   updateClock();
 
-  // ====== LOAD CATEGORIES ======
+  // ============================
+  // Categories
+  // ============================
   const categories = [
     { key: "health", label: "Health" },
     { key: "sports", label: "Sports" },
@@ -81,58 +75,73 @@ document.addEventListener("DOMContentLoaded", () => {
     { key: "politics", label: "Politics" },
     { key: "travel", label: "Travel" },
   ];
-  categorySelect.innerHTML = `<option value="">-- Select Category --</option>`;
-  categories.forEach(cat => {
-    const option = document.createElement("option");
-    option.value = cat.key;
-    option.textContent = cat.label;
-    categorySelect.appendChild(option);
-  });
 
-  // ====== LOAD PROFILE ======
+  function loadCategories() {
+    ui.categorySelect.innerHTML = `<option value="">-- Select Category --</option>`;
+    categories.forEach(cat => {
+      const option = document.createElement("option");
+      option.value = cat.key;
+      option.textContent = cat.label;
+      ui.categorySelect.appendChild(option);
+    });
+  }
+  loadCategories();
+
+  // ============================
+  // Profile
+  // ============================
   async function loadProfile() {
     try {
-      const res = await fetch(`${BASE_URL}/api/profile`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`${BASE_URL}/api/profile`, { headers: { Authorization: `Bearer ${token}` } });
       if (!res.ok) throw new Error("Failed to fetch profile");
-
       const user = await res.json();
-
-      // save to localStorage for later use
       if (user.firstName) localStorage.setItem("firstName", user.firstName);
       if (user.lastName) localStorage.setItem("lastName", user.lastName);
-
-      welcomeMessage.innerText = user.firstName && user.lastName
+      ui.welcomeMessage.innerText = user.firstName && user.lastName
         ? `👋 Welcome back, ${user.firstName} ${user.lastName}!`
         : `👋 Welcome back, ${user.email || "Admin"}`;
     } catch (err) {
       console.error("Profile load error:", err);
-      welcomeMessage.innerText = "👋 Welcome back!";
+      ui.welcomeMessage.innerText = "👋 Welcome back!";
     }
   }
 
-  // ====== LOAD POSTS ======
+  // ============================
+  // Image Preview
+  // ============================
+  ui.imageInput.addEventListener("change", () => {
+    const file = ui.imageInput.files[0];
+    if (!file) return ui.previewImg.style.display = "none";
+    if (!file.type.startsWith("image/")) {
+      alert("❌ Please select a valid image.");
+      ui.imageInput.value = "";
+      ui.previewImg.style.display = "none";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = e => { ui.previewImg.src = e.target.result; ui.previewImg.style.display = "block"; };
+    reader.readAsDataURL(file);
+  });
+
+  // ============================
+  // Posts
+  // ============================
   async function loadPosts() {
     try {
-      const res = await fetch(`${BASE_URL}/api/posts`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`${BASE_URL}/api/posts`, { headers: { Authorization: `Bearer ${token}` } });
       const posts = await res.json();
-      postsContainer.innerHTML = "";
-
-      if (!Array.isArray(posts) || posts.length === 0) {
-        postsContainer.innerHTML = "<p>No posts found</p>";
+      ui.postsContainer.innerHTML = "";
+      if (!Array.isArray(posts) || !posts.length) {
+        ui.postsContainer.innerHTML = "<p>No posts found</p>";
         return;
       }
-
       posts.forEach(post => {
         const div = document.createElement("div");
         div.classList.add("post-card");
         div.innerHTML = `
           <h3>${post.title}</h3>
           <p><strong>Category:</strong> ${post.category || "N/A"}</p>
-          <p>${post.body.substring(0, 100)}...</p>
+          <p>${post.body?.substring(0, 100)}...</p>
           ${post.image ? `<img src="${post.image}" />` : ""}
           <div class="actions">
             <button class="edit">Edit</button>
@@ -141,37 +150,35 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         div.querySelector(".edit").addEventListener("click", () => editPost(post._id));
         div.querySelector(".delete").addEventListener("click", () => deletePost(post._id));
-        postsContainer.appendChild(div);
+        ui.postsContainer.appendChild(div);
       });
     } catch (err) {
       console.error(err);
-      postsContainer.innerHTML = "<p style='color:red'>Error loading posts</p>";
+      ui.postsContainer.innerHTML = "<p style='color:red'>Error loading posts</p>";
     }
   }
 
-  // ====== CREATE / UPDATE POST ======
-  postForm.addEventListener("submit", async e => {
+  // ============================
+  // Create / Update Post
+  // ============================
+  ui.postForm.addEventListener("submit", async e => {
     e.preventDefault();
-    const postId = postForm.dataset.editingId;
+    const postId = ui.postForm.dataset.editingId;
     const endpoint = postId ? `${BASE_URL}/api/posts/${postId}` : `${BASE_URL}/api/posts`;
     const method = postId ? "PUT" : "POST";
 
     try {
-      const formData = new FormData(postForm);
+      const formData = new FormData(ui.postForm);
       formData.append("status", "published");
 
-      const res = await fetch(endpoint, {
-        method,
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+      const res = await fetch(endpoint, { method, headers: { Authorization: `Bearer ${token}` }, body: formData });
       const data = await res.json();
 
       if (data.success) {
         alert(postId ? "✅ Post updated!" : "✅ Post created!");
-        postForm.reset();
-        previewImg.style.display = "none";
-        delete postForm.dataset.editingId;
+        ui.postForm.reset();
+        ui.previewImg.style.display = "none";
+        delete ui.postForm.dataset.editingId;
         loadPosts();
       } else {
         alert("Error: " + (data.error || "Something went wrong"));
@@ -182,41 +189,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ====== EDIT POST ======
+  // ============================
+  // Edit Post
+  // ============================
   async function editPost(id) {
     try {
-      const res = await fetch(`${BASE_URL}/api/posts/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`${BASE_URL}/api/posts/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       const post = await res.json();
       if (!post._id) return alert("Post not found");
 
-      titleInput.value = post.title;
-      bodyInput.value = post.body;
-      urlInput.value = post.url;
-      urlTextInput.value = post.urlText;
-      categorySelect.value = post.category || "";
-      if (post.image) {
-        previewImg.src = post.image;
-        previewImg.style.display = "block";
-      } else {
-        previewImg.style.display = "none";
-      }
-      postForm.dataset.editingId = id;
+      ui.titleInput.value = post.title;
+      ui.bodyInput.value = post.body;
+      ui.urlInput.value = post.url;
+      ui.urlTextInput.value = post.urlText;
+      ui.categorySelect.value = post.category || "";
+      if (post.image) { ui.previewImg.src = post.image; ui.previewImg.style.display = "block"; }
+      else { ui.previewImg.style.display = "none"; }
+
+      ui.postForm.dataset.editingId = id;
     } catch (err) {
       console.error(err);
       alert("Failed to load post for editing");
     }
   }
 
-  // ====== DELETE POST ======
+  // ============================
+  // Delete Post
+  // ============================
   async function deletePost(id) {
     if (!confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`${BASE_URL}/api/posts/${id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(`${BASE_URL}/api/posts/${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       if (data.success) {
         alert("✅ Post deleted!");
@@ -230,7 +233,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // ====== INITIALIZE ======
+  // ============================
+  // Initialize
+  // ============================
   loadProfile();
   loadPosts();
 });

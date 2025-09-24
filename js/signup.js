@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const password = document.getElementById("password");
   const phone = document.getElementById("phone");
   const region = document.getElementById("region");
-  const roleSelect = document.getElementById("role"); // ✅ dropdown instead of radios
+  const roleSelect = document.getElementById("role"); // dropdown
   const signupBtn = document.getElementById("signupBtn");
   const msg = document.getElementById("msg");
 
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
         password: password.value.trim(),
         phone: phone.value.trim(),
         region: region.value,
-        role: role // ✅ include selected role
+        role: role
       };
 
       const res = await fetch(API_URL, {
@@ -248,43 +248,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
 
-      if (res.ok && data.token) {
-        msg.style.color = "green";
-        msg.textContent = "✅ Signup successful! Redirecting...";
+      if (!res.ok) throw new Error(data.message || "Signup failed");
 
-        // Decode token to get role if backend embeds it
-        let userRole = role;
-        try {
-          const payload = JSON.parse(atob(data.token.split(".")[1]));
-          if (payload.role) userRole = payload.role;
-        } catch (e) {
-          console.warn("Token decode failed:", e);
+      // Save session
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", role);
+
+      msg.style.color = "green";
+      msg.textContent = "✅ Signup successful! Redirecting...";
+
+      setTimeout(() => {
+        if (role.toLowerCase() === "admin") {
+          window.location.href = "admin.html";
+        } else {
+          window.location.href = "index.html";
         }
-
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", userRole);
-
-        setTimeout(() => {
-          if (userRole === "admin") {
-            window.location.href = "admin.html";
-          } else {
-            window.location.href = "login.html";
-          }
-        }, 1500);
-      } else {
-        msg.style.color = "red";
-        msg.textContent = data.error || "❌ Signup failed!";
-      }
+      }, 1500);
     } catch (err) {
-      console.error("Signup error:", err);
+      console.error("❌ Signup Error:", err);
       msg.style.color = "red";
-      msg.textContent = "❌ Network error, try again!";
+      msg.textContent = "❌ " + err.message;
     } finally {
       signupBtn.disabled = false;
     }
   }
 
-  // Bind click
+  // ====== EVENT LISTENERS ======
   signupBtn.addEventListener("click", (e) => {
     e.preventDefault();
     signup();

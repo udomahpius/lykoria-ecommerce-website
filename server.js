@@ -109,7 +109,7 @@ app.get("/", (req, res) => res.send("✅ Server is alive"));
 // Signup
 app.post("/api/signup", async (req, res) => {
   try {
-    const { firstName, lastName, email, password, phone, region } = req.body;
+    const { firstName, lastName, email, password, phone, region, role } = req.body;
 
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({ error: "All required fields must be filled" });
@@ -129,6 +129,7 @@ app.post("/api/signup", async (req, res) => {
       passwordHash: hashedPassword,
       phone,
       region,
+      role: role === "admin" ? "admin" : "user", // only allow "admin" or "user"
     });
 
     await newUser.save();
@@ -150,8 +151,18 @@ app.post("/api/login", async (req, res) => {
     const validPass = await bcrypt.compare(password, user.passwordHash);
     if (!validPass) return res.status(400).json({ error: "Invalid password" });
 
-    const token = jwt.sign({ id: user._id }, SECRET_KEY, { expiresIn: "1h" });
-    res.json({ success: true, token });
+    // Include role in JWT payload
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+
+    res.json({ 
+      success: true, 
+      token, 
+      role: user.role  // send role back as well
+    });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ error: "Internal server error" });
