@@ -136,16 +136,24 @@
   <div id="welcomeMessage"></div>
   <div id="welcomeClock"></div>
 
+  <!-- ✅ Fixed form with proper name attributes -->
   <form id="postForm">
-    <input type="text" id="title" placeholder="Title" required>
-    <textarea id="body" placeholder="Body" required></textarea>
-    <input type="text" id="url" placeholder="Link URL">
-    <input type="text" id="urlText" placeholder="Link Text">
-    <select id="category" required>
+    <input type="text" id="title" name="title" placeholder="Title" required>
+    
+    <textarea id="body" name="body" placeholder="Body" required></textarea>
+    
+    <input type="text" id="url" name="url" placeholder="Link URL">
+    
+    <input type="text" id="urlText" name="urlText" placeholder="Link Text">
+    
+    <select id="category" name="category" required>
       <option value="">-- Select Category --</option>
     </select>
-    <input type="file" id="image" accept="image/*">
+    
+    <input type="file" id="image" name="image" accept="image/*">
+    
     <img id="preview" alt="Preview">
+    
     <button type="submit" id="submitBtn">Save Post</button>
   </form>
 
