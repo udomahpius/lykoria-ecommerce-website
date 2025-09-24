@@ -1,99 +1,82 @@
 import express from "express";
 import multer from "multer";
-import fs from "fs";
 import cloudinary from "cloudinary";
-import crypto from "crypto";   // ✅ missing
+import fs from "fs";
 import Post from "../models/Post.js";
 import authMiddleware from "../middleware/authMiddleware.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-import nodemailer from "nodemailer";
 
 const router = express.Router();
 
 // ------------------------------
-// Multer
+// Multer for file uploads
 // ------------------------------
-const upload = multer({
-  dest: "/tmp",
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
+const upload = multer({ dest: "/tmp" });
 
 // ------------------------------
-// Nodemailer Transport
+// CREATE POST
 // ------------------------------
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-// ------------------------------
-// Request Password Reset (keep only one flow!)
-// ------------------------------
-router.post("/request-password-reset", async (req, res) => {
+router.post("/", authMiddleware, upload.single("image"), async (req, res) => {
   try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ error: "Email is required" });
+    let imageUrl = null;
 
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (req.file) {
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: "lykoria_posts",
+      });
+      imageUrl = result.secure_url;
+      fs.unlinkSync(req.file.path); // cleanup tmp file
+    }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "15m",
+    const { title, body, url, urlText, category, status } = req.body;
+
+    const newPost = new Post({
+      title,
+      body,
+      url,
+      urlText,
+      category,
+      status: status || "draft",
+      image: imageUrl,
+      user: req.user.id, // save user from authMiddleware
     });
 
-    const resetLink = `${process.env.CLIENT_URL}/pages/new-password.html?token=${token}`;
-
-    await transporter.sendMail({
-      from: `"Lykoria Support" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Password Reset Request",
-      html: `
-        <h3>Password Reset</h3>
-        <p>Hi ${user.firstName},</p>
-        <p>Click the link below to reset your password (valid for 15 minutes):</p>
-        <a href="${resetLink}" target="_blank">${resetLink}</a>
-      `,
-    });
-
-    res.json({ message: "✅ Reset link sent to email" });
+    await newPost.save();
+    res.status(201).json(newPost);
   } catch (err) {
-    console.error("Password reset request error:", err);
-    res.status(500).json({ error: "Server error" });
+    console.error("Error creating post:", err);
+    res.status(500).json({ error: "Failed to create post" });
   }
 });
 
 // ------------------------------
-// Reset Password
+// GET ALL POSTS
 // ------------------------------
-router.post("/reset-password", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
-    const { token, password } = req.body;
-    if (!token || !password) {
-      return res.status(400).json({ error: "Token and password required" });
-    }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET);
-    } catch {
-      return res.status(400).json({ error: "Invalid or expired token" });
-    }
-
-    const user = await User.findById(decoded.id);
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    const hashed = await bcrypt.hash(password, 10);
-    user.passwordHash = hashed;  // ✅ FIX
-    await user.save();
-
-    res.json({ message: "✅ Password updated successfully" });
+    const posts = await Post.find().sort({ createdAt: -1 });
+    res.json(posts);
   } catch (err) {
-    console.error("Reset password error:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: "Failed to load posts" });
   }
 });
+
+// ------------------------------
+// DELETE POST
+// ------------------------------
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) return res.status(404).json({ error: "Post not found" });
+
+    if (post.user.toString() !== req.user.id && req.user.role !== "admin") {
+      return res.status(403).json({ error: "Not authorized" });
+    }
+
+    await post.deleteOne();
+    res.json({ message: "✅ Post deleted" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete post" });
+  }
+});
+
+export default router;

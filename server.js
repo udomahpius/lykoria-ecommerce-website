@@ -82,6 +82,8 @@ mongoose
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 
+app.use("/api", authRoutes);      // signup, login, reset-password
+app.use("/api/posts", postRoutes); // CRUD for posts
 
 
 // ============================

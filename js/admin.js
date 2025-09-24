@@ -123,40 +123,56 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-  // ============================
-  // Posts
-  // ============================
-  async function loadPosts() {
+// ============================
+// Posts
+// ============================
+async function loadPosts() {
+  try {
+    const res = await fetch(`${BASE_URL}/api/posts`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const text = await res.text(); // always read raw response first
+    let posts;
+
     try {
-      const res = await fetch(`${BASE_URL}/api/posts`, { headers: { Authorization: `Bearer ${token}` } });
-      const posts = await res.json();
-      ui.postsContainer.innerHTML = "";
-      if (!Array.isArray(posts) || !posts.length) {
-        ui.postsContainer.innerHTML = "<p>No posts found</p>";
-        return;
-      }
-      posts.forEach(post => {
-        const div = document.createElement("div");
-        div.classList.add("post-card");
-        div.innerHTML = `
-          <h3>${post.title}</h3>
-          <p><strong>Category:</strong> ${post.category || "N/A"}</p>
-          <p>${post.body?.substring(0, 100)}...</p>
-          ${post.image ? `<img src="${post.image}" />` : ""}
-          <div class="actions">
-            <button class="edit">Edit</button>
-            <button class="delete">Delete</button>
-          </div>
-        `;
-        div.querySelector(".edit").addEventListener("click", () => editPost(post._id));
-        div.querySelector(".delete").addEventListener("click", () => deletePost(post._id));
-        ui.postsContainer.appendChild(div);
-      });
-    } catch (err) {
-      console.error(err);
-      ui.postsContainer.innerHTML = "<p style='color:red'>Error loading posts</p>";
+      posts = JSON.parse(text); // attempt to parse JSON
+    } catch (e) {
+      console.error("❌ Server did not return JSON:", text);
+      ui.postsContainer.innerHTML =
+        "<p style='color:red'>Error: Server returned invalid response</p>";
+      return;
     }
+
+    ui.postsContainer.innerHTML = "";
+
+    if (!Array.isArray(posts) || !posts.length) {
+      ui.postsContainer.innerHTML = "<p>No posts found</p>";
+      return;
+    }
+
+    posts.forEach((post) => {
+      const div = document.createElement("div");
+      div.classList.add("post-card");
+      div.innerHTML = `
+        <h3>${post.title}</h3>
+        <p><strong>Category:</strong> ${post.category || "N/A"}</p>
+        <p>${post.body?.substring(0, 100)}...</p>
+        ${post.image ? `<img src="${post.image}" />` : ""}
+        <div class="actions">
+          <button class="edit">Edit</button>
+          <button class="delete">Delete</button>
+        </div>
+      `;
+      div.querySelector(".edit").addEventListener("click", () => editPost(post._id));
+      div.querySelector(".delete").addEventListener("click", () => deletePost(post._id));
+      ui.postsContainer.appendChild(div);
+    });
+  } catch (err) {
+    console.error("❌ Fetch error:", err);
+    ui.postsContainer.innerHTML = "<p style='color:red'>Error loading posts</p>";
   }
+}
 
   // ============================
   // Create / Update Post
