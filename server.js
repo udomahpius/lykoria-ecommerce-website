@@ -3,20 +3,13 @@
 // ============================
 import express from "express";
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
 import cors from "cors";
-import jwt from "jsonwebtoken";
-import multer from "multer";
-import fs from "fs";
-import cloudinary from "cloudinary";
 import dotenv from "dotenv";
+import cloudinary from "cloudinary";
 
-
-// Routes
-// import router from "./routes/postRoutes.js";
-// app.use("/api", router);
-
-import User from "./models/User.js";
+// Import routes
+import authRoutes from "./routes/authRoutes.js";   // signup, login, reset-password, profile
+import postRoutes from "./routes/postRoutes.js";   // posts CRUD
 
 dotenv.config();
 
@@ -29,7 +22,6 @@ const app = express();
 // Config
 // ============================
 const PORT = process.env.PORT || 5000;
-const SECRET_KEY = process.env.JWT_SECRET || "mySuperSecretKey";
 const MONGO_URI = process.env.MONGO_URI;
 
 // ============================
@@ -56,22 +48,22 @@ const allowedOrigins = [
   process.env.FRONTEND_URL, // hosted frontend URL
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow Postman / curl
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error("CORS policy does not allow access from this origin."), false);
-  },
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow Postman / curl
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      return callback(
+        new Error("CORS policy does not allow access from this origin."),
+        false
+      );
+    },
+    credentials: true,
+  })
+);
 
-// ✅ Fix preflight requests for all paths
+// ✅ Handle preflight requests
 app.options(/.*/, cors());
-
-// ============================
-// Multer (for file uploads)
-// ============================
-const upload = multer({ dest: "/tmp", limits: { fileSize: 5 * 1024 * 1024 } });
 
 // ============================
 // MongoDB Connection
@@ -81,26 +73,6 @@ mongoose
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
-
-app.use("/api", authRoutes);      // signup, login, reset-password
-app.use("/api/posts", postRoutes); // CRUD for posts
-
-
-// ============================
-// Auth Middleware
-// ============================
-function authMiddleware(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  if (!authHeader) return res.status(401).json({ error: "No token provided" });
-
-  const token = authHeader.split(" ")[1];
-  jwt.verify(token, SECRET_KEY, (err, decoded) => {
-    if (err) return res.status(401).json({ error: "Invalid token" });
-    req.userId = decoded.id;
-    next();
-  });
-}
-
 // ============================
 // Routes
 // ============================
@@ -108,97 +80,9 @@ function authMiddleware(req, res, next) {
 // Health check
 app.get("/", (req, res) => res.send("✅ Server is alive"));
 
-// Signup
-app.post("/api/signup", async (req, res) => {
-  try {
-    const { firstName, lastName, email, password, phone, region, role } = req.body;
-
-    if (!firstName || !lastName || !email || !password) {
-      return res.status(400).json({ error: "All required fields must be filled" });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: "Email already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newUser = new User({
-      firstName,
-      lastName,
-      email,
-      passwordHash: hashedPassword,
-      phone,
-      region,
-      role: role === "admin" ? "admin" : "user", // only allow "admin" or "user"
-    });
-
-    await newUser.save();
-
-    res.status(201).json({ success: true, message: "User registered successfully" });
-  } catch (error) {
-    console.error("Signup error:", error.message);
-    res.status(500).json({ error: "Internal server error", details: error.message });
-  }
-});
-
-// Login
-app.post("/api/login", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "User not found" });
-
-    const validPass = await bcrypt.compare(password, user.passwordHash);
-    if (!validPass) return res.status(400).json({ error: "Invalid password" });
-
-    // Include role in JWT payload
-    const token = jwt.sign(
-      { id: user._id, role: user.role },
-      SECRET_KEY,
-      { expiresIn: "1h" }
-    );
-
-    res.json({ 
-      success: true, 
-      token, 
-      role: user.role  // send role back as well
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-// Profile
-app.get("/api/profile", authMiddleware, async (req, res) => {
-  try {
-    const user = await User.findById(req.userId).select("-passwordHash");
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// Categories
-app.get("/api/categories", (req, res) => {
-  const categories = [
-    { key: "health", label: "Health" },
-    { key: "sports", label: "Sports" },
-    { key: "business", label: "Business" },
-    { key: "education", label: "Education" },
-    { key: "entertainment", label: "Entertainment" },
-    { key: "lifestyle", label: "Lifestyle" },
-    { key: "politics", label: "Politics" },
-    { key: "travel", label: "Travel" },
-  ];
-  res.json(categories);
-});
-
-// Post routes
-// import authRoutes from "./routes/authRoutes.js"; // adjust path
-// app.use("/api", authRoutes);
+// Use route files
+app.use("/api", authRoutes);       // signup, login, reset-password, profile, categories
+app.use("/api/posts", postRoutes); // post CRUD (upload, list, delete, etc.)
 
 // ============================
 // Start Server
