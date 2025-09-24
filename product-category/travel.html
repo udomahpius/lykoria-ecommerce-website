@@ -28,7 +28,6 @@
     --banner-text: #ffffff;
     --text-shadow:2px 2px 8px rgba(0,0,0,0.7);
     --border-bottom:1px solid rgba(255,255,255,0.1);
-   
   }
 
   body.dark-mode{
@@ -50,11 +49,6 @@
     --banner-text: #ffffff;
     --text-shadow:2px 2px 8px rgba(0,0,0,0.7)
   } 
-
-  /* body.dark-mode {
-      background: #121212;
-      color: #eaeaea;
-    } */
 
   #toggleTheme {
       display: inline-block;
@@ -81,7 +75,6 @@
   }
   a{color:inherit;}
   
-  
   /* Header */
 header {
   display:flex;
@@ -98,9 +91,8 @@ header {
 .scrollBg{
   background-color:#021c42;
   padding:25px 30px;
-    transition:0.7s ease-in-out;
-box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
-
+  transition:0.7s ease-in-out;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
 
 header h1 {
@@ -129,12 +121,6 @@ nav a:hover {
 }
 
 /* User dropdown */
-.dropdown-content{
-    background-color: var(--bg-color);
-    width:300px;
-    position:relative;
-  
-  }
 .dropbtn {
   background: var(--dropdown-hover-bg);
   color:var(--header-text);
@@ -144,6 +130,7 @@ nav a:hover {
   cursor:pointer;
 }
 
+/* Default dropdown hidden */
 .dropdown-content {
   display:none;
   position:absolute;
@@ -165,8 +152,11 @@ nav a:hover {
   color:var(--header-text);
 }
 
-.user-dropdown:hover .dropdown-content {
-  display:block;
+/* Desktop hover dropdown only */
+@media(min-width:901px){
+  .user-dropdown:hover .dropdown-content {
+    display:block;
+  }
 }
 
 /* Toggle button */
@@ -184,6 +174,7 @@ nav a:hover {
 .nav-toggle:hover {
   background:var(--dropdown-hover-bg);
 }
+
 /* Overlay */
 .overlay {
   position: fixed;
@@ -201,19 +192,18 @@ nav a:hover {
 
 .overlay.show {
   display:block;
-  opacity:1;
-  opacity: 0.9;
+  opacity:0.9;
 }
 
 /* Mobile */
-@media(max-width:768px){
+@media(max-width:900px){
   nav {
     position:fixed;
     top:0;
     right:-100%;
     height:100%;
     width:70%;
-    overflow-y: scroll;
+    overflow-y: auto;
     max-width:280px;
     background: var(--header-bg);
     flex-direction:column;
@@ -221,7 +211,6 @@ nav a:hover {
     padding:80px 20px;
     gap:20px;
     transition:right 0.4s ease-in-out;
-
     box-shadow:var(--text-shadow);
   }
 
@@ -234,64 +223,51 @@ nav a:hover {
 
   .nav-toggle { display:block; }
 
-  .user-dropdown{
+  .user-dropdown {
+    position: relative;
     width: 100%;
-    background-color: var(--dropdown-hover-bg);
   }
-  .dropdown-content{
-    background-color: var(--bg-color);
+
+  .dropbtn {
     width: 100%;
+    text-align: left;
+    padding: 12px;
+    background: var(--header-bg);
+    border: none;
+    cursor: pointer;
+  }
+
+  .dropdown-content {
+    display: none !important;   /* hidden until toggled */
+    position: static;           /* no absolute on mobile */
+    width: 100%;
+    background: var(--header-bg);
+    flex-direction: column;
+  }
+
+  .user-dropdown.open .dropdown-content {
+    display: block !important;  /* shown when .open is toggled */
+  }
+
+  .dropdown-content a {
+    display: block;
+    padding: 12px;
+    border-bottom: var(--border-bottom);
+    color: var(--header-text);
   }
 }
 
 /* Logo container (h1) */
-.logo {
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-}
+.logo { margin: 0; padding: 0; line-height: 1; }
+.logo img { max-width:110px; height: auto; display: block; object-fit: contain; transition: transform .2s ease, filter .2s ease; cursor: pointer; }
+.logo img:hover { transform: scale(1.05); filter: brightness(1.05); }
+@media (max-width: 992px) { .logo img { max-width: 150px; } }
+@media (max-width: 600px) { .logo img { max-width: 120px; } }
+@media (max-width: 400px) { .logo img { max-width: 100px; } }
 
-/* Logo image */
-.logo img {
-  max-width:110px;        /* reasonable default size */
-  height: auto;            /* keeps aspect ratio */
-  display: block;          /* remove inline gaps */
-  object-fit: contain;     /* prevents distortion */
-  transition: transform .2s ease, filter .2s ease;
-  cursor: pointer;         /* optional, makes it clickable if linked */
-}
-
-/* Hover effect for desktop */
-.logo img:hover {
-  transform: scale(1.05);
-  filter: brightness(1.05);
-}
-
-/* Tablet screens */
-@media (max-width: 992px) {
-  .logo img {
-    max-width: 150px;
-  }
-}
-
-/* Mobile screens */
-@media (max-width: 600px) {
-  .logo img {
-    max-width: 120px;
-  }
-}
-
-/* Extra small devices */
-@media (max-width: 400px) {
-  .logo img {
-    max-width: 100px;
-  }
-}
-
-
-    .posts { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; }
-    .post { border: 1px solid #ccc; border-radius: 6px; padding: 10px; width: 30%; }
-    .post img { max-width: 100%; border-radius: 6px; }
+.posts { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; }
+.post { border: 1px solid #ccc; border-radius: 6px; padding: 10px; width: 30%; }
+.post img { max-width: 100%; border-radius: 6px; }
   </style>
 </head>
 <body>
@@ -300,7 +276,7 @@ nav a:hover {
   <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
 
   <nav id="navMenu" aria-label="Main navigation">
-    <a href="../index.html">Home</a>
+    <a href="index.html">Home</a>
     <a href="health.html">Health</a>
     <a href="sports.html">Sports</a>
     <a href="business.html">Business</a>
@@ -319,21 +295,19 @@ nav a:hover {
         <a href="#" id="toggleTheme">🌙 Dark Mode</a>
       </div>
     </div>
-
   </nav>
 </header>
 <!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
-
-  <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
-  <div id="categoryPosts" class="posts"></div>
+<h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
+<div id="categoryPosts" class="posts"></div>
 
 <script>
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
 
-// 🔍 Detect category from filename (e.g., health.html → "health")
+// Detect category
 const CATEGORY = window.location.pathname.split("/").pop().replace(".html", "").toLowerCase();
 
 async function loadCategory() {
@@ -345,39 +319,27 @@ async function loadCategory() {
     if (!res.ok) throw new Error("Failed to fetch posts");
 
     const posts = await res.json();
+    const sortedPosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    // Sort newest → oldest
-    const sortedPosts = posts.sort(
-      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-    );
-
-    // Capitalize category label for UI
     const categoryLabel = CATEGORY.charAt(0).toUpperCase() + CATEGORY.slice(1);
     titleEl.innerText = `${categoryLabel} Posts`;
     document.title = `${categoryLabel} - Lykoria`;
 
     if (!sortedPosts.length) {
-      postsContainer.innerHTML = `
-        <p style="width:100%; text-align:center; padding:2rem; color:#555;">
-          No posts found for ${categoryLabel}.
-        </p>
-      `;
+      postsContainer.innerHTML = `<p style="width:100%; text-align:center; padding:2rem; color:#555;">
+        No posts found for ${categoryLabel}.
+      </p>`;
       return;
     }
 
-    // Render posts
-    postsContainer.innerHTML = sortedPosts
-      .map(
-        (p) => `
-        <div class="post">
-          <h3>${p.title}</h3>
-          ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
-          <p>${p.body.substring(0, 150)}...</p>
-          <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
-        </div>
-      `
-      )
-      .join("");
+    postsContainer.innerHTML = sortedPosts.map((p) => `
+      <div class="post">
+        <h3>${p.title}</h3>
+        ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
+        <p>${p.body.substring(0, 150)}...</p>
+        <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
+      </div>
+    `).join("");
   } catch (err) {
     console.error("Category load error:", err);
     postsContainer.innerHTML = `
@@ -385,14 +347,74 @@ async function loadCategory() {
                  width:100%; background:lightgray; padding:3rem 1rem; font-weight:lighter;">
         ⚠️ Failed to load posts.<br>
         ${err.message || "Check your internet connection..."}
-      </h1>
-    `;
+      </h1>`;
   }
 }
 
 document.addEventListener("DOMContentLoaded", loadCategory);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const navToggle = document.getElementById('navToggle');
+  const navMenu = document.getElementById('navMenu');
+  const overlay = document.getElementById('overlay');
+  const toggleThemeBtn = document.getElementById('toggleTheme');
+  const userDropdown = document.getElementById('userDropdown');
+  const userDropBtn = document.getElementById('userDropBtn');
+
+  // Toggle mobile nav
+  navToggle.addEventListener('click', () => {
+    const active = navMenu.classList.toggle('active');
+    overlay.classList.toggle('show', active);
+  });
+
+  function closeMenu(){
+    navMenu.classList.remove('active');
+    overlay.classList.remove('show');
+  }
+
+  document.querySelectorAll('#navMenu a').forEach(a => a.addEventListener('click', closeMenu));
+  overlay.addEventListener('click', closeMenu);
+
+  document.addEventListener('click', (e) => {
+    if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
+      closeMenu();
+    }
+  });
+
+  // Dark/Light toggle
+  let changeTheme = true;
+  toggleThemeBtn.addEventListener("click", () =>{
+    if (changeTheme) {
+      document.body.classList.add("dark-mode");
+      toggleThemeBtn.innerHTML = "☀️ Light Mode";
+      changeTheme = false;
+    } else {
+      document.body.classList.remove("dark-mode");
+      toggleThemeBtn.innerHTML = "🌙 Dark Mode";
+      changeTheme = true;
+    }
+  });
+
+  // Mobile dropdown toggle
+  if (userDropBtn) {
+    userDropBtn.addEventListener('click', (e) => {
+      if (window.innerWidth <= 900) {
+        e.preventDefault();
+        userDropdown.classList.toggle('open');
+        const expanded = userDropdown.classList.contains('open');
+        userDropBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      }
+    });
+  }
+
+  window.addEventListener("scroll", () =>{
+    if(window.scrollY >= 200){
+      document.querySelector(".h").classList.add("scrollBg");
+    } else {
+      document.querySelector(".h").classList.remove("scrollBg");
+    }
+  });
+});
 </script>
-
-
 </body>
 </html>

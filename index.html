@@ -208,7 +208,7 @@ nav a:hover {
 }
 
 /* Mobile */
-@media(max-width:768px){
+@media(max-width:900px){
   nav {
     position:fixed;
     top:0;
@@ -652,7 +652,7 @@ if (changeTheme == true) {
   if (userDropBtn) {
     userDropBtn.addEventListener('click', (e) => {
       // if mobile, toggle inline
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 900) {
         e.preventDefault();
         userDropdown.classList.toggle('open');
         const expanded = userDropdown.classList.contains('open');
