@@ -1,65 +1,38 @@
-// ====== API BASE ======
-const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
+const BASE_URL = "https://lykoria-ecommerce-website.onrender.com"; // Your API base
 const API_URL = `${BASE_URL}/api/posts`;
-const CATEGORY_API = `${BASE_URL}/api/categories`;
 
-// ====== LOAD CATEGORY POSTS ======
-async function loadCategory(categoryKey, categoryLabel) {
+// ===== Load 12 latest posts per category =====
+async function loadCategory(categoryKey, containerId) {
   try {
-    const res = await fetch(`${API_URL}?category=${categoryKey}&status=published&limit=6`);
-    if (!res.ok) throw new Error(`Failed to load ${categoryLabel} posts`);
-
+    // Fetch latest 12 posts per category
+    const res = await fetch(`${API_URL}?category=${categoryKey}&status=published&limit=12`);
     const posts = await res.json();
 
-    const section = document.createElement("section");
-    section.innerHTML = `
-      <h2><a href="./product-category/${categoryKey}.html">${categoryLabel}</a></h2>
-      <div class="posts-grid">
-        ${
-          posts.length > 0
-            ? posts
-                .map(
-                  (post) => `
-          <div class="post-card">
-            <span class="badge">${post.category}</span>
-            ${post.image ? `<img src="${post.image}" alt="${post.title}">` : ""}
-            <div class="post-card-content">
-              <h3>${post.title}</h3>
-              <p>${post.body ? post.body.substring(0, 100) : ""}...</p>
-              <a href="${post.url}" target="_blank" class="read-more">
-                ${post.urlText || "Read more"}
-              </a>
-            </div>
-          </div>
-        `
-                )
-                .join("")
-            : `<p>No posts available in ${categoryLabel}</p>`
-        }
+    const container = document.getElementById(containerId);
+    container.innerHTML = posts.map(post => `
+      <div class="post-card">
+        <span class="badge">${post.category}</span>
+        ${post.image ? `<img src="${post.image}" alt="${post.title}">` : ""}
+        <div class="post-card-content">
+          <h3>${post.title}</h3>
+          <p>${post.body}</p>
+          <a href="${post.url}" target="_blank" class="read-more">
+            ${post.urlText || "Read more"}
+          </a>
+        </div>
       </div>
-    `;
-    document.getElementById("categories").appendChild(section);
-  } catch (err) {
-    console.error(`Error loading ${categoryKey}:`, err);
-    const fallback = document.createElement("section");
-    fallback.innerHTML = `
-      <h2>${categoryLabel}</h2>
-      <p style="color:red;">⚠️ Failed to load posts. Please try again later.</p>
-    `;
-    document.getElementById("categories").appendChild(fallback);
+    `).join("");
+  } catch (error) {
+    console.error(`Error loading ${categoryKey} posts:`, error);
   }
 }
 
-// ====== INIT ======
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await fetch(CATEGORY_API);
-    if (!res.ok) throw new Error("Failed to fetch categories");
-    const categories = await res.json();
-
-    // loop through categories dynamically
-    categories.forEach((cat) => loadCategory(cat.key, cat.label));
-  } catch (err) {
-    console.error("Error loading categories:", err);
-  }
+// ===== Call categories for homepage =====
+document.addEventListener("DOMContentLoaded", () => {
+  loadCategory("health", "health-posts");
+  loadCategory("entertainment", "entertainment-posts");
+  loadCategory("sports", "sports-posts");
+  loadCategory("technology", "technology-posts");
+  loadCategory("education", "education-posts");
+  loadCategory("religion", "religion-posts");
 });

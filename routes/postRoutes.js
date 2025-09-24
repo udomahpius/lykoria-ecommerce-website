@@ -48,15 +48,21 @@ router.post("/", authMiddleware, upload.single("image"), async (req, res) => {
   }
 });
 
-// ------------------------------
-// GET ALL POSTS
-// ------------------------------
 router.get("/", async (req, res) => {
   try {
-    const posts = await Post.find().sort({ createdAt: -1 });
+    const { category, status, limit } = req.query;
+
+    let query = {};
+    if (category) query.category = category;
+    if (status) query.status = status;
+
+    const posts = await Post.find(query)
+      .sort({ createdAt: -1 }) // newest first
+      .limit(parseInt(limit) || 0);
+
     res.json(posts);
   } catch (err) {
-    res.status(500).json({ error: "Failed to load posts" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 
