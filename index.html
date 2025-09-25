@@ -1,677 +1,812 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Shop</title>
-<style>
- /* -------------------------
-     THEME VARIABLES
-     ------------------------- */
-  :root{
-    --bg-color: #ffffff;
-    --text-color: #1e1e2f;
-    --header-bg: #030346;
-    --header-text: #ffffff;
-    --accent: #007BFF;
-    --accent-2: #00CFFF;
-    --dropdown-bg: #ffffff;
-    --dropdown-text: #333333;
-    --dropdown-hover-bg: var(--accent);
-    --dropdown-hover-text: #ffffff;
-    --link-hover: rgba(0,0,0,0.06);
-    --card-bg: #ffffff;
-    --card-text: #1e1e2f;
-    --card-desc: #555555;
-    --footer-bg: #1e1e2f;
-    --footer-text: #ffffff;
-    --banner-overlay: linear-gradient(rgba(3, 41, 51, 0.831), rgba(19, 2, 2, 0.731));
-    --banner-text: #ffffff;
-    --text-shadow:2px 2px 8px rgba(0,0,0,0.7);
-    --border-bottom:1px solid rgba(255,255,255,0.1);
-   
-  }
-
-  body.dark-mode{
-    --bg-color: #000000da;
-    --text-color: #e6e6e6;
-    --header-bg: #0b0d10;
-    --header-text: #ffffff;
-    --dropdown-bg: #1f2226;
-    --dropdown-text: #e6e6e6;
-    --dropdown-hover-bg: #2f3438;
-    --dropdown-hover-text: #ffffff;
-    --link-hover: rgba(255,255,255,0.06);
-    --card-bg: #131417;
-    --card-text: #e6e6e6;
-    --card-desc: #bfbfbf;
-    --footer-bg: #0b0d10;
-    --footer-text: #ffffff;
-    --banner-overlay: linear-gradient(rgba(1, 17, 21, 0.954), rgba(19, 2, 2, 0.731));
-    --banner-text: #ffffff;
-    --text-shadow:2px 2px 8px rgba(0,0,0,0.7)
-  } 
-
-  /* body.dark-mode {
-      background: #121212;
-      color: #eaeaea;
-    } */
-
-  #toggleTheme {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #007BFF;
-      color: #fff;
-      border-radius:0;
-      text-decoration: none;
-      cursor: pointer;
-      width: 100%;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Shop - E-Commerce</title>
+  <style>
+    :root {
+      --bg-color: #fff;
+      --text-color: #1e1e2f;
+      --header-bg: #FF6600;
+      --header-text: #fff;
+      --accent: #FF6600;
+      --accent-2: #FF9900;
+      --dropdown-bg: #fff;
+      --dropdown-text: #333;
+      --dropdown-hover-bg: var(--accent);
+      --dropdown-hover-text: #fff;
+      --card-bg: #fff;
+      --card-text: #1e1e2f;
+      --card-desc: #555;
+      --footer-bg: #1e1e2f;
+      --footer-text: #fff;
     }
 
-  /* -------------------------
-     GLOBAL
-     ------------------------- */
-  *{box-sizing:border-box;margin:0;padding:0;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-  html,body{height:100%;}
-  body{
-    background:var(--bg-color);
-    color:var(--text-color);
-    transition: background .25s ease, color .25s ease;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;}
-  
-  
-  /* Header */
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background: var(--header-bg);
-  color: var(--header-text);
-  padding:15px 20px;
-  position:fixed;
-  top:0;
-  z-index:1000;
-  width: 100%;
-}
-.scrollBg{
-  background-color:#021c42;
-  padding:25px 30px;
-    transition:0.7s ease-in-out;
-box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    body.dark-mode {
+      --bg-color: #000;
+      --text-color: #e6e6e6;
+      --header-bg: #0b0d10;
+      --header-text: #fff;
+      --dropdown-bg: #1f2226;
+      --dropdown-text: #e6e6e6;
+      --dropdown-hover-bg: #2f3438;
+      --dropdown-hover-text: #fff;
+      --card-bg: #131417;
+      --card-text: #e6e6e6;
+      --card-desc: #bfbfbf;
+      --footer-bg: #0b0d10;
+      --footer-text: #fff;
+    }
 
-}
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+    }
 
-header h1 {
-  margin:0;
-  font-size:24px;
-}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-/* Nav links */
-nav {
-  display:flex;
-  gap:13px;
-  align-items:center;
-  z-index:1000;
-}
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 3px 15px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: 0.3s;
+    }
 
-nav a {
-  color: var(--header-text);
-  text-decoration:none;
-  padding:8px 14px;
-  border-radius:6px;
-  transition:0.3s;
-}
+    .scrollBg {
+      background: #E65C00;
+      padding: 10px 15px;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
 
-nav a:hover {
-  background: var(--link-hover);
-}
+    .logo img {
+      max-width: 60px;
+      height: auto;
+      cursor: pointer;
+    }
 
-/* User dropdown */
-.dropdown-content{
-    background-color: var(--bg-color);
-    width:300px;
-    position:relative;
-  
-  }
-.dropbtn {
-  background: var(--dropdown-hover-bg);
-  color:var(--header-text);
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-}
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+      flex: 1;
+      justify-content: center;
+      margin: auto 2.5rem;
+    }
 
-.dropdown-content {
-  display:none;
-  position:absolute;
-  right:0;
-  background:var(--bg-color);
-  min-width:160px;
-  box-shadow:var(--text-shadow);
-  z-index:2000;
-}
+    .nav-links-dropdown {
+      position: relative;
+    }
 
-.dropdown-content a {
-  display:block;
-  padding:10px;
-  color:var(--dropdown-text);
-}
+    .nav-links-dropdown button {
+      background: none;
+      color: #fff;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 6px;
+    }
 
-.dropdown-content a:hover {
-  background:var(--dropdown-hover-bg);
-  color:var(--header-text);
-}
+    .nav-links-dropdown-content {
+      display: none;
+      position: absolute;
+      top: 35px;
+      left: 0;
+      width: 100%;
+      background: var(--dropdown-bg);
+      color: var(--dropdown-text);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.3s;
+    }
 
-.user-dropdown:hover .dropdown-content {
-  display:block;
-}
+    .nav-links-dropdown-content .column {
+      width: 100%;
+      padding: 10px;
+      float: left;
+    }
 
-/* Toggle button */
-.nav-toggle {
-  display:none;
-  font-size:28px;
-  cursor:pointer;
-  background:var(--dropdown-hover-bg);
-  color:var(--header-text);
-  padding:6px 12px;
-  border-radius:6px;
-  transition:0.3s;
-}
+    .nav-links-dropdown-content a {
+      display: block;
+      padding: 5px 0;
+      color: var(--dropdown-text);
+    }
 
-.nav-toggle:hover {
-  background:var(--dropdown-hover-bg);
-}
+    .nav-links-dropdown-content a:hover {
+      color: var(--dropdown-hover-text);
+      background: var(--dropdown-hover-bg);
+    }
 
-/* Overlay */
-.overlay {
-  position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:var(--header-bg);
-  opacity: 0.9;
-  display:none;
-  z-index:900;
-  opacity:0;
-  transition: opacity 0.3s ease;
-}
+    .nav-links-dropdown:hover .nav-links-dropdown-content {
+      display: block;
+      opacity: 1;
+      visibility: visible;
+    }
 
-.overlay.show {
-  display:block;
-  opacity:1;
-  opacity: 0.9;
-}
+    .nav-toggle {
+      display: none;
+      font-size: 28px;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+    }
 
-/* Mobile */
-@media(max-width:900px){
-  nav {
-    position:fixed;
-    top:0;
-    right:-100%;
-    height:100%;
-    width:70%;
-    overflow-y: scroll;
-    max-width:280px;
-    background: var(--header-bg);
-    flex-direction:column;
-    align-items:flex-start;
-    padding:80px 20px;
-    gap:20px;
-    transition:right 0.4s ease-in-out;
+    .nav-toggle:hover {
+      background: var(--accent-2);
+    }
+    .dropbtn{
+      color:white;
+      background-color: #e6e6e6 !important;
+    }
 
-    box-shadow:var(--text-shadow);
-  }
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      z-index: 900;
+      opacity: 0;
+      transition: 0.3s;
+    }
 
-  nav.active { right:0; }
+    .overlay.show {
+      display: block;
+      opacity: 1;
+    }
 
-  nav a {
-    width:100%;
-    border-bottom:var(--border-bottom);
-  }
+    .user-dropdown {
+      position: relative;
+      margin-left: 10px;
+    }
 
-  .nav-toggle { display:block; }
+    .user-dropdown .dropbtn {
+      background: none;
+      color: #fff;
+      border: none;
+      padding: 5px;
+      font-size: 28px;
+      cursor: pointer;
+    }
 
-  .user-dropdown{
-    width: 100%;
-    background-color: var(--dropdown-hover-bg);
-  }
-  .dropdown-content{
-    background-color: var(--bg-color);
-    width: 100%;
-  }
-}
+    .user-dropdown .dropdown-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background: var(--dropdown-bg);
+      min-width: 160px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      z-index: 2000;
+      border-radius: 6px;
+    }
 
+    .user-dropdown .dropdown-content a {
+      display: block;
+      padding: 8px;
+      color: var(--dropdown-text);
+    }
 
+    .user-dropdown .dropdown-content a:hover {
+      background: var(--dropdown-hover-bg);
+      color: #fff;
+    }
 
-/* Banner */
-  .banner { background:url('https://via.placeholder.com/1200x350?text=Shop+The+Best+Products') center/cover no-repeat; height:350px; display:flex; justify-content:center; align-items:center; font-size:36px; color:var(--header-text); text-shadow:var(--text-shadow); margin-bottom:30px; font-weight:bold; border-radius:12px; }
+    .user-dropdown.open .dropdown-content {
+      display: block;
+    }
 
-  /* Container */
-  .container { max-width:1200px; margin:0 auto; padding:20px; }
+    .search-bar {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
 
-  /* Category Section */
-  .category-section { margin-bottom:50px; }
-  .category-section h2 { font-size:28px; margin-bottom:20px; color:var(--card-text); }
-  .category-section h2 a { text-decoration:none; color:var(--card-text); transition:0.3s; }
-  .category-section h2 a:hover { color:var(--dropdown-hover-bg); }
+    .search-bar input {
+      padding: 12px 4rem  12px 12px;
+      border-radius: 6px;
+      border: none;
+      width: 70%;
+      max-width: 400px;
+    }
 
-/* Posts Grid */
-.posts-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 25px;
-  width: 100%;
-}
+    .search-bar input:focus {
+      outline: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
 
-/* Redesigned Post Card */
-.post-card {
-  background:var(--bg-color);
-  border-radius: 12px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding: 15px;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
-  
-}
+    .sticky-cart {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 50px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
 
-.post-card:hover {
-  transform: translateY(-7px);
-  box-shadow: var(--text-shadow);
-}
+    .sticky-cart:hover {
+      background: var(--accent-2);
+    }
 
-/* Badge for category or status */
-.post-card .badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: var(--dropdown-hover-bg);
-  color:var(--header-text);
-  font-size: 12px;
-  font-weight: bold;
-  padding: 5px 10px;
-  border-radius: 20px;
-  text-transform: uppercase;
-}
+    /* Banner */
+    .banner {
+      position: relative;
+      height: 400px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      margin-top: 60px;
+      border-radius: 12px;
+    }
 
-/* Card Image */
-.post-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-bottom:var(--border-bottom);
-  transition: transform 0.3s;
-}
+    .banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
-.post-card:hover img {
-  transform: scale(1.05);
-}
+    .banner-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+    }
 
-/* Card Content */
-.post-card-content {
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .banner-content {
+      position: absolute;
+      z-index: 2;
+      text-align: center;
+      color: #fff;
+    }
 
-/* Title */
-.post-card h3 {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--card-text);
-  margin: 0;
-}
+    .banner-content h1 {
+      font-size: 28px;
+      margin: 0;
+    }
 
-/* Description */
-.post-card p {
-  font-size: 14px;
-  color: var(--card-desc);
-  line-height: 1.5;
-  flex-grow: 1;
-}
+    .banner-content p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
 
-/* Call-to-action button */
-.post-card .read-more {
-  text-decoration: none;
-  text-align: center;
-  background: var(--dropdown-hover-bg);
-  color: var(--header-text);
-  padding: 10px 0;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: 0.3s;
-}
+    .banner-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      border-radius: 999px;
+      background: var(--accent);
+      transition: 0.3s;
+    }
 
-.post-card .read-more:hover {
-  background: var(--dropdown-hover-bg);
-}
-  /* Footer */
-  footer { background:var(--footer-bg); color:var(--header-text); text-align:center; padding:25px 10px; border-radius:12px 12px 0 0; margin-top:40px; }
-  footer a { color:var(--dropdown-hover-text); margin:0 8px; text-decoration:none; transition:0.3s; }
-  footer a:hover { color:var(--dropdown-hover-bg); }
+    .banner-btn:hover {
+      background: var(--accent-2);
+      transform: translateY(-2px);
+    }
 
-  /* Responsive */
-  @media screen and (max-width:700px){
-    .banner { font-size:26px; height:200px; }
-    .post-card img { height:100%;width: 100%; }
-    .category-section h2 { font-size:22px; }
-    .post-card h3 { font-size:16px; }
-    .post-card p { font-size:13px; }
-   
-  }
-/* Banner with video */
-.banner {
-  position: relative;
-  height: 500px;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+    /* Hot Deals Carousel */
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      gap: 15px;
+      padding: 10px;
+    }
 
-.banner-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-}
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
 
-.banner-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--banner-overlay);
-  background-blend-mode: soft-light;
-  z-index: 2;
-}
-.banner-overlay.dark-mode{
-  background: var(--banner-overlay);
-}
-.banner-content {
-  position: relative;
-  z-index: 3;
-  text-align: center;
-  color: var(--banner-text);
-  padding: 20px;
-  animation: fadeInUp 1s ease forwards;
-}
-/* Modern primary banner call-to-action button */
-.banner-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;                         /* space for optional icon + text */
-  padding: 14px 28px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--banner-text);
-  text-decoration: none;
-  border-radius: 999px;              /* pill shape */
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 -2px 0 rgba(255,255,255,0.06);
-  transition: transform .18s cubic-bezier(.2,.9,.3,1), box-shadow .18s ease, filter .18s ease;
-  will-change: transform;
-  -webkit-tap-highlight-color: transparent;
-  border: 0;
-  cursor: pointer;
-}
+    .carousel-item {
+      min-width: 200px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
 
-/* Hover / focus states */
-.banner-btn:hover,
-.banner-btn:focus {
-  transform: translateY(-4px);
-  box-shadow: 0 18px 40px rgba(0,0,0,0.18);
-  outline: none;
-  filter: saturate(1.05);
-}
+    .carousel-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+    }
 
-/* Active (pressed) */
-.banner-btn:active {
-  transform: translateY(-1px) scale(.995);
-  box-shadow: 0 10px 22px rgba(0,0,0,0.12);
-}
+    .carousel-item .carousel-content {
+      padding: 10px;
+      text-align: center;
+    }
 
-/* Focus-visible for keyboard users */
-.banner-btn:focus-visible {
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12), 0 0 0 4px rgba(0,123,255,0.14);
-  outline: none;
-}
+    .carousel-item h4 {
+      margin: 5px 0;
+      font-size: 16px;
+    }
 
-/* Disabled state (if you add aria-disabled or .disabled) */
-.banner-btn[aria-disabled="true"],
-.banner-btn.disabled {
-  pointer-events: none;
-  opacity: 0.6;
-  transform: none;
-  box-shadow: none;
-  filter: grayscale(.05);
-}
+    .carousel-item p {
+      font-size: 14px;
+      color: var(--card-desc);
+    }
 
-/* Optional: small icon inside the button */
-.banner-btn .icon {
-  display: inline-block;
-  width: 18px;
-  height: 18px;
-  flex: 0 0 18px;
-}
+    /* Products Grid */
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
 
-/* Make CTA full-width on small screens for easier tapping */
-@media (max-width: 700px) {
-  .banner-btn {
-    display: block;
-    width: calc(100% - 40px);
-    margin: 1.5rem  auto 0 auto;
-    padding: 12px 20px;
-    font-size: 16px;
-  }
-.banner-content{
-  margin-top: 3rem;
-}
-.banner{
-  width: 100%;
-  height: 100%;
-}
-}
+    .section-title {
+      font-size: 22px;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
 
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
 
-/* Logo container (h1) */
-.logo {
-  margin: 0;
-  padding: 0;
-  line-height: 1;
-}
+    .post-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: 0.3s;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
 
-/* Logo image */
-.logo img {
-  max-width:110px;        /* reasonable default size */
-  height: auto;            /* keeps aspect ratio */
-  display: block;          /* remove inline gaps */
-  object-fit: contain;     /* prevents distortion */
-  transition: transform .2s ease, filter .2s ease;
-  cursor: pointer;         /* optional, makes it clickable if linked */
-}
+    .post-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
 
-/* Hover effect for desktop */
-.logo img:hover {
-  transform: scale(1.05);
-  filter: brightness(1.05);
-}
+    .post-card-content {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
 
-/* Tablet screens */
-@media (max-width: 992px) {
-  .logo img {
-    max-width: 150px;
-  }
-}
+    .post-card h3 {
+      font-size: 16px;
+      margin: 0;
+    }
 
-/* Mobile screens */
-@media (max-width: 600px) {
-  .logo img {
-    max-width: 120px;
-  }
-}
+    .post-card p {
+      font-size: 14px;
+      color: var(--card-desc);
+      margin: 0;
+    }
 
-/* Extra small devices */
-@media (max-width: 400px) {
-  .logo img {
-    max-width: 100px;
-  }
-}
+    .post-card .read-more {
+      margin-top: auto;
+      text-align: center;
+      padding: 8px 0;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      font-weight: 600;
+    }
 
+    .post-card .read-more:hover {
+      background: var(--accent-2);
+    }
 
-</style>
+    /* Newsletter */
+    .newsletter {
+      background: var(--accent);
+      color: #fff;
+      text-align: center;
+      padding: 25px 15px;
+      margin: 30px 0;
+      border-radius: 12px;
+    }
+
+    .newsletter input {
+      padding: 10px 15px;
+      border-radius: 6px;
+      border: none;
+      width: 250px;
+      max-width: 80%;
+      margin-right: 10px;
+    }
+
+    .newsletter button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent-2);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .newsletter button:hover {
+      background: var(--accent);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg);
+      color: var(--footer-text);
+      text-align: center;
+      padding: 25px 15px;
+      margin-top: 40px;
+    }
+
+    footer a {
+      color: #fff;
+      margin: 0 8px;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media(max-width:900px) {
+      nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100%;
+        width: 80%;
+        max-width: 280px;
+        background: var(--header-bg);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 70px 15px;
+        gap: 15px;
+        transition: right 0.4s;
+        justify-content: flex-start;
+        overflow-y: scroll;
+        margin: auto;
+      }
+
+      nav.active {
+        right: 0;
+      }
+
+      .nav-links-dropdown-content,
+      .user-dropdown .dropdown-content {
+        position: static;
+        width: 100%;
+        box-shadow: none;
+        opacity: 1;
+        visibility: visible;
+        display: grid;
+        grid-template-columns: 1fr;
+        padding: 0;
+      }
+
+      .nav-links-dropdown button {
+        width: 100%;
+        text-align: left;
+        font-size: 16px;
+        padding: 10px 0;
+      }
+
+      .search-bar {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 10px;
+      }
+
+      .search-bar input {
+        width: calc(100% - 30px);
+      }
+
+      .user-dropdown .dropbtn {
+        font-size: 32px;
+      }
+
+      .nav-toggle {
+        display: block;
+       margin: auto 2rem !important;
+
+      }
+    }
+
+    @media(max-width:600px) {
+      .banner-content h1 {
+        font-size: 20px;
+      }
+
+      .banner-content p {
+        font-size: 14px;
+      }
+
+      .banner-btn {
+        font-size: 14px;
+        padding: 8px 16px;
+      }
+
+      .post-card img {
+        height: 120px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<header class="h">
-  <h1 class="logo"><img src="./assets/logo.png" alt="" srcset=""></h1>
-  <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
-
-  <nav id="navMenu" aria-label="Main navigation">
-    <a href="index.html">Home</a>
-    <a href="./product-category/health.html">Health</a>
-    <a href="./product-category/sports.html">Sports</a>
-    <a href="./product-category/business.html">Business</a>
-    <a href="./product-category/education.html">Education</a>
-    <a href="./product-category/entertainment.html">Entertainment</a>
-    <a href="./product-category/lifestyle.html">Lifestyle</a>
-    <a href="./product-category/politics.html">Politics</a>
-        <a href="./product-category/travel.html">Travel</a>
-
-
-    <div class="user-dropdown" id="userDropdown">
-      <button class="dropbtn" id="userDropBtn" aria-haspopup="true" aria-expanded="false">User ▾</button>
-      <div class="dropdown-content" id="userDropdownContent">
-        <a href="./html/login.html">Login</a>
-        <a href="./html/signup.html">Signup</a>
-        <a href="./html/admin.html">Admin</a>
-        <a href="#" id="toggleTheme">🌙 Dark Mode</a>
+  <header class="h">
+    <h1 class="logo"><img src="./assets/logo.png" alt="Logo"></h1>
+    <button class="nav-toggle" id="navToggle">☰</button>
+    <nav id="navMenu">
+      <div class="nav-links-dropdown" id="navLinksDropdown">
+        <button>Categories ▾</button>
+        <div class="nav-links-dropdown-content">
+          <div class="column"><a href="#">Health</a><a href="#">Sports</a><a href="#">Business</a></div>
+          <div class="column"><a href="#">Education</a><a href="#">Entertainment</a><a href="#">Lifestyle</a></div>
+          <div class="column"><a href="#">Politics</a><a href="#">Travel</a><a href="#">Home</a></div>
+        </div>
       </div>
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search products...">
+      </div>
+      <div class="user-dropdown" id="userDropdown">
+        <button class="dropbtn">👤 ▾</button>
+        <div class="dropdown-content">
+          <a href="#">Login</a>
+          <a href="#">Signup</a>
+          <a href="#">Admin</a>
+          <a href="#" id="toggleTheme">🌙 Dark Mode</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="overlay" id="overlay"></div>
+
+  <div class="banner">
+    <img src="https://via.placeholder.com/1200x400" alt="Banner">
+    <div class="banner-overlay"></div>
+    <div class="banner-content">
+      <h1>Boost Your Income with Top Affiliate Programs</h1>
+      <p>Join or promote the best affiliate programs & start earning today!</p>
+      <a href="#" class="banner-btn">Get Started</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="section-title">Hot Deals</div>
+    <div class="carousel" id="hotDeals"></div>
+    <div class="container">
+      <h2 class="section-title">Health</h2>
+      <div class="posts-grid" id="health-posts"></div>
+
+      <h2 class="section-title">Entertainment</h2>
+      <div class="posts-grid" id="entertainment-posts"></div>
+
+      <h2 class="section-title">Sports</h2>
+      <div class="posts-grid" id="sports-posts"></div>
+
+      <h2 class="section-title">Technology</h2>
+      <div class="posts-grid" id="technology-posts"></div>
+
+      <h2 class="section-title">Education</h2>
+      <div class="posts-grid" id="education-posts"></div>
+
     </div>
 
-  </nav>
-</header>
 
 
-<!-- Overlay -->
-<div class="overlay" id="overlay"></div>
-<!-- Banner Section -->
-<div class="banner">
-  <video autoplay muted loop playsinline class="banner-video">
-    <source src="./assets/b.mp4" type="video/mp4">
-  </video>
+    <div class="section-title">Featured Products</div>
+    <div class="posts-grid" id="productsGrid"></div>
 
-  <div class="banner-overlay"></div>
-  <div class="banner-content">
-    <h1>Boost Your Income with Top Affiliate Programs</h1>
-    <p>Join or promote the best affiliate programs & start earning today!</p>
-    <a href="./html/signup.html" class="banner-btn">Get Started</a>
+    <div class="newsletter">
+      <h3>Subscribe to our Newsletter</h3>
+      <input type="email" placeholder="Enter your email"><button>Subscribe</button>
+    </div>
   </div>
-</div>
-
-<div class="container">
-  <!-- Example category section -->
-  <div class="category-section" id="categories">
-  </div>
-</div>
-
-<footer>
-  &copy; 2025 My Shop. All Rights Reserved. <br>
-  <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Contact</a>
-</footer>
-
-<script src="./js/index.js"></script>
-<script>
-/* ======== INIT & HELPERS ======== */
-document.addEventListener('DOMContentLoaded', () => {
-  const navToggle = document.getElementById('navToggle');
-  const navMenu = document.getElementById('navMenu');
-  const overlay = document.getElementById('overlay');
-  const toggleThemeBtn = document.getElementById('toggleTheme');
-  const userDropdown = document.getElementById('userDropdown');
-  const userDropBtn = document.getElementById('userDropBtn');
 
 
+  <div class="sticky-cart">🛒</div>
 
-  // Toggle mobile nav
-  navToggle.addEventListener('click', () => {
-    const active = navMenu.classList.toggle('active');
-    overlay.classList.toggle('show', active);
-  });
+  <footer>
+    <div class="footer-links">
+      <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Contact</a> | <a href="#">About</a>
+    </div>
+    &copy; 2025 My Shop. All Rights Reserved.
+  </footer>
+  <script>
+    const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
+    const API_URL = `${BASE_URL}/api/posts`;
 
-  function closeMenu(){
-    navMenu.classList.remove('active');
-    overlay.classList.remove('show');
-  }
+    let allCategoryPosts = {}; // store API fetched posts per category
+    const sampleProducts = [
+      { title: "Health Product 1", desc: "Great product", img: "./assets/sample1.png", link: "#" },
+      { title: "Sports Gear", desc: "Awesome gear", img: "./assets/sample2.png", link: "#" },
+      { title: "Business Book", desc: "Learn fast", img: "./assets/sample3.png", link: "#" },
+      { title: "Education Tool", desc: "Educational tool", img: "./assets/sample4.png", link: "#" },
+      { title: "Fitness Kit", desc: "Top quality", img: "./assets/sample5.png", link: "#" }
+    ];
 
-  // Close when clicking links inside nav
-  document.querySelectorAll('#navMenu a').forEach(a => a.addEventListener('click', closeMenu));
-
-  // Click overlay to close
-  overlay.addEventListener('click', closeMenu);
-
-  // Click outside to close nav (desktop too)
-  document.addEventListener('click', (e) => {
-    if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
-      closeMenu();
+    // ===== Utility functions =====
+    function renderPosts(containerId, posts) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = posts.length
+        ? posts.map(p => `
+      <div class="post-card">
+        <img src="${p.img || p.image || './assets/default-product.png'}" alt="${p.title}">
+        <div class="post-card-content">
+          <h3>${p.title}</h3>
+          <p>${p.desc || p.body?.substring(0, 100) || ''}</p>
+          <a href="${p.link || p.url || '#'}" target="_blank" class="read-more">
+            ${p.urlText || 'View'}
+          </a>
+        </div>
+      </div>
+    `).join('')
+        : '<p>No results found.</p>';
     }
-  });
 
-  // Function to apply theme
-  let changeTheme = true
-  toggleThemeBtn.addEventListener("click", () =>{
-if (changeTheme == true) {
-        document.body.classList.add("dark-mode");
-        toggleThemeBtn.innerHTML = "☀️ Light Mode";
-        changeTheme = false
-      } else {
-        document.body.classList.remove("dark-mode");
-        toggleThemeBtn.innerHTML = "🌙 Dark Mode";
-        changeTheme = true
+    function renderCarousel(container, items) {
+      container.innerHTML = '';
+      items.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'carousel-item';
+        item.innerHTML = `
+      <img src="${p.img || p.image || './assets/default-product.png'}" alt="${p.title}">
+      <div class="carousel-content">
+        <h4>${p.title}</h4>
+        <p>${p.desc || p.body?.substring(0, 100) || ''}</p>
+      </div>
+    `;
+        container.appendChild(item);
+      });
+    }
+
+    // ===== Load API posts per category =====
+    async function loadCategory(categoryKey, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      container.innerHTML = `<p>Loading ${categoryKey} posts...</p>`;
+
+      try {
+        const res = await fetch(`${API_URL}?category=${categoryKey}&status=published&limit=12`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const posts = await res.json();
+        allCategoryPosts[categoryKey] = posts; // store for search
+        renderPosts(containerId, posts);
+      } catch (err) {
+        console.error(`Error loading ${categoryKey} posts:`, err);
+        container.innerHTML = `<p style="color:red;">Failed to load posts for ${categoryKey}.</p>`;
+        allCategoryPosts[categoryKey] = []; // empty array for search
       }
-    
-  })
+    }
 
+    // ===== Load all homepage categories =====
+    function loadHomepagePosts() {
+      const categories = [
+        { key: "health", container: "health-posts" },
+        { key: "entertainment", container: "entertainment-posts" },
+        { key: "sports", container: "sports-posts" },
+        { key: "technology", container: "technology-posts" },
+        { key: "education", container: "education-posts" },
+        { key: "religion", container: "religion-posts" }
+      ];
 
+      categories.forEach(cat => loadCategory(cat.key, cat.container));
+    }
 
-  // Mobile-friendly dropdown: toggle on click when viewport is small
-  if (userDropBtn) {
-    userDropBtn.addEventListener('click', (e) => {
-      // if mobile, toggle inline
-      if (window.innerWidth <= 900) {
-        e.preventDefault();
-        userDropdown.classList.toggle('open');
-        const expanded = userDropdown.classList.contains('open');
-        userDropBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
-      }
+    // ===== Render sample products & hot deals =====
+    function renderSampleProducts() {
+      const productsGrid = document.getElementById("productsGrid");
+      const hotDeals = document.getElementById("hotDeals");
+
+      renderPosts('productsGrid', sampleProducts);
+      renderCarousel(hotDeals, sampleProducts);
+    }
+
+    // ===== Search functionality across all sections =====
+    function enableGlobalSearch() {
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', e => {
+        const query = e.target.value.toLowerCase();
+
+        // Search in API categories
+        for (const [category, posts] of Object.entries(allCategoryPosts)) {
+          const filtered = posts.filter(p =>
+            (p.title && p.title.toLowerCase().includes(query)) ||
+            (p.body && p.body.toLowerCase().includes(query))
+          );
+          renderPosts(`${category}-posts`, filtered);
+        }
+
+        // Search in sample products (featured + hot deals)
+        const filteredProducts = sampleProducts.filter(p =>
+          p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)
+        );
+        renderPosts('productsGrid', filteredProducts);
+        renderCarousel(document.getElementById('hotDeals'), filteredProducts);
+      });
+    }
+
+    // ===== Initialize everything =====
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHomepagePosts();
+      renderSampleProducts();
+      enableGlobalSearch();
+
+      // ===== Mobile menu toggle =====
+      const navToggle = document.getElementById('navToggle');
+      const navMenu = document.getElementById('navMenu');
+      const overlay = document.getElementById('overlay');
+      navToggle.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        overlay.classList.toggle('show');
+      });
+      overlay.addEventListener('click', () => {
+        navMenu.classList.remove('active');
+        overlay.classList.remove('show');
+      });
+
+      // ===== Dropdown toggles =====
+      const navLinksDropdown = document.getElementById('navLinksDropdown');
+      const userDropdown = document.getElementById('userDropdown');
+      navLinksDropdown.querySelector('button').addEventListener('click', () => navLinksDropdown.classList.toggle('open'));
+      userDropdown.querySelector('.dropbtn').addEventListener('click', () => userDropdown.classList.toggle('open'));
+
+      // ===== Dark mode toggle =====
+      const toggleThemeBtn = document.getElementById('toggleTheme');
+      let dark = true;
+      toggleThemeBtn.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        dark = !dark;
+        toggleThemeBtn.innerHTML = dark ? "🌙 Dark Mode" : "☀️ Light Mode";
+      });
+
+      // ===== Scroll effect on header =====
+      window.addEventListener("scroll", () => {
+        document.querySelector(".h").classList.toggle("scrollBg", window.scrollY >= 200);
+      });
     });
-  }
-window.addEventListener("scroll", () =>{
-  if(window.scrollY >= 200){
-    document.querySelector(".h").classList.add("scrollBg")
-  }else{
-        document.querySelector(".h").classList.remove("scrollBg")
-
-  }
-})
-  // If other scripts exist and might conflict, console note:
-  console.debug('Theme/init script loaded. Current theme:', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-});
   </script>
 
 </body>
+
 </html>

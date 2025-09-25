@@ -91,14 +91,11 @@ header {
 .scrollBg{
   background-color:#021c42;
   padding:25px 30px;
-  transition:0.7s ease-in-out;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+    transition:0.7s ease-in-out;
+box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
 }
 
-header h1 {
-  margin:0;
-  font-size:24px;
-}
+header h1 { margin:0; font-size:24px; }
 
 /* Nav links */
 nav {
@@ -116,9 +113,7 @@ nav a {
   transition:0.3s;
 }
 
-nav a:hover {
-  background: var(--link-hover);
-}
+nav a:hover { background: var(--link-hover); }
 
 /* User dropdown */
 .dropbtn {
@@ -128,9 +123,9 @@ nav a:hover {
   padding:8px 12px;
   border-radius:6px;
   cursor:pointer;
+  font-size:18px;
 }
 
-/* Default dropdown hidden */
 .dropdown-content {
   display:none;
   position:absolute;
@@ -152,11 +147,8 @@ nav a:hover {
   color:var(--header-text);
 }
 
-/* Desktop hover dropdown only */
-@media(min-width:901px){
-  .user-dropdown:hover .dropdown-content {
-    display:block;
-  }
+.user-dropdown:hover .dropdown-content {
+  display:block;
 }
 
 /* Toggle button */
@@ -171,9 +163,7 @@ nav a:hover {
   transition:0.3s;
 }
 
-.nav-toggle:hover {
-  background:var(--dropdown-hover-bg);
-}
+.nav-toggle:hover { background:var(--dropdown-hover-bg); }
 
 /* Overlay */
 .overlay {
@@ -190,10 +180,7 @@ nav a:hover {
   transition: opacity 0.3s ease;
 }
 
-.overlay.show {
-  display:block;
-  opacity:0.9;
-}
+.overlay.show { display:block; opacity:0.9; }
 
 /* Mobile */
 @media(max-width:900px){
@@ -203,7 +190,7 @@ nav a:hover {
     right:-100%;
     height:100%;
     width:70%;
-    overflow-y: auto;
+    overflow-y: scroll;
     max-width:280px;
     background: var(--header-bg);
     flex-direction:column;
@@ -223,47 +210,45 @@ nav a:hover {
 
   .nav-toggle { display:block; }
 
-  .user-dropdown {
-    position: relative;
-    width: 100%;
-  }
-
-  .dropbtn {
-    width: 100%;
-    text-align: left;
-    padding: 12px;
-    background: var(--header-bg);
-    border: none;
-    cursor: pointer;
-  }
-
-  .dropdown-content {
-    display: none !important;   /* hidden until toggled */
-    position: static;           /* no absolute on mobile */
-    width: 100%;
-    background: var(--header-bg);
-    flex-direction: column;
-  }
-
-  .user-dropdown.open .dropdown-content {
-    display: block !important;  /* shown when .open is toggled */
-  }
-
-  .dropdown-content a {
-    display: block;
-    padding: 12px;
-    border-bottom: var(--border-bottom);
-    color: var(--header-text);
-  }
+  .user-dropdown{ width: 100%; background-color: var(--dropdown-hover-bg); }
+  .dropdown-content{ background-color: var(--bg-color); width: 100%; position:static; box-shadow:none; }
 }
 
-/* Logo container (h1) */
-.logo { margin: 0; padding: 0; line-height: 1; }
-.logo img { max-width:110px; height: auto; display: block; object-fit: contain; transition: transform .2s ease, filter .2s ease; cursor: pointer; }
+/* Logo */
+.logo img {
+  max-width:110px;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  transition: transform .2s ease, filter .2s ease;
+  cursor:pointer;
+}
 .logo img:hover { transform: scale(1.05); filter: brightness(1.05); }
-@media (max-width: 992px) { .logo img { max-width: 150px; } }
-@media (max-width: 600px) { .logo img { max-width: 120px; } }
-@media (max-width: 400px) { .logo img { max-width: 100px; } }
+
+/* ====== Animations ====== */
+@keyframes navLinkFade {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes navLinkFadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(30px); }
+}
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media(max-width:900px){
+  #navMenu a, #navMenu .dropbtn {
+    opacity:0;
+    transform: translateX(30px);
+  }
+  .user-dropdown.open .dropdown-content a {
+    opacity:0;
+    transform: translateY(-10px);
+  }
+}
 
 .posts { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; }
 .post { border: 1px solid #ccc; border-radius: 6px; padding: 10px; width: 30%; }
@@ -272,11 +257,11 @@ nav a:hover {
 </head>
 <body>
 <header class="h">
-  <h1 class="logo"><img src="../assets/logo.png" alt="" srcset=""></h1>
+  <h1 class="logo"><img src="../assets/logo.png" alt=""></h1>
   <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
 
   <nav id="navMenu" aria-label="Main navigation">
-    <a href="index.html">Home</a>
+    <a href="../index.html">Home</a>
     <a href="health.html">Health</a>
     <a href="sports.html">Sports</a>
     <a href="business.html">Business</a>
@@ -287,7 +272,7 @@ nav a:hover {
     <a href="travel.html">Travel</a>
 
     <div class="user-dropdown" id="userDropdown">
-      <button class="dropbtn" id="userDropBtn" aria-haspopup="true" aria-expanded="false">User ▾</button>
+      <button class="dropbtn" id="userDropBtn" aria-haspopup="true" aria-expanded="false">👤 ▾</button>
       <div class="dropdown-content" id="userDropdownContent">
         <a href="../html/login.html">Login</a>
         <a href="../html/signup.html">Signup</a>
@@ -297,7 +282,6 @@ nav a:hover {
     </div>
   </nav>
 </header>
-<!-- Overlay -->
 <div class="overlay" id="overlay"></div>
 
 <h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
@@ -306,114 +290,118 @@ nav a:hover {
 <script>
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
-
-// Detect category
 const CATEGORY = window.location.pathname.split("/").pop().replace(".html", "").toLowerCase();
 
 async function loadCategory() {
   const postsContainer = document.getElementById("categoryPosts");
   const titleEl = document.getElementById("categoryTitle");
-
   try {
     const res = await fetch(`${API_URL}?category=${CATEGORY}&status=published`);
     if (!res.ok) throw new Error("Failed to fetch posts");
-
     const posts = await res.json();
-    const sortedPosts = posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-    const categoryLabel = CATEGORY.charAt(0).toUpperCase() + CATEGORY.slice(1);
+    const sortedPosts = posts.sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+    const categoryLabel = CATEGORY.charAt(0).toUpperCase()+CATEGORY.slice(1);
     titleEl.innerText = `${categoryLabel} Posts`;
     document.title = `${categoryLabel} - Lykoria`;
-
     if (!sortedPosts.length) {
-      postsContainer.innerHTML = `<p style="width:100%; text-align:center; padding:2rem; color:#555;">
-        No posts found for ${categoryLabel}.
-      </p>`;
+      postsContainer.innerHTML = `<p style="width:100%; text-align:center; padding:2rem; color:#555;">No posts found for ${categoryLabel}.</p>`;
       return;
     }
-
-    postsContainer.innerHTML = sortedPosts.map((p) => `
+    postsContainer.innerHTML = sortedPosts.map(p=>`
       <div class="post">
         <h3>${p.title}</h3>
-        ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
-        <p>${p.body.substring(0, 150)}...</p>
-        <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
-      </div>
-    `).join("");
+        ${p.image?`<img src="${p.image}" alt="${p.title}">`:""}
+        <p>${p.body.substring(0,150)}...</p>
+        <a href="${p.url}" target="_blank">${p.urlText||"Read More"}</a>
+      </div>`).join("");
   } catch (err) {
-    console.error("Category load error:", err);
-    postsContainer.innerHTML = `
-      <h1 style="font-size:2rem; text-align:center; color:rgb(65, 29, 4);
-                 width:100%; background:lightgray; padding:3rem 1rem; font-weight:lighter;">
-        ⚠️ Failed to load posts.<br>
-        ${err.message || "Check your internet connection..."}
-      </h1>`;
+    postsContainer.innerHTML = `<h1 style="font-size:2rem; text-align:center; color:rgb(65, 29, 4);width:100%; background:lightgray; padding:3rem 1rem; font-weight:lighter;">⚠️ Failed to load posts.<br>${err.message}</h1>`;
   }
 }
-
 document.addEventListener("DOMContentLoaded", loadCategory);
 
 document.addEventListener('DOMContentLoaded', () => {
-  const navToggle = document.getElementById('navToggle');
-  const navMenu = document.getElementById('navMenu');
-  const overlay = document.getElementById('overlay');
-  const toggleThemeBtn = document.getElementById('toggleTheme');
-  const userDropdown = document.getElementById('userDropdown');
-  const userDropBtn = document.getElementById('userDropBtn');
+  const navToggle=document.getElementById('navToggle');
+  const navMenu=document.getElementById('navMenu');
+  const overlay=document.getElementById('overlay');
+  const toggleThemeBtn=document.getElementById('toggleTheme');
+  const userDropdown=document.getElementById('userDropdown');
+  const userDropBtn=document.getElementById('userDropBtn');
 
-  // Toggle mobile nav
   navToggle.addEventListener('click', () => {
-    const active = navMenu.classList.toggle('active');
+    const active=navMenu.classList.toggle('active');
     overlay.classList.toggle('show', active);
+    const navLinks=navMenu.querySelectorAll('a, .dropbtn');
+    if(active){
+      navLinks.forEach((link,i)=>{
+        link.style.animation=`navLinkFade 0.4s ease forwards`;
+        link.style.animationDelay=`${i*0.1+0.2}s`;
+      });
+    }else{
+      navLinks.forEach((link,i)=>{
+        link.style.animation=`navLinkFadeOut 0.3s ease forwards`;
+        link.style.animationDelay=`${i*0.05}s`;
+      });
+      setTimeout(()=>resetAnimations(navLinks),300);
+    }
   });
 
   function closeMenu(){
     navMenu.classList.remove('active');
     overlay.classList.remove('show');
   }
-
-  document.querySelectorAll('#navMenu a').forEach(a => a.addEventListener('click', closeMenu));
-  overlay.addEventListener('click', closeMenu);
-
-  document.addEventListener('click', (e) => {
-    if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
-      closeMenu();
-    }
+  document.querySelectorAll('#navMenu a').forEach(a=>a.addEventListener('click',closeMenu));
+  overlay.addEventListener('click',closeMenu);
+  document.addEventListener('click', (e)=>{
+    if(!navMenu.contains(e.target)&&!navToggle.contains(e.target)&&navMenu.classList.contains('active')){closeMenu();}
   });
 
-  // Dark/Light toggle
-  let changeTheme = true;
-  toggleThemeBtn.addEventListener("click", () =>{
-    if (changeTheme) {
+  let changeTheme=true;
+  toggleThemeBtn.addEventListener("click", ()=>{
+    if(changeTheme){
       document.body.classList.add("dark-mode");
-      toggleThemeBtn.innerHTML = "☀️ Light Mode";
-      changeTheme = false;
-    } else {
+      toggleThemeBtn.innerHTML="☀️ Light Mode";
+      changeTheme=false;
+    }else{
       document.body.classList.remove("dark-mode");
-      toggleThemeBtn.innerHTML = "🌙 Dark Mode";
-      changeTheme = true;
+      toggleThemeBtn.innerHTML="🌙 Dark Mode";
+      changeTheme=true;
     }
   });
 
-  // Mobile dropdown toggle
-  if (userDropBtn) {
-    userDropBtn.addEventListener('click', (e) => {
-      if (window.innerWidth <= 900) {
+  if(userDropBtn){
+    userDropBtn.addEventListener('click',(e)=>{
+      if(window.innerWidth<=900){
         e.preventDefault();
         userDropdown.classList.toggle('open');
-        const expanded = userDropdown.classList.contains('open');
-        userDropBtn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+        const expanded=userDropdown.classList.contains('open');
+        userDropBtn.setAttribute('aria-expanded', expanded?'true':'false');
+        const dropLinks=userDropdown.querySelectorAll('.dropdown-content a');
+        if(expanded){
+          dropLinks.forEach((link,i)=>{
+            link.style.animation=`dropdownFade 0.3s ease forwards`;
+            link.style.animationDelay=`${i*0.1+0.1}s`;
+          });
+        }else{
+          resetAnimations(dropLinks);
+        }
       }
     });
   }
 
-  window.addEventListener("scroll", () =>{
-    if(window.scrollY >= 200){
-      document.querySelector(".h").classList.add("scrollBg");
-    } else {
-      document.querySelector(".h").classList.remove("scrollBg");
-    }
+  window.addEventListener("scroll", ()=>{
+    if(window.scrollY>=200){ document.querySelector(".h").classList.add("scrollBg"); }
+    else{ document.querySelector(".h").classList.remove("scrollBg"); }
   });
+
+  function resetAnimations(els){
+    els.forEach(el=>{
+      el.style.animation='none';
+      el.offsetHeight;
+      el.style.animation=null;
+      el.style.animationDelay=null;
+    });
+  }
 });
 </script>
 </body>
