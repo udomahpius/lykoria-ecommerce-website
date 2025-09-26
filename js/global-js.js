@@ -195,3 +195,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 });
+
+ function toggleDropdown() {
+  document.getElementById("accountDropdown").classList.toggle("show");
+}
+
+// Close dropdown if clicking outside
+window.onclick = function(event) {
+  if (!event.target.matches('.header-icons-dropdown') && 
+      !event.target.closest('.dropdown')) {
+    document.getElementById("accountDropdown").classList.remove("show");
+  }
+}

@@ -68,39 +68,7 @@
 }
 .category-card:hover { transform: translateY(-5px); }
 
-/* --- Footer --- */
-.footer {
-  background:#1e1e2f;
-  color:#fff;
-  margin-top:40px;
-}
-.footer-top {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  gap: 20px;
-  padding: 40px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.footer-col h3 {
-  margin-bottom: 15px; font-size:1.1rem;
-}
-.footer-col ul { list-style: none; padding: 0; }
-.footer-col ul li { margin-bottom: 8px; }
-.footer-col ul li a {
-  color: #bbb; text-decoration:none; font-size:.95rem;
-  text-align: left;
-}
-.footer-col ul li a:hover { color:#fff; }
-.socials a {
-  margin-right:10px; font-size:1.4rem;
-  text-decoration:none; color:#fff;
-}
-.footer-bottom {
-  text-align:center;
-  padding: 15px 10px;
-  font-size:.9rem;
-  background:#141421;
-}
+
 
     /* Search */
     .search-bar { margin: 15px 0; display: flex; gap: 10px; }
@@ -157,19 +125,6 @@
       .container { grid-template-columns: 1fr; }
       .sidebar { order: 2; }
     }
-    /* Footer */
-footer { background:#1e1e2f; color:#fff; padding:20px 15px; margin-top:40px; }
-.footer-top { text-align:center; margin-bottom:20px; }
-.newsletter input { padding:10px; border:none; border-radius:6px; width:220px; }
-.newsletter button { padding:10px 15px; background:#007BFF; border:none; border-radius:6px; color:#fff; cursor:pointer; }
-.newsletter button:hover { background:#0056b3; }
-.footer-middle { display:flex; justify-content:center; gap:50px; margin-bottom:20px; flex-wrap:wrap; }
-.footer-links h4 { margin-bottom:10px; }
-.footer-links a { display:block; color:#ccc; margin-bottom:6px; text-decoration:none; }
-.footer-links a:hover { color:#fff; }
-.social-icons a { margin:0 5px; font-size:20px; color:#fff; }
-.footer-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px; }
-.payment-icons img { height:28px; margin:0 8px; }
 
 
 
@@ -441,7 +396,6 @@ posts.forEach(p => {
       <h3>${p.title}</h3>
       <p>${p.body.substring(0,100)}...</p>
       <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
-      <br><br>
       <button 
         class="add-to-cart"
         data-id="${p._id || p.id}" 

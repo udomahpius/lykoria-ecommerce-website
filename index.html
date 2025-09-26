@@ -45,6 +45,8 @@
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: var(--bg-color);
+       /* background: linear-gradient(135deg, #f68b1e, #030346);
+  color: var(--text); */
       color: var(--text-color);
     }
 
@@ -53,13 +55,27 @@
       text-decoration: none;
     }
 
+.product-bg{
+background: linear-gradient(120deg, #ffffff, #fdf5eb, #ffe9cc);
+  background-size: 300% 300%;
+  animation: gradientMove 18s ease infinite;
+    color: var(--text);
+  padding: 1rem 0;
+}
 
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
     .hero-section {
+       background: linear-gradient(120deg, #f68b1e, #ffcc70, #030346);
+  color: var(--text);
       display: grid;
       grid-template-columns: 200px 1fr 250px;
       gap: 15px;
       padding-top: 10% !important;
-      max-width: 1200px;
+      max-width: 100%;
       padding: 10px;
 
     }
@@ -184,6 +200,21 @@
 
     .promo-card a:hover {
       background: #ff9900;
+    }
+
+    .add-to-cart{
+      display: inline-block;
+      margin-top: 5px;
+      padding: 6px 12px;
+       background:var(--card-text);
+      color: #fff;
+      font-size: 14px;
+      border-radius: 4px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .add-to-cart:hover{
+       background:var(--card-desc);
     }
 
     /* Responsive */
@@ -347,32 +378,6 @@
       background: var(--accent);
     }
 
-    /* Footer */
-    footer {
-      background: var(--footer-bg);
-      color: var(--footer-text);
-      text-align: center;
-      padding: 25px 15px;
-      margin-top: 40px;
-    }
-
-    footer a {
-      color: #fff;
-      margin: 0 8px;
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      color: var(--accent);
-    }
-
-    .footer-links {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
 
 
 
@@ -447,12 +452,24 @@
 
       <!-- Right icons -->
       <div class="header-icons">
-        <a href="#"><i class="fas fa-user"></i> Account</a>
+       
         <a href="#"><i class="fas fa-question-circle"></i> Help</a>
         <a href="../html/cart.html">
-          🛒 Cart (<span id="cartCount">0</span>)
+          <i class="fa-solid fa-cart-plus"></i>  Cart (<span id="cartCount">0</span>)
         </a>
+
+        <div class="dropdown">
+  <a class="header-icons-dropdown" onclick="toggleDropdown()">
+    <i class="fa-regular fa-user"></i> Account ▼
+  </a>
+  <div class="dropdown-content" id="accountDropdown">
+    <a href="./html/signup.html"><i class="fas fa-user"></i> Signup</a>
+    <a href="./html/admin.html"><i class="fas fa-user"></i> Dashboard</a>
+  </div>
+</div>
       </div>
+
+      
 
       <!-- Mobile toggle -->
       <button class="menu-toggle" onclick="toggleMenu()">☰</button>
@@ -461,15 +478,15 @@
     <!-- ===== Mega Menu (Desktop only) ===== -->
     <nav class="mega-menu">
       <ul>
-        <li><a href="health.html">Health</a></li>
-        <li><a href="sports.html">Sports</a></li>
-        <li><a href="business.html">Business</a></li>
-        <li><a href="education.html">Education</a></li>
-        <li><a href="entertainment.html">Entertainment</a></li>
-        <li><a href="#">Lifestyle</a></li>
-        <li><a href="#">Fashion</a></li>
-        <li><a href="#">Electronics</a></li>
-        <li><a href="#">Groceries</a></li>
+        <li><a href="./product-category/health.html">Health</a></li>
+        <li><a href="./product-category/sports.html">Sports</a></li>
+        <li><a href="./product-category/business.html">Business</a></li>
+        <li><a href="./product-category/education.html">Education</a></li>
+        <li><a href="./product-category/entertainment.html">Entertainment</a></li>
+        <li><a href="./product-category/lifestyle.html">Lifestyle</a></li>
+        <li><a href="./product-category/fashion.html">Fashion</a></li>
+        <li><a href="./product-category/electronics.html">Electronics</a></li>
+        <li><a href="./product-category/grocerise">Groceries</a></li>
       </ul>
     </nav>
   </header>
@@ -478,25 +495,27 @@
   <div class="mobile-nav" id="mobileNav">
     <button class="close-btn" onclick="toggleMenu()">✖</button>
     <ul>
-      <li><a href="../index.html">Home</a></li>
+      <li><a href="index.html">Home</a></li>
       <li class="has-sub">
         <a href="#">Categories ▾</a>
         <ul class="sub-menu">
-          <li><a href="health.html">Health</a></li>
-          <li><a href="sports.html">Sports</a></li>
-          <li><a href="business.html">Business</a></li>
-          <li><a href="education.html">Education</a></li>
-          <li><a href="entertainment.html">Entertainment</a></li>
-          <li><a href="#">Lifestyle</a></li>
-          <li><a href="#">Fashion</a></li>
-          <li><a href="#">Electronics</a></li>
-          <li><a href="#">Groceries</a></li>
+          <li><a href="./product-category/health.html">Health</a></li>
+        <li><a href="./product-category/sports.html">Sports</a></li>
+        <li><a href="./product-category/business.html">Business</a></li>
+        <li><a href="./product-category/education.html">Education</a></li>
+        <li><a href="./product-category/entertainment.html">Entertainment</a></li>
+        <li><a href="./product-category/lifestyle.html">Lifestyle</a></li>
+        <li><a href="./product-category/fashion.html">Fashion</a></li>
+        <li><a href="./product-category/electronics.html">Electronics</a></li>
+        <li><a href="./product-category/grocerise">Groceries</a></li>
         </ul>
       </li>
-      <li><a href="#">Account</a></li>
-      <li><a href="#">Help</a></li>
-      <li> <a href="../html/cart.html">
-          🛒 Cart (<span id="cartCount">0</span>)
+      <li><a href="#"><i class="fa-solid fa-gear"></i> Account</a></li>
+      <li><a href="./html/signup.html"><i class="fa-solid fa-right-to-bracket"></i> Signup</a></li>
+      <li> <a href="./html/admin.html"><i class="fas fa-user"></i> Dashboard</a></li>
+      <li><a href="#"> <i class="fa-solid fa-question"></i> Help</a></li>
+      <li> <a href="./html/cart.html">
+          <i class="fa-solid fa-cart-plus"></i> Cart (<span id="cartCount">0</span>)
         </a>
 
       </li>
@@ -509,14 +528,19 @@
     <!-- Left: Categories -->
     <div class="hero-categories">
       <ul>
-        <li><a href="#">Health</a></li>
-        <li><a href="#">Sports</a></li>
-        <li><a href="#">Education</a></li>
         <li><a href="#">Entertainment</a></li>
-        <li><a href="#">Technology</a></li>
-        <li><a href="#">Business</a></li>
-        <li><a href="#">Politics</a></li>
-        <li><a href="#">Travel</a></li>
+        <li><a href="./product-category/technology">Technology</a></li>
+        <li><a href="./product-category/politics.html">Politics</a></li>
+        <li><a href="./product-category/travel.html">Travel</a></li>
+        <li><a href="./product-category/health.html">Health</a></li>
+        <li><a href="./product-category/sports.html">Sports</a></li>
+        <li><a href="./product-category/business.html">Business</a></li>
+        <li><a href="./product-category/education.html">Education</a></li>
+        <li><a href="./product-category/entertainment.html">Entertainment</a></li>
+        <li><a href="./product-category/lifestyle.html">Lifestyle</a></li>
+        <li><a href="./product-category/fashion.html">Fashion</a></li>
+        <li><a href="./product-category/electronics.html">Electronics</a></li>
+        <li><a href="./product-category/grocerise">Groceries</a></li>
       </ul>
     </div>
 
@@ -563,8 +587,10 @@
   <div class="container">
     <div class="section-title">Hot Deals</div>
     <div class="carousel" id="hotDeals"></div>
+  </div>
 
-
+  <div class="product-bg">
+<div class="container">
     <h2 class="section-title">Health</h2>
     <div class="posts-grid" id="health-posts"></div>
 
@@ -593,8 +619,11 @@
     <h2 class="section-title">Lifestyle</h2>
     <div class="posts-grid" id="lifestyle-posts"></div>
 
+</div>
+  </div>
 
 
+<div class="container">
     <div class="section-title">Featured Products</div>
     <div class="posts-grid" id="productsGrid"></div>
 
@@ -603,24 +632,63 @@
       <input type="email" placeholder="Enter your email"><button>Subscribe</button>
     </div>
   </div>
+  
 
-  <footer>
-    <div class="footer-links">
-      <a href="#">Privacy</a> | <a href="#">Terms</a> | <a href="#">Contact</a> | <a href="#">About</a>
+  <!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-col">
+      <h3>Need Help?</h3>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Track Order</a></li>
+      </ul>
     </div>
-    &copy; 2025 My Shop. All Rights Reserved.
-  </footer>
+    <div class="footer-col">
+      <h3>About Us</h3>
+      <ul>
+        <li><a href="#">Company Info</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Affiliate Program</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Make Money</h3>
+      <ul>
+        <li><a href="#">Sell Products</a></li>
+        <li><a href="#">Become a Partner</a></li>
+        <li><a href="#">Advertise</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Follow Us</h3>
+      <div class="socials">
+        <a href="#">🌐</a>
+        <a href="#">📘</a>
+        <a href="#">🐦</a>
+        <a href="#">📸</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Lykoria. All rights reserved.</p>
+  </div>
+</footer>
+
   <script>
     const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
     const API_URL = `${BASE_URL}/api/posts`;
 
     let allCategoryPosts = {}; // store API fetched posts per category
     const sampleProducts = [
-      { title: "Health Product 1", desc: "Great product", img: "./assets/sample1.png", link: "#" },
-      { title: "Sports Gear", desc: "Awesome gear", img: "./assets/sample2.png", link: "#" },
-      { title: "Business Book", desc: "Learn fast", img: "./assets/sample3.png", link: "#" },
-      { title: "Education Tool", desc: "Educational tool", img: "./assets/sample4.png", link: "#" },
-      { title: "Fitness Kit", desc: "Top quality", img: "./assets/sample5.png", link: "#" }
+      { title: "Health Product 1", desc: "Great product", img: "./assets/banner.png", link: "" },
+      { title: "Sports Gear", desc: "Awesome gear", img: "./assets/bg.png", link: "" },
+      { title: "Business Book", desc: "Learn fast", img: "./assets/banner.png", link: "" },
+      { title: "Education Tool", desc: "Educational tool", img: "./assets/bg.png", link: "" },
+      { title: "Fitness Kit", desc: "Top quality", img: "./assets/banner.png", link: "" }
     ];
 
     // ===== Utility functions =====
@@ -636,6 +704,14 @@
           <a href="${p.link || p.url || '#'}" target="_blank" class="read-more">
             ${p.urlText || 'View'}
           </a>
+           <button 
+        class="add-to-cart"
+        data-id="${p._id || p.id}" 
+        data-title="${p.title}" 
+        data-price="${p.price || 0}" 
+        data-image="${p.image || ''}">
+        Add to Cart
+      </button>
         </div>
       </div>
     `).join('')
@@ -652,6 +728,7 @@
       <div class="carousel-content">
         <h4>${p.title}</h4>
         <p>${p.desc || p.body?.substring(0, 100) || ''}</p>
+        <a href='' class='add-to-cart'>explore more</a>
       </div>
     `;
         container.appendChild(item);
@@ -734,94 +811,9 @@
       renderSampleProducts();
       enableGlobalSearch();
 
-      // ===== Mobile menu toggle =====
-      const navToggle = document.getElementById('navToggle');
-      const navMenu = document.getElementById('navMenu');
-      const overlay = document.getElementById('overlay');
-      navToggle.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-        overlay.classList.toggle('show');
-      });
-      overlay.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        overlay.classList.remove('show');
-      });
-
-      // ===== Dropdown toggles =====
-      const navLinksDropdown = document.getElementById('navLinksDropdown');
-      const userDropdown = document.getElementById('userDropdown');
-      navLinksDropdown.querySelector('button').addEventListener('click', () => navLinksDropdown.classList.toggle('open'));
-      userDropdown.querySelector('.dropbtn').addEventListener('click', () => userDropdown.classList.toggle('open'));
-
-      // ===== Dark mode toggle =====
-      const toggleThemeBtn = document.getElementById('toggleTheme');
-      let dark = true;
-      toggleThemeBtn.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        dark = !dark;
-        toggleThemeBtn.innerHTML = dark ? "🌙 Dark Mode" : "☀️ Light Mode";
-      });
-
-      // ===== Scroll effect on header =====
-      window.addEventListener("scroll", () => {
-        document.querySelector(".h").classList.toggle("scrollBg", window.scrollY >= 200);
-      });
     });
 
 
-    // // hero carousel
-    //     const slides = document.querySelectorAll(".hero-slider .slide");
-    // const prevBtn = document.querySelector(".slider-controls .prev");
-    // const nextBtn = document.querySelector(".slider-controls .next");
-    // const dotsContainer = document.getElementById("sliderDots");
-
-    // let currentIndex = 0;
-    // let autoPlay;
-
-    // // Create dots
-    // slides.forEach((_, i) => {
-    //   const dot = document.createElement("span");
-    //   if (i === 0) dot.classList.add("active");
-    //   dot.addEventListener("click", () => goToSlide(i));
-    //   dotsContainer.appendChild(dot);
-    // });
-    // const dots = dotsContainer.querySelectorAll("span");
-
-    // function showSlide(index) {
-    //   slides.forEach((s, i) => {
-    //     s.classList.toggle("active", i === index);
-    //     dots[i].classList.toggle("active", i === index);
-    //   });
-    //   currentIndex = index;
-    // }
-
-    // function nextSlide() {
-    //   showSlide((currentIndex + 1) % slides.length);
-    // }
-
-    // function prevSlide() {
-    //   showSlide((currentIndex - 1 + slides.length) % slides.length);
-    // }
-
-    // function goToSlide(index) {
-    //   showSlide(index);
-    // }
-
-    // function startAutoPlay() {
-    //   autoPlay = setInterval(nextSlide, 4000);
-    // }
-
-    // function stopAutoPlay() {
-    //   clearInterval(autoPlay);
-    // }
-
-    // nextBtn.addEventListener("click", () => { nextSlide(); stopAutoPlay(); startAutoPlay(); });
-    // prevBtn.addEventListener("click", () => { prevSlide(); stopAutoPlay(); startAutoPlay(); });
-
-    // document.getElementById("heroSlider").addEventListener("mouseenter", stopAutoPlay);
-    // document.getElementById("heroSlider").addEventListener("mouseleave", startAutoPlay);
-
-    // startAutoPlay();
     document.addEventListener("DOMContentLoaded", () => {
       const track = document.querySelector(".carousel-track");
       const slides = Array.from(track.children);
@@ -895,6 +887,14 @@
           <h3>${p.title}</h3>
           <p>${p.body ? p.body.substring(0, 80) + "..." : ""}</p>
           <a href="${p.url || '#'}" class="read-more">View</a>
+           <button 
+        class="add-to-cart"
+        data-id="${p._id || p.id}" 
+        data-title="${p.title}" 
+        data-price="${p.price || 0}" 
+        data-image="${p.image || ''}">
+        Add to Cart
+      </button>
         </div>
       `;
           productsGrid.appendChild(card);
@@ -917,9 +917,9 @@
     });
 
   </script>
+  <script src="https://kit.fontawesome.com/79a2ec8048.js" crossorigin="anonymous"></script>
 
   <script src="./js/global-js.js"></script>
-  <script src="https://kit.fontawesome.com/79a2ec8048.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
