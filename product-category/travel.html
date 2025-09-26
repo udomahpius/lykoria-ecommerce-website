@@ -68,39 +68,7 @@
 }
 .category-card:hover { transform: translateY(-5px); }
 
-/* --- Footer --- */
-.footer {
-  background:#1e1e2f;
-  color:#fff;
-  margin-top:40px;
-}
-.footer-top {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
-  gap: 20px;
-  padding: 40px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.footer-col h3 {
-  margin-bottom: 15px; font-size:1.1rem;
-}
-.footer-col ul { list-style: none; padding: 0; }
-.footer-col ul li { margin-bottom: 8px; }
-.footer-col ul li a {
-  color: #bbb; text-decoration:none; font-size:.95rem;
-  text-align: left;
-}
-.footer-col ul li a:hover { color:#fff; }
-.socials a {
-  margin-right:10px; font-size:1.4rem;
-  text-decoration:none; color:#fff;
-}
-.footer-bottom {
-  text-align:center;
-  padding: 15px 10px;
-  font-size:.9rem;
-  background:#141421;
-}
+
 
     /* Search */
     .search-bar { margin: 15px 0; display: flex; gap: 10px; }
@@ -157,19 +125,6 @@
       .container { grid-template-columns: 1fr; }
       .sidebar { order: 2; }
     }
-    /* Footer */
-footer { background:#1e1e2f; color:#fff; padding:20px 15px; margin-top:40px; }
-.footer-top { text-align:center; margin-bottom:20px; }
-.newsletter input { padding:10px; border:none; border-radius:6px; width:220px; }
-.newsletter button { padding:10px 15px; background:#007BFF; border:none; border-radius:6px; color:#fff; cursor:pointer; }
-.newsletter button:hover { background:#0056b3; }
-.footer-middle { display:flex; justify-content:center; gap:50px; margin-bottom:20px; flex-wrap:wrap; }
-.footer-links h4 { margin-bottom:10px; }
-.footer-links a { display:block; color:#ccc; margin-bottom:6px; text-decoration:none; }
-.footer-links a:hover { color:#fff; }
-.social-icons a { margin:0 5px; font-size:20px; color:#fff; }
-.footer-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px; }
-.payment-icons img { height:28px; margin:0 8px; }
 
 
 
@@ -212,87 +167,101 @@ footer { background:#1e1e2f; color:#fff; padding:20px 15px; margin-top:40px; }
 </head>
 <body>
 
-<!-- ====== HEADER ====== -->
-<header class="header">
-  <div class="top-bar">
-    <!-- Logo -->
-    <div class="logo">
-      <a href="../index.html"><img src="../assets/logo.png" alt="Logo"></a>
-    </div>
+  <!-- ====== HEADER ====== -->
+  <header class="header">
+    <div class="top-bar">
+      <!-- Logo -->
+      <div class="logo">
+        <a href="../index.html"><img src="../assets/logo.png" alt="Logo"></a>
+      </div>
 
-    <!-- Search with category -->
-    <div class="search-box">
-      <select class="search-category">
-        <option value="all">All Categories</option>
-        <option value="health">Health</option>
-        <option value="sports">Sports</option>
-        <option value="business">Business</option>
-        <option value="education">Education</option>
-        <option value="entertainment">Entertainment</option>
-      </select>
-      <input type="text" placeholder="Search for products, brands and more..." />
-      <button onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <!-- Search with category -->
+      <div class="search-box">
+        <select class="search-category">
+          <option value="all">All Categories</option>
+          <option value="health">Health</option>
+          <option value="sports">Sports</option>
+          <option value="business">Business</option>
+          <option value="education">Education</option>
+          <option value="entertainment">Entertainment</option>
+        </select>
+        <input type="text" placeholder="Search for products, brands and more..." />
+        <button onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
 
-    </div>
+      </div>
 
-    <!-- Right icons -->
-    <div class="header-icons">
-      <a href="#"><i class="fas fa-user"></i> Account</a>
-      <a href="#"><i class="fas fa-question-circle"></i> Help</a>
- <a href="../html/cart.html">
-    🛒 Cart (<span id="cartCount">0</span>)
+      <!-- Right icons -->
+      <div class="header-icons">
+       
+        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+        <a href="../html/cart.html">
+          <i class="fa-solid fa-cart-plus"></i>  Cart (<span id="cartCount">0</span>)
+        </a>
+
+        <div class="dropdown">
+  <a class="header-icons-dropdown" onclick="toggleDropdown()">
+    <i class="fa-regular fa-user"></i> Account ▼
   </a>
+  <div class="dropdown-content" id="accountDropdown">
+    <a href="./html/signup.html"><i class="fas fa-user"></i> Signup</a>
+    <a href="./html/admin.html"><i class="fas fa-user"></i> Dashboard</a>
+  </div>
+</div>
+      </div>
+
+      
+
+      <!-- Mobile toggle -->
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     </div>
 
-    <!-- Mobile toggle -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
-
-  <!-- ===== Mega Menu (Desktop only) ===== -->
-  <nav class="mega-menu">
-    <ul>
-      <li><a href="health.html">Health</a></li>
-      <li><a href="sports.html">Sports</a></li>
-      <li><a href="business.html">Business</a></li>
-      <li><a href="education.html">Education</a></li>
-      <li><a href="entertainment.html">Entertainment</a></li>
-      <li><a href="#">Lifestyle</a></li>
-      <li><a href="#">Fashion</a></li>
-      <li><a href="#">Electronics</a></li>
-      <li><a href="#">Groceries</a></li>
-    </ul>
-  </nav>
-</header>
-
-<!-- ===== Mobile Nav ===== -->
-<div class="mobile-nav" id="mobileNav">
-  <button class="close-btn" onclick="toggleMenu()">✖</button>
-  <ul>
-    <li><a href="../index.html">Home</a></li>
-    <li class="has-sub">
-      <a href="#">Categories ▾</a>
-      <ul class="sub-menu">
+    <!-- ===== Mega Menu (Desktop only) ===== -->
+    <nav class="mega-menu">
+      <ul>
         <li><a href="health.html">Health</a></li>
         <li><a href="sports.html">Sports</a></li>
         <li><a href="business.html">Business</a></li>
         <li><a href="education.html">Education</a></li>
         <li><a href="entertainment.html">Entertainment</a></li>
-        <li><a href="#">Lifestyle</a></li>
-        <li><a href="#">Fashion</a></li>
-        <li><a href="#">Electronics</a></li>
-        <li><a href="#">Groceries</a></li>
+        <li><a href="lifestyle.html">Lifestyle</a></li>
+        <li><a href="fashion.html">Fashion</a></li>
+        <li><a href="electronics.html">Electronics</a></li>
+        <li><a href="grocerise">Groceries</a></li>
       </ul>
-    </li>
-    <li><a href="#">Account</a></li>
-    <li><a href="#">Help</a></li>
-    <li> <a href="../html/cart.html">
-    🛒 Cart (<span id="cartCount">0</span>)
-  </a>
+    </nav>
+  </header>
 
-</li>
-  </ul>
-</div>
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+  <!-- ===== Mobile Nav ===== -->
+  <div class="mobile-nav" id="mobileNav">
+    <button class="close-btn" onclick="toggleMenu()">✖</button>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li class="has-sub">
+        <a href="#">Categories ▾</a>
+        <ul class="sub-menu">
+          <li><a href="health.html">Health</a></li>
+        <li><a href="sports.html">Sports</a></li>
+        <li><a href="business.html">Business</a></li>
+        <li><a href="education.html">Education</a></li>
+        <li><a href="entertainment.html">Entertainment</a></li>
+        <li><a href="lifestyle.html">Lifestyle</a></li>
+        <li><a href="fashion.html">Fashion</a></li>
+        <li><a href="electronics.html">Electronics</a></li>
+        <li><a href="grocerise">Groceries</a></li>
+        </ul>
+      </li>
+      <li><a href="#"><i class="fa-solid fa-gear"></i> Account</a></li>
+      <li><a href="../html/signup.html"><i class="fa-solid fa-right-to-bracket"></i> Signup</a></li>
+      <li> <a href="../html/admin.html"><i class="fas fa-user"></i> Dashboard</a></li>
+      <li><a href="#"> <i class="fa-solid fa-question"></i> Help</a></li>
+      <li> <a href="../html/cart.html">
+          <i class="fa-solid fa-cart-plus"></i> Cart (<span id="cartCount">0</span>)
+        </a>
+
+      </li>
+    </ul>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 
 
@@ -441,7 +410,6 @@ posts.forEach(p => {
       <h3>${p.title}</h3>
       <p>${p.body.substring(0,100)}...</p>
       <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
-      <br><br>
       <button 
         class="add-to-cart"
         data-id="${p._id || p.id}" 

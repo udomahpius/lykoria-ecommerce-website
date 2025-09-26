@@ -167,87 +167,101 @@
 </head>
 <body>
 
-<!-- ====== HEADER ====== -->
-<header class="header">
-  <div class="top-bar">
-    <!-- Logo -->
-    <div class="logo">
-      <a href="../index.html"><img src="../assets/logo.png" alt="Logo"></a>
-    </div>
+  <!-- ====== HEADER ====== -->
+  <header class="header">
+    <div class="top-bar">
+      <!-- Logo -->
+      <div class="logo">
+        <a href="../index.html"><img src="../assets/logo.png" alt="Logo"></a>
+      </div>
 
-    <!-- Search with category -->
-    <div class="search-box">
-      <select class="search-category">
-        <option value="all">All Categories</option>
-        <option value="health">Health</option>
-        <option value="sports">Sports</option>
-        <option value="business">Business</option>
-        <option value="education">Education</option>
-        <option value="entertainment">Entertainment</option>
-      </select>
-      <input type="text" placeholder="Search for products, brands and more..." />
-      <button onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <!-- Search with category -->
+      <div class="search-box">
+        <select class="search-category">
+          <option value="all">All Categories</option>
+          <option value="health">Health</option>
+          <option value="sports">Sports</option>
+          <option value="business">Business</option>
+          <option value="education">Education</option>
+          <option value="entertainment">Entertainment</option>
+        </select>
+        <input type="text" placeholder="Search for products, brands and more..." />
+        <button onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
 
-    </div>
+      </div>
 
-    <!-- Right icons -->
-    <div class="header-icons">
-      <a href="#"><i class="fas fa-user"></i> Account</a>
-      <a href="#"><i class="fas fa-question-circle"></i> Help</a>
- <a href="../html/cart.html">
-    🛒 Cart (<span id="cartCount">0</span>)
+      <!-- Right icons -->
+      <div class="header-icons">
+       
+        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+        <a href="../html/cart.html">
+          <i class="fa-solid fa-cart-plus"></i>  Cart (<span id="cartCount">0</span>)
+        </a>
+
+        <div class="dropdown">
+  <a class="header-icons-dropdown" onclick="toggleDropdown()">
+    <i class="fa-regular fa-user"></i> Account ▼
   </a>
+  <div class="dropdown-content" id="accountDropdown">
+    <a href="./html/signup.html"><i class="fas fa-user"></i> Signup</a>
+    <a href="./html/admin.html"><i class="fas fa-user"></i> Dashboard</a>
+  </div>
+</div>
+      </div>
+
+      
+
+      <!-- Mobile toggle -->
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
     </div>
 
-    <!-- Mobile toggle -->
-    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
-  </div>
-
-  <!-- ===== Mega Menu (Desktop only) ===== -->
-  <nav class="mega-menu">
-    <ul>
-      <li><a href="health.html">Health</a></li>
-      <li><a href="sports.html">Sports</a></li>
-      <li><a href="business.html">Business</a></li>
-      <li><a href="education.html">Education</a></li>
-      <li><a href="entertainment.html">Entertainment</a></li>
-      <li><a href="#">Lifestyle</a></li>
-      <li><a href="#">Fashion</a></li>
-      <li><a href="#">Electronics</a></li>
-      <li><a href="#">Groceries</a></li>
-    </ul>
-  </nav>
-</header>
-
-<!-- ===== Mobile Nav ===== -->
-<div class="mobile-nav" id="mobileNav">
-  <button class="close-btn" onclick="toggleMenu()">✖</button>
-  <ul>
-    <li><a href="../index.html">Home</a></li>
-    <li class="has-sub">
-      <a href="#">Categories ▾</a>
-      <ul class="sub-menu">
+    <!-- ===== Mega Menu (Desktop only) ===== -->
+    <nav class="mega-menu">
+      <ul>
         <li><a href="health.html">Health</a></li>
         <li><a href="sports.html">Sports</a></li>
         <li><a href="business.html">Business</a></li>
         <li><a href="education.html">Education</a></li>
         <li><a href="entertainment.html">Entertainment</a></li>
-        <li><a href="#">Lifestyle</a></li>
-        <li><a href="#">Fashion</a></li>
-        <li><a href="#">Electronics</a></li>
-        <li><a href="#">Groceries</a></li>
+        <li><a href="lifestyle.html">Lifestyle</a></li>
+        <li><a href="fashion.html">Fashion</a></li>
+        <li><a href="electronics.html">Electronics</a></li>
+        <li><a href="grocerise">Groceries</a></li>
       </ul>
-    </li>
-    <li><a href="#">Account</a></li>
-    <li><a href="#">Help</a></li>
-    <li> <a href="../html/cart.html">
-    🛒 Cart (<span id="cartCount">0</span>)
-  </a>
+    </nav>
+  </header>
 
-</li>
-  </ul>
-</div>
-<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+  <!-- ===== Mobile Nav ===== -->
+  <div class="mobile-nav" id="mobileNav">
+    <button class="close-btn" onclick="toggleMenu()">✖</button>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li class="has-sub">
+        <a href="#">Categories ▾</a>
+        <ul class="sub-menu">
+          <li><a href="health.html">Health</a></li>
+        <li><a href="sports.html">Sports</a></li>
+        <li><a href="business.html">Business</a></li>
+        <li><a href="education.html">Education</a></li>
+        <li><a href="entertainment.html">Entertainment</a></li>
+        <li><a href="lifestyle.html">Lifestyle</a></li>
+        <li><a href="fashion.html">Fashion</a></li>
+        <li><a href="electronics.html">Electronics</a></li>
+        <li><a href="grocerise">Groceries</a></li>
+        </ul>
+      </li>
+      <li><a href="#"><i class="fa-solid fa-gear"></i> Account</a></li>
+      <li><a href="../html/signup.html"><i class="fa-solid fa-right-to-bracket"></i> Signup</a></li>
+      <li> <a href="../html/admin.html"><i class="fas fa-user"></i> Dashboard</a></li>
+      <li><a href="#"> <i class="fa-solid fa-question"></i> Help</a></li>
+      <li> <a href="../html/cart.html">
+          <i class="fa-solid fa-cart-plus"></i> Cart (<span id="cartCount">0</span>)
+        </a>
+
+      </li>
+    </ul>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 
 
 
