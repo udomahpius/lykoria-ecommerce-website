@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
     { key: "lifestyle", label: "Lifestyle" },
     { key: "politics", label: "Politics" },
     { key: "travel", label: "Travel" },
+    { key: "technology", label: "Technology" },
   ];
 
   function loadCategories() {

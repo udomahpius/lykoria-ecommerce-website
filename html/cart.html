@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Cart</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .cart-table th, .cart-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    .cart-table th {
+      background: #f4f4f4;
+    }
+    .cart-summary {
+      margin-top: 20px;
+      text-align: right;
+    }
+    .cart-summary button {
+      padding: 10px 15px;
+      background: #ff6600;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .cart-summary button:hover {
+      background: #e65c00;
+    }
+  </style>
+</head>
+<body>
+  <h2>🛒 My Cart</h2>
+  <div id="cartItems"></div>
+
+     <script src="../js/global-js.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      renderCart();
+    });
+  </script>
+</body>
+</html>
+
+

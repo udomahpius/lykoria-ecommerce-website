@@ -138,5 +138,33 @@ export const config = {
     bodyParser: false, // Multer handles body
   },
 };
+// ===== GET ALL POSTS (with filters) =====
+handler.get(async (req, res) => {
+  try {
+    const { category, status, limit, search } = req.query;
+
+    const query = {};
+    if (category) query.category = category;
+    if (status) query.status = status;
+
+    // 🔎 Search by title or body
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { body: { $regex: search, $options: "i" } }
+      ];
+    }
+
+    let posts = Post.find(query).sort({ createdAt: -1 });
+
+    if (limit) posts = posts.limit(parseInt(limit));
+
+    const results = await posts;
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ success: false, error: "Failed to load posts" });
+  }
+});
+
 
 export default handler;

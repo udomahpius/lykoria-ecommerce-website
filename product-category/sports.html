@@ -3,406 +3,515 @@
 <head>
   <meta charset="UTF-8">
   <title>Category - NAME</title>
+  <link rel="stylesheet" href="../css/global-css.css">
   <style>
- /* -------------------------
-     THEME VARIABLES
-     ------------------------- */
-  :root{
-    --bg-color: #ffffff;
-    --text-color: #1e1e2f;
-    --header-bg: #030346;
-    --header-text: #ffffff;
-    --accent: #007BFF;
-    --accent-2: #00CFFF;
-    --dropdown-bg: #ffffff;
-    --dropdown-text: #333333;
-    --dropdown-hover-bg: var(--accent);
-    --dropdown-hover-text: #ffffff;
-    --link-hover: rgba(0,0,0,0.06);
-    --card-bg: #ffffff;
-    --card-text: #1e1e2f;
-    --card-desc: #555555;
-    --footer-bg: #1e1e2f;
-    --footer-text: #ffffff;
-    --banner-overlay: linear-gradient(rgba(3, 41, 51, 0.831), rgba(19, 2, 2, 0.731));
-    --banner-text: #ffffff;
-    --text-shadow:2px 2px 8px rgba(0,0,0,0.7);
-    --border-bottom:1px solid rgba(255,255,255,0.1);
-  }
-
-  body.dark-mode{
-    --bg-color: #000000da;
-    --text-color: #e6e6e6;
-    --header-bg: #0b0d10;
-    --header-text: #ffffff;
-    --dropdown-bg: #1f2226;
-    --dropdown-text: #e6e6e6;
-    --dropdown-hover-bg: #2f3438;
-    --dropdown-hover-text: #ffffff;
-    --link-hover: rgba(255,255,255,0.06);
-    --card-bg: #131417;
-    --card-text: #e6e6e6;
-    --card-desc: #bfbfbf;
-    --footer-bg: #0b0d10;
-    --footer-text: #ffffff;
-    --banner-overlay: linear-gradient(rgba(1, 17, 21, 0.954), rgba(19, 2, 2, 0.731));
-    --banner-text: #ffffff;
-    --text-shadow:2px 2px 8px rgba(0,0,0,0.7)
-  } 
-
-  #toggleTheme {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #007BFF;
-      color: #fff;
-      border-radius:0;
-      text-decoration: none;
-      cursor: pointer;
-      width: 100%;
+    :root {
+      --bg: #fff;
+      --text: #1e1e2f;
+      --accent: #f68b1e;
+      --header-bg: #030346;
+      --header-text: #fff;
+      --card-bg: #fff;
+      --card-border: #eee;
+      --card-text: #333;
+      --sidebar-bg: #f9f9f9;
     }
 
-  /* -------------------------
-     GLOBAL
-     ------------------------- */
-  *{box-sizing:border-box;margin:0;padding:0;font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;}
-  html,body{height:100%;}
-  body{
-    background:var(--bg-color);
-    color:var(--text-color);
-    transition: background .25s ease, color .25s ease;
-    -webkit-font-smoothing:antialiased;
-  }
-  a{color:inherit;}
-  
-  /* Header */
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background: var(--header-bg);
-  color: var(--header-text);
-  padding:15px 20px;
-  position:fixed;
-  top:0;
-  z-index:1000;
-  width: 100%;
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+    body { background: var(--bg); color: var(--text); }
+    /* Layout */
+    .container {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--sidebar-bg);
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+    .sidebar h3 { margin-bottom: 10px; font-size: 18px; }
+    .sidebar label { display: block; margin-bottom: 8px; font-size: 14px; cursor: pointer; }
+
+/* --- Categories --- */
+.categories {
+  padding: 40px 20px;
+  text-align: center;
+  padding-top: 9rem;
 }
-.scrollBg{
-  background-color:#021c42;
-  padding:25px 30px;
-    transition:0.7s ease-in-out;
-box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
+.categories h2 {
+  font-size: 2rem;
+  margin-bottom: 25px;
 }
-
-header h1 { margin:0; font-size:24px; }
-
-/* Nav links */
-nav {
-  display:flex;
-  gap:13px;
-  align-items:center;
-  z-index:1000;
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(150px,1fr));
+  gap: 20px;
 }
-
-nav a {
-  color: var(--header-text);
-  text-decoration:none;
-  padding:8px 14px;
-  border-radius:6px;
-  transition:0.3s;
+.category-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform .2s;
+  cursor: pointer;
 }
-
-nav a:hover { background: var(--link-hover); }
-
-/* User dropdown */
-.dropbtn {
-  background: var(--dropdown-hover-bg);
-  color:var(--header-text);
-  border:none;
-  padding:8px 12px;
-  border-radius:6px;
-  cursor:pointer;
-  font-size:18px;
+.category-card img {
+  width: 100%; height: 120px; object-fit: cover;
 }
-
-.dropdown-content {
-  display:none;
-  position:absolute;
-  right:0;
-  background:var(--bg-color);
-  min-width:160px;
-  box-shadow:var(--text-shadow);
-  z-index:2000;
+.category-card p {
+  padding: 10px; font-weight: bold; color:#333;
 }
+.category-card:hover { transform: translateY(-5px); }
 
-.dropdown-content a {
-  display:block;
-  padding:10px;
-  color:var(--dropdown-text);
+/* --- Footer --- */
+.footer {
+  background:#1e1e2f;
+  color:#fff;
+  margin-top:40px;
 }
-
-.dropdown-content a:hover {
-  background:var(--dropdown-hover-bg);
-  color:var(--header-text);
+.footer-top {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+  gap: 20px;
+  padding: 40px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
-
-.user-dropdown:hover .dropdown-content {
-  display:block;
+.footer-col h3 {
+  margin-bottom: 15px; font-size:1.1rem;
+}
+.footer-col ul { list-style: none; padding: 0; }
+.footer-col ul li { margin-bottom: 8px; }
+.footer-col ul li a {
+  color: #bbb; text-decoration:none; font-size:.95rem;
+  text-align: left;
+}
+.footer-col ul li a:hover { color:#fff; }
+.socials a {
+  margin-right:10px; font-size:1.4rem;
+  text-decoration:none; color:#fff;
+}
+.footer-bottom {
+  text-align:center;
+  padding: 15px 10px;
+  font-size:.9rem;
+  background:#141421;
 }
 
-/* Toggle button */
-.nav-toggle {
-  display:none;
-  font-size:28px;
-  cursor:pointer;
-  background:var(--dropdown-hover-bg);
-  color:var(--header-text);
-  padding:6px 12px;
-  border-radius:6px;
-  transition:0.3s;
+    /* Search */
+    .search-bar { margin: 15px 0; display: flex; gap: 10px; }
+    .search-bar input {
+      flex: 1; padding: 10px;
+      border: 1px solid #ccc; border-radius: 4px;
+    }
+    .search-bar button {
+      padding: 10px 15px;
+      background: var(--accent); border: none;
+      color: white; border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Grid */
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 20px;
+    }
+    .post-card {
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      background: var(--card-bg);
+      overflow: hidden;
+      transition: 0.3s;
+    }
+    .post-card:hover { box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    .post-card img { width: 100%; height: 150px; object-fit: cover; }
+    .post-card-content { padding: 10px; }
+    .post-card-content h3 { font-size: 16px; margin-bottom: 8px; color: var(--card-text); }
+    .post-card-content p { font-size: 14px; color: #555; margin-bottom: 10px; }
+    .post-card-content a {
+      text-decoration: none; background: var(--accent);
+      color: white; padding: 6px 10px; border-radius: 4px;
+      font-size: 14px;
+    }
+
+    /* Pagination */
+    .pagination { margin: 20px 0; text-align: center; }
+    .pagination button {
+      padding: 10px 20px;
+      background: var(--accent);
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media(max-width: 900px) {
+      nav { display: none; }
+      .menu-toggle { display: block; }
+      .container { grid-template-columns: 1fr; }
+      .sidebar { order: 2; }
+    }
+    /* Footer */
+footer { background:#1e1e2f; color:#fff; padding:20px 15px; margin-top:40px; }
+.footer-top { text-align:center; margin-bottom:20px; }
+.newsletter input { padding:10px; border:none; border-radius:6px; width:220px; }
+.newsletter button { padding:10px 15px; background:#007BFF; border:none; border-radius:6px; color:#fff; cursor:pointer; }
+.newsletter button:hover { background:#0056b3; }
+.footer-middle { display:flex; justify-content:center; gap:50px; margin-bottom:20px; flex-wrap:wrap; }
+.footer-links h4 { margin-bottom:10px; }
+.footer-links a { display:block; color:#ccc; margin-bottom:6px; text-decoration:none; }
+.footer-links a:hover { color:#fff; }
+.social-icons a { margin:0 5px; font-size:20px; color:#fff; }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px; }
+.payment-icons img { height:28px; margin:0 8px; }
+
+
+
+#cartCount {
+  background: #f68b1e;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 7px;
+  font-size: 12px;
+  margin-left: 4px;
 }
 
-.nav-toggle:hover { background:var(--dropdown-hover-bg); }
-
-/* Overlay */
-.overlay {
-  position: fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:var(--header-bg);
-  opacity: 0.9;
-  display:none;
-  z-index:900;
-  opacity:0;
-  transition: opacity 0.3s ease;
+#cartItems { margin: 20px; }
+.cart-item {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+  padding: 10px 0;
+}
+.cart-item img {
+  width: 80px; height: 80px;
+  object-fit: cover;
+  margin-right: 15px;
+}
+.cart-info { flex: 1; }
+.cart-info h4 { margin: 0 0 5px; font-size: 16px; }
+.quantity { display: flex; align-items: center; gap: 8px; }
+.quantity button {
+  background: #ddd; border: none;
+  padding: 4px 10px; cursor: pointer;
+}
+.remove { background: none; border: none; color: red; cursor: pointer; }
+.cart-total { margin-top: 20px; text-align: right; }
+.cart-total button {
+  background: #f68b1e; color: #fff; border: none;
+  padding: 10px 20px; cursor: pointer;
 }
 
-.overlay.show { display:block; opacity:0.9; }
-
-/* Mobile */
-@media(max-width:900px){
-  nav {
-    position:fixed;
-    top:0;
-    right:-100%;
-    height:100%;
-    width:70%;
-    overflow-y: scroll;
-    max-width:280px;
-    background: var(--header-bg);
-    flex-direction:column;
-    align-items:flex-start;
-    padding:80px 20px;
-    gap:20px;
-    transition:right 0.4s ease-in-out;
-    box-shadow:var(--text-shadow);
-  }
-
-  nav.active { right:0; }
-
-  nav a {
-    width:100%;
-    border-bottom:var(--border-bottom);
-  }
-
-  .nav-toggle { display:block; }
-
-  .user-dropdown{ width: 100%; background-color: var(--dropdown-hover-bg); }
-  .dropdown-content{ background-color: var(--bg-color); width: 100%; position:static; box-shadow:none; }
-}
-
-/* Logo */
-.logo img {
-  max-width:110px;
-  height:auto;
-  display:block;
-  object-fit:contain;
-  transition: transform .2s ease, filter .2s ease;
-  cursor:pointer;
-}
-.logo img:hover { transform: scale(1.05); filter: brightness(1.05); }
-
-/* ====== Animations ====== */
-@keyframes navLinkFade {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-@keyframes navLinkFadeOut {
-  from { opacity: 1; transform: translateX(0); }
-  to { opacity: 0; transform: translateX(30px); }
-}
-@keyframes dropdownFade {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@media(max-width:900px){
-  #navMenu a, #navMenu .dropbtn {
-    opacity:0;
-    transform: translateX(30px);
-  }
-  .user-dropdown.open .dropdown-content a {
-    opacity:0;
-    transform: translateY(-10px);
-  }
-}
-
-.posts { display: flex; flex-wrap: wrap; gap: 15px; padding: 20px; }
-.post { border: 1px solid #ccc; border-radius: 6px; padding: 10px; width: 30%; }
-.post img { max-width: 100%; border-radius: 6px; }
   </style>
 </head>
 <body>
-<header class="h">
-  <h1 class="logo"><img src="../assets/logo.png" alt=""></h1>
-  <button class="nav-toggle" id="navToggle" aria-label="Open menu">☰</button>
 
-  <nav id="navMenu" aria-label="Main navigation">
-    <a href="../index.html">Home</a>
-    <a href="health.html">Health</a>
-    <a href="sports.html">Sports</a>
-    <a href="business.html">Business</a>
-    <a href="education.html">Education</a>
-    <a href="entertainment.html">Entertainment</a>
-    <a href="lifestyle.html">Lifestyle</a>
-    <a href="politics.html">Politics</a>
-    <a href="travel.html">Travel</a>
-
-    <div class="user-dropdown" id="userDropdown">
-      <button class="dropbtn" id="userDropBtn" aria-haspopup="true" aria-expanded="false">👤 ▾</button>
-      <div class="dropdown-content" id="userDropdownContent">
-        <a href="../html/login.html">Login</a>
-        <a href="../html/signup.html">Signup</a>
-        <a href="../html/admin.html">Admin</a>
-        <a href="#" id="toggleTheme">🌙 Dark Mode</a>
-      </div>
+<!-- ====== HEADER ====== -->
+<header class="header">
+  <div class="top-bar">
+    <!-- Logo -->
+    <div class="logo">
+      <a href="../index.html"><img src="../assets/logo.png" alt="Logo"></a>
     </div>
+
+    <!-- Search with category -->
+    <div class="search-box">
+      <select class="search-category">
+        <option value="all">All Categories</option>
+        <option value="health">Health</option>
+        <option value="sports">Sports</option>
+        <option value="business">Business</option>
+        <option value="education">Education</option>
+        <option value="entertainment">Entertainment</option>
+      </select>
+      <input type="text" placeholder="Search for products, brands and more..." />
+      <button onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+
+    </div>
+
+    <!-- Right icons -->
+    <div class="header-icons">
+      <a href="#"><i class="fas fa-user"></i> Account</a>
+      <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+ <a href="../html/cart.html">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </a>
+    </div>
+
+    <!-- Mobile toggle -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+
+  <!-- ===== Mega Menu (Desktop only) ===== -->
+  <nav class="mega-menu">
+    <ul>
+      <li><a href="health.html">Health</a></li>
+      <li><a href="sports.html">Sports</a></li>
+      <li><a href="business.html">Business</a></li>
+      <li><a href="education.html">Education</a></li>
+      <li><a href="entertainment.html">Entertainment</a></li>
+      <li><a href="#">Lifestyle</a></li>
+      <li><a href="#">Fashion</a></li>
+      <li><a href="#">Electronics</a></li>
+      <li><a href="#">Groceries</a></li>
+    </ul>
   </nav>
 </header>
-<div class="overlay" id="overlay"></div>
 
-<h2 style="padding:20px;" id="categoryTitle">Category Posts</h2>
-<div id="categoryPosts" class="posts"></div>
+<!-- ===== Mobile Nav ===== -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="close-btn" onclick="toggleMenu()">✖</button>
+  <ul>
+    <li><a href="../index.html">Home</a></li>
+    <li class="has-sub">
+      <a href="#">Categories ▾</a>
+      <ul class="sub-menu">
+        <li><a href="health.html">Health</a></li>
+        <li><a href="sports.html">Sports</a></li>
+        <li><a href="business.html">Business</a></li>
+        <li><a href="education.html">Education</a></li>
+        <li><a href="entertainment.html">Entertainment</a></li>
+        <li><a href="#">Lifestyle</a></li>
+        <li><a href="#">Fashion</a></li>
+        <li><a href="#">Electronics</a></li>
+        <li><a href="#">Groceries</a></li>
+      </ul>
+    </li>
+    <li><a href="#">Account</a></li>
+    <li><a href="#">Help</a></li>
+    <li> <a href="../html/cart.html">
+    🛒 Cart (<span id="cartCount">0</span>)
+  </a>
+
+</li>
+  </ul>
+</div>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+
+
+<!-- ===== Category Thumbnails ===== -->
+<section class="categories">
+  <h2>Top Categories</h2>
+  <div class="category-grid">
+    <div class="category-card">
+      <img src="https://via.placeholder.com/200x150?text=Health" alt="Health">
+      <p>Health</p>
+    </div>
+    <div class="category-card">
+      <img src="https://via.placeholder.com/200x150?text=Sports" alt="Sports">
+      <p>Sports</p>
+    </div>
+    <div class="category-card">
+      <img src="https://via.placeholder.com/200x150?text=Business" alt="Business">
+      <p>Business</p>
+    </div>
+    <div class="category-card">
+      <img src="https://via.placeholder.com/200x150?text=Education" alt="Education">
+      <p>Education</p>
+    </div>
+    <div class="category-card">
+      <img src="https://via.placeholder.com/200x150?text=Entertainment" alt="Entertainment">
+      <p>Entertainment</p>
+    </div>
+    <div class="category-card">
+      <img src="https://via.placeholder.com/200x150?text=Lifestyle" alt="Lifestyle">
+      <p>Lifestyle</p>
+    </div>
+  </div>
+</section>
+<div id="searchResults"></div>
+
+
+<div class="container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h3>Filters</h3>
+    <label><input type="checkbox" name="filter" value="recent"> Most Recent</label>
+    <label><input type="checkbox" name="filter" value="popular"> Popular</label>
+    <label><input type="checkbox" name="filter" value="draft"> Drafts</label>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <h2 id="categoryTitle">Category Posts</h2>
+
+    <!-- Search -->
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search posts...">
+      <button onclick="clearSearch()">Clear</button>
+    </div>
+
+    <!-- Posts -->
+    <div id="categoryPosts" class="posts-grid"></div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+      <button id="loadMore">Load More</button>
+    </div>
+  </main>
+
+</div>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-col">
+      <h3>Need Help?</h3>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Shipping</a></li>
+        <li><a href="#">Returns</a></li>
+        <li><a href="#">Track Order</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>About Us</h3>
+      <ul>
+        <li><a href="#">Company Info</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Affiliate Program</a></li>
+        <li><a href="#">Press</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Make Money</h3>
+      <ul>
+        <li><a href="#">Sell Products</a></li>
+        <li><a href="#">Become a Partner</a></li>
+        <li><a href="#">Advertise</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3>Follow Us</h3>
+      <div class="socials">
+        <a href="#">🌐</a>
+        <a href="#">📘</a>
+        <a href="#">🐦</a>
+        <a href="#">📸</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Lykoria. All rights reserved.</p>
+  </div>
+</footer>
 
 <script>
 const BASE_URL = "https://lykoria-ecommerce-website.onrender.com";
 const API_URL = `${BASE_URL}/api/posts`;
-const CATEGORY = window.location.pathname.split("/").pop().replace(".html", "").toLowerCase();
+const CATEGORY = window.location.pathname.split("/").pop().replace(".html","").toLowerCase();
 
-async function loadCategory() {
+let page = 1;
+const limit = 8;
+let postsData = [];
+
+async function loadCategory(reset=false) {
   const postsContainer = document.getElementById("categoryPosts");
   const titleEl = document.getElementById("categoryTitle");
+  if (reset) { page = 1; postsData = []; postsContainer.innerHTML = ""; }
+
   try {
-    const res = await fetch(`${API_URL}?category=${CATEGORY}&status=published`);
+    const res = await fetch(`${API_URL}?category=${CATEGORY}&status=published&page=${page}&limit=${limit}`);
     if (!res.ok) throw new Error("Failed to fetch posts");
     const posts = await res.json();
-    const sortedPosts = posts.sort((a,b)=> new Date(b.createdAt)-new Date(a.createdAt));
+    postsData = [...postsData, ...posts];
+
     const categoryLabel = CATEGORY.charAt(0).toUpperCase()+CATEGORY.slice(1);
     titleEl.innerText = `${categoryLabel} Posts`;
     document.title = `${categoryLabel} - Lykoria`;
-    if (!sortedPosts.length) {
-      postsContainer.innerHTML = `<p style="width:100%; text-align:center; padding:2rem; color:#555;">No posts found for ${categoryLabel}.</p>`;
+
+    if (!posts.length && page === 1) {
+      postsContainer.innerHTML = `<p>No posts found for ${categoryLabel}.</p>`;
       return;
     }
-    postsContainer.innerHTML = sortedPosts.map(p=>`
-      <div class="post">
-        <h3>${p.title}</h3>
-        ${p.image?`<img src="${p.image}" alt="${p.title}">`:""}
-        <p>${p.body.substring(0,150)}...</p>
-        <a href="${p.url}" target="_blank">${p.urlText||"Read More"}</a>
-      </div>`).join("");
+
+posts.forEach(p => {
+  const div = document.createElement("div");
+  div.className = "post-card";
+  div.innerHTML = `
+    ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
+    <div class="post-card-content">
+      <h3>${p.title}</h3>
+      <p>${p.body.substring(0,100)}...</p>
+      <a href="${p.url}" target="_blank">${p.urlText || "Read More"}</a>
+      <br><br>
+      <button 
+        class="add-to-cart"
+        data-id="${p._id || p.id}" 
+        data-title="${p.title}" 
+        data-price="${p.price || 0}" 
+        data-image="${p.image || ''}">
+        Add to Cart
+      </button>
+    </div>
+  `;
+  postsContainer.appendChild(div);
+});
+
+
   } catch (err) {
-    postsContainer.innerHTML = `<h1 style="font-size:2rem; text-align:center; color:rgb(65, 29, 4);width:100%; background:lightgray; padding:3rem 1rem; font-weight:lighter;">⚠️ Failed to load posts.<br>${err.message}</h1>`;
+    console.error(err);
   }
 }
-document.addEventListener("DOMContentLoaded", loadCategory);
 
-document.addEventListener('DOMContentLoaded', () => {
-  const navToggle=document.getElementById('navToggle');
-  const navMenu=document.getElementById('navMenu');
-  const overlay=document.getElementById('overlay');
-  const toggleThemeBtn=document.getElementById('toggleTheme');
-  const userDropdown=document.getElementById('userDropdown');
-  const userDropBtn=document.getElementById('userDropBtn');
+document.addEventListener("DOMContentLoaded", ()=> {
+  loadCategory(true);
+  document.getElementById("loadMore").addEventListener("click", ()=>{ page++; loadCategory(); });
 
-  navToggle.addEventListener('click', () => {
-    const active=navMenu.classList.toggle('active');
-    overlay.classList.toggle('show', active);
-    const navLinks=navMenu.querySelectorAll('a, .dropbtn');
-    if(active){
-      navLinks.forEach((link,i)=>{
-        link.style.animation=`navLinkFade 0.4s ease forwards`;
-        link.style.animationDelay=`${i*0.1+0.2}s`;
+  // Search filter
+  document.getElementById("searchInput").addEventListener("input", e=>{
+    const q = e.target.value.toLowerCase();
+    const postsContainer = document.getElementById("categoryPosts");
+    postsContainer.innerHTML = "";
+    postsData.filter(p => p.title.toLowerCase().includes(q) || p.body.toLowerCase().includes(q))
+      .forEach(p=>{
+        const div = document.createElement("div");
+        div.className = "post-card";
+        div.innerHTML = `
+          ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
+          <div class="post-card-content">
+            <h3>${p.title}</h3>
+            <p>${p.body.substring(0,100)}...</p>
+            <a href="${p.url}" target="_blank">${p.urlText||"Read More"}</a>
+          </div>
+        `;
+        postsContainer.appendChild(div);
       });
-    }else{
-      navLinks.forEach((link,i)=>{
-        link.style.animation=`navLinkFadeOut 0.3s ease forwards`;
-        link.style.animationDelay=`${i*0.05}s`;
-      });
-      setTimeout(()=>resetAnimations(navLinks),300);
-    }
   });
-
-  function closeMenu(){
-    navMenu.classList.remove('active');
-    overlay.classList.remove('show');
-  }
-  document.querySelectorAll('#navMenu a').forEach(a=>a.addEventListener('click',closeMenu));
-  overlay.addEventListener('click',closeMenu);
-  document.addEventListener('click', (e)=>{
-    if(!navMenu.contains(e.target)&&!navToggle.contains(e.target)&&navMenu.classList.contains('active')){closeMenu();}
-  });
-
-  let changeTheme=true;
-  toggleThemeBtn.addEventListener("click", ()=>{
-    if(changeTheme){
-      document.body.classList.add("dark-mode");
-      toggleThemeBtn.innerHTML="☀️ Light Mode";
-      changeTheme=false;
-    }else{
-      document.body.classList.remove("dark-mode");
-      toggleThemeBtn.innerHTML="🌙 Dark Mode";
-      changeTheme=true;
-    }
-  });
-
-  if(userDropBtn){
-    userDropBtn.addEventListener('click',(e)=>{
-      if(window.innerWidth<=900){
-        e.preventDefault();
-        userDropdown.classList.toggle('open');
-        const expanded=userDropdown.classList.contains('open');
-        userDropBtn.setAttribute('aria-expanded', expanded?'true':'false');
-        const dropLinks=userDropdown.querySelectorAll('.dropdown-content a');
-        if(expanded){
-          dropLinks.forEach((link,i)=>{
-            link.style.animation=`dropdownFade 0.3s ease forwards`;
-            link.style.animationDelay=`${i*0.1+0.1}s`;
-          });
-        }else{
-          resetAnimations(dropLinks);
-        }
-      }
-    });
-  }
-
-  window.addEventListener("scroll", ()=>{
-    if(window.scrollY>=200){ document.querySelector(".h").classList.add("scrollBg"); }
-    else{ document.querySelector(".h").classList.remove("scrollBg"); }
-  });
-
-  function resetAnimations(els){
-    els.forEach(el=>{
-      el.style.animation='none';
-      el.offsetHeight;
-      el.style.animation=null;
-      el.style.animationDelay=null;
-    });
-  }
 });
+
+function clearSearch() {
+  document.getElementById("searchInput").value = "";
+  const postsContainer = document.getElementById("categoryPosts");
+  postsContainer.innerHTML = "";
+  postsData.forEach(p=>{
+    const div = document.createElement("div");
+    div.className = "post-card";
+    div.innerHTML = `
+      ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
+      <div class="post-card-content">
+        <h3>${p.title}</h3>
+        <p>${p.body.substring(0,100)}...</p>
+        <a href="${p.url}" target="_blank">${p.urlText||"Read More"}</a>
+      </div>
+    `;
+    postsContainer.appendChild(div);
+  });
+}
+
+
+
 </script>
+
+  <script src="../js/global-js.js"></script>
+
+<script src="https://kit.fontawesome.com/79a2ec8048.js" crossorigin="anonymous"></script>
 </body>
 </html>

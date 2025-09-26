@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Shop - E-Commerce</title>
+  <link rel="stylesheet" href="./css/global-css.css">
   <style>
     :root {
       --bg-color: #fff;
@@ -52,266 +53,151 @@
       text-decoration: none;
     }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--header-bg);
-      color: var(--header-text);
-      padding: 3px 15px;
-      position: fixed;
-      top: 0;
-      width: 100%;
-      z-index: 1000;
-      transition: 0.3s;
-    }
 
-    .scrollBg {
-      background: #E65C00;
-      padding: 10px 15px;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    .logo img {
-      max-width: 60px;
-      height: auto;
-      cursor: pointer;
-    }
-
-    nav {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      position: relative;
-      flex: 1;
-      justify-content: center;
-      margin: auto 2.5rem;
-    }
-
-    .nav-links-dropdown {
-      position: relative;
-    }
-
-    .nav-links-dropdown button {
-      background: none;
-      color: #fff;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 6px;
-    }
-
-    .nav-links-dropdown-content {
-      display: none;
-      position: absolute;
-      top: 35px;
-      left: 0;
-      width: 100%;
-      background: var(--dropdown-bg);
-      color: var(--dropdown-text);
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-      border-radius: 8px;
-      z-index: 2000;
-      opacity: 0;
-      visibility: hidden;
-      transition: 0.3s;
-    }
-
-    .nav-links-dropdown-content .column {
-      width: 100%;
+    .hero-section {
+      display: grid;
+      grid-template-columns: 200px 1fr 250px;
+      gap: 15px;
+      padding-top: 10% !important;
+      max-width: 1200px;
       padding: 10px;
-      float: left;
+
     }
 
-    .nav-links-dropdown-content a {
-      display: block;
-      padding: 5px 0;
-      color: var(--dropdown-text);
+    .hero-section .hero-carousel img {
+      width: 100% !important;
+      height: auto;
     }
 
-    .nav-links-dropdown-content a:hover {
-      color: var(--dropdown-hover-text);
-      background: var(--dropdown-hover-bg);
+    /* Categories */
+    .hero-categories {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .nav-links-dropdown:hover .nav-links-dropdown-content {
-      display: block;
-      opacity: 1;
-      visibility: visible;
+    .hero-categories ul {
+      list-style: none;
+      margin: 0;
+      padding: 10px;
     }
 
-    .nav-toggle {
-      display: none;
-      font-size: 28px;
-      cursor: pointer;
-      background: var(--accent);
-      color: #fff;
-      padding: 5px 10px;
-      border-radius: 6px;
+    .hero-categories li {
+      padding: 8px 0;
     }
 
-    .nav-toggle:hover {
-      background: var(--accent-2);
-    }
-    .dropbtn{
-      color:white;
-      background-color: #e6e6e6 !important;
+    .hero-categories a {
+      color: #333;
+      text-decoration: none;
+      font-size: 14px;
     }
 
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      z-index: 900;
-      opacity: 0;
-      transition: 0.3s;
+    .hero-categories a:hover {
+      color: #ff6600;
     }
 
-    .overlay.show {
-      display: block;
-      opacity: 1;
-    }
-
-    .user-dropdown {
+    /* Carousel */
+    .hero-carousel {
       position: relative;
-      margin-left: 10px;
-    }
-
-    .user-dropdown .dropbtn {
-      background: none;
-      color: #fff;
-      border: none;
-      padding: 5px;
-      font-size: 28px;
-      cursor: pointer;
-    }
-
-    .user-dropdown .dropdown-content {
-      display: none;
-      position: absolute;
-      right: 0;
-      background: var(--dropdown-bg);
-      min-width: 160px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      z-index: 2000;
-      border-radius: 6px;
-    }
-
-    .user-dropdown .dropdown-content a {
-      display: block;
-      padding: 8px;
-      color: var(--dropdown-text);
-    }
-
-    .user-dropdown .dropdown-content a:hover {
-      background: var(--dropdown-hover-bg);
-      color: #fff;
-    }
-
-    .user-dropdown.open .dropdown-content {
-      display: block;
-    }
-
-    .search-bar {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-    }
-
-    .search-bar input {
-      padding: 12px 4rem  12px 12px;
-      border-radius: 6px;
-      border: none;
-      width: 70%;
-      max-width: 400px;
-    }
-
-    .search-bar input:focus {
-      outline: none;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .sticky-cart {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--accent);
-      color: #fff;
-      padding: 12px 16px;
-      border-radius: 50px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-    }
-
-    .sticky-cart:hover {
-      background: var(--accent-2);
-    }
-
-    /* Banner */
-    .banner {
-      position: relative;
-      height: 400px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
-      margin-top: 60px;
-      border-radius: 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .banner img {
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .carousel-slide {
+      min-width: 100%;
+    }
+
+    .carousel-slide img {
       width: 100%;
-      height: 100%;
+      height: 300px;
       object-fit: cover;
     }
 
-    .banner-overlay {
+    .carousel-btn {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.3);
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.5);
+      color: #fff;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      border-radius: 50%;
     }
 
-    .banner-content {
-      position: absolute;
-      z-index: 2;
+    .carousel-btn.prev {
+      left: 10px;
+    }
+
+    .carousel-btn.next {
+      right: 10px;
+    }
+
+    /* Promo Cards */
+    .hero-promos {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .promo-card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px;
       text-align: center;
-      color: #fff;
     }
 
-    .banner-content h1 {
-      font-size: 28px;
-      margin: 0;
+    .promo-card img {
+      width: 100%;
+      border-radius: 6px;
+      height: 120px;
+      object-fit: cover;
     }
 
-    .banner-content p {
+    .promo-card h4 {
+      margin: 10px 0 5px;
       font-size: 16px;
-      margin: 10px 0;
     }
 
-    .banner-btn {
+    .promo-card p {
+      font-size: 14px;
+      color: #777;
+    }
+
+    .promo-card a {
       display: inline-block;
-      padding: 12px 24px;
-      font-size: 16px;
-      font-weight: 700;
+      margin-top: 5px;
+      padding: 6px 12px;
+      background: #ff6600;
       color: #fff;
-      border-radius: 999px;
-      background: var(--accent);
-      transition: 0.3s;
+      font-size: 14px;
+      border-radius: 4px;
+      text-decoration: none;
     }
 
-    .banner-btn:hover {
-      background: var(--accent-2);
-      transform: translateY(-2px);
+    .promo-card a:hover {
+      background: #ff9900;
     }
+
+    /* Responsive */
+    @media(max-width: 900px) {
+      .hero-section {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-promos {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+
 
     /* Hot Deals Carousel */
     .carousel {
@@ -368,6 +254,10 @@
       font-size: 22px;
       margin-bottom: 15px;
       font-weight: 600;
+      width: 100%;
+      padding: 10px;
+      background-color: var(--footer-bg);
+      color: var(--footer-text);
     }
 
     .posts-grid {
@@ -484,86 +374,47 @@
       flex-wrap: wrap;
     }
 
-    /* Responsive */
-    @media(max-width:900px) {
-      nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        height: 100%;
-        width: 80%;
-        max-width: 280px;
-        background: var(--header-bg);
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 70px 15px;
-        gap: 15px;
-        transition: right 0.4s;
-        justify-content: flex-start;
-        overflow-y: scroll;
-        margin: auto;
-      }
 
-      nav.active {
-        right: 0;
-      }
 
-      .nav-links-dropdown-content,
-      .user-dropdown .dropdown-content {
-        position: static;
-        width: 100%;
-        box-shadow: none;
-        opacity: 1;
-        visibility: visible;
-        display: grid;
-        grid-template-columns: 1fr;
-        padding: 0;
-      }
-
-      .nav-links-dropdown button {
-        width: 100%;
-        text-align: left;
-        font-size: 16px;
-        padding: 10px 0;
-      }
-
-      .search-bar {
-        width: 100%;
-        justify-content: flex-start;
-        margin-top: 10px;
-      }
-
-      .search-bar input {
-        width: calc(100% - 30px);
-      }
-
-      .user-dropdown .dropbtn {
-        font-size: 32px;
-      }
-
-      .nav-toggle {
-        display: block;
-       margin: auto 2rem !important;
-
-      }
+    /* Mobile search bar styles */
+    .mobile-search-bar {
+      display: none;
+      padding: 12px 15px;
+      background: var(--header-bg);
+      text-align: center;
     }
 
-    @media(max-width:600px) {
-      .banner-content h1 {
-        font-size: 20px;
+    .mobile-search-bar input {
+      width: 70%;
+      max-width: 300px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+    }
+
+    .mobile-search-bar button {
+      padding: 8px 12px;
+      margin-left: 8px;
+      border: none;
+      border-radius: 6px;
+      background: var(--accent-2);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .mobile-search-bar button:hover {
+      background: var(--accent);
+    }
+
+    /* Show only on mobile */
+    @media(max-width: 900px) {
+      .mobile-search-bar {
+        display: block;
       }
 
-      .banner-content p {
-        font-size: 14px;
-      }
-
-      .banner-btn {
-        font-size: 14px;
-        padding: 8px 16px;
-      }
-
-      .post-card img {
-        height: 120px;
+      .hero-categories {
+        display: none !important;
       }
     }
   </style>
@@ -571,65 +422,176 @@
 
 <body>
 
-  <header class="h">
-    <h1 class="logo"><img src="./assets/logo.png" alt="Logo"></h1>
-    <button class="nav-toggle" id="navToggle">☰</button>
-    <nav id="navMenu">
-      <div class="nav-links-dropdown" id="navLinksDropdown">
-        <button>Categories ▾</button>
-        <div class="nav-links-dropdown-content">
-          <div class="column"><a href="./product-category/health.html">Health</a><a href="./product-category/sports.html">Sports</a><a href="./product-category/business.html">Business</a></div>
-          <div class="column"><a href="./product-category/education.html">Education</a><a href="./product-category/entertainment.html">Entertainment</a><a href="#">Lifestyle</a></div>
-          <div class="column"><a href="./product-category/politics.html">Politics</a><a href="./product-category/travel.html">Travel</a><a href="#">Home</a></div>
-        </div>
+  <!-- ====== HEADER ====== -->
+  <header class="header">
+    <div class="top-bar">
+      <!-- Logo -->
+      <div class="logo">
+        <a href="../index.html"><img src="../assets/logo.png" alt="Logo"></a>
       </div>
-      <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="Search products...">
+
+      <!-- Search with category -->
+      <div class="search-box">
+        <select class="search-category">
+          <option value="all">All Categories</option>
+          <option value="health">Health</option>
+          <option value="sports">Sports</option>
+          <option value="business">Business</option>
+          <option value="education">Education</option>
+          <option value="entertainment">Entertainment</option>
+        </select>
+        <input type="text" placeholder="Search for products, brands and more..." />
+        <button onclick="handleSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+
       </div>
-      <div class="user-dropdown" id="userDropdown">
-        <button class="dropbtn">👤 ▾</button>
-        <div class="dropdown-content">
-          <a href="./html/login.html">Login</a>
-          <a href="./html/signup.html">Signup</a>
-          <a href="./html/admin.html">Admin</a>
-          <a href="#" id="toggleTheme">🌙 Dark Mode</a>
-        </div>
+
+      <!-- Right icons -->
+      <div class="header-icons">
+        <a href="#"><i class="fas fa-user"></i> Account</a>
+        <a href="#"><i class="fas fa-question-circle"></i> Help</a>
+        <a href="../html/cart.html">
+          🛒 Cart (<span id="cartCount">0</span>)
+        </a>
       </div>
+
+      <!-- Mobile toggle -->
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+
+    <!-- ===== Mega Menu (Desktop only) ===== -->
+    <nav class="mega-menu">
+      <ul>
+        <li><a href="health.html">Health</a></li>
+        <li><a href="sports.html">Sports</a></li>
+        <li><a href="business.html">Business</a></li>
+        <li><a href="education.html">Education</a></li>
+        <li><a href="entertainment.html">Entertainment</a></li>
+        <li><a href="#">Lifestyle</a></li>
+        <li><a href="#">Fashion</a></li>
+        <li><a href="#">Electronics</a></li>
+        <li><a href="#">Groceries</a></li>
+      </ul>
     </nav>
   </header>
 
-  <div class="overlay" id="overlay"></div>
+  <!-- ===== Mobile Nav ===== -->
+  <div class="mobile-nav" id="mobileNav">
+    <button class="close-btn" onclick="toggleMenu()">✖</button>
+    <ul>
+      <li><a href="../index.html">Home</a></li>
+      <li class="has-sub">
+        <a href="#">Categories ▾</a>
+        <ul class="sub-menu">
+          <li><a href="health.html">Health</a></li>
+          <li><a href="sports.html">Sports</a></li>
+          <li><a href="business.html">Business</a></li>
+          <li><a href="education.html">Education</a></li>
+          <li><a href="entertainment.html">Entertainment</a></li>
+          <li><a href="#">Lifestyle</a></li>
+          <li><a href="#">Fashion</a></li>
+          <li><a href="#">Electronics</a></li>
+          <li><a href="#">Groceries</a></li>
+        </ul>
+      </li>
+      <li><a href="#">Account</a></li>
+      <li><a href="#">Help</a></li>
+      <li> <a href="../html/cart.html">
+          🛒 Cart (<span id="cartCount">0</span>)
+        </a>
 
-  <div class="banner">
-    <img src="./assets/bg.png" alt="Banner">
-    <div class="banner-overlay"></div>
-    <div class="banner-content">
-      <h1>Boost Your Income with Top Affiliate Programs</h1>
-      <p>Join or promote the best affiliate programs & start earning today!</p>
-      <a href="#" class="banner-btn">Get Started</a>
+      </li>
+    </ul>
+  </div>
+  <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+
+  <div class="hero-section">
+    <!-- Left: Categories -->
+    <div class="hero-categories">
+      <ul>
+        <li><a href="#">Health</a></li>
+        <li><a href="#">Sports</a></li>
+        <li><a href="#">Education</a></li>
+        <li><a href="#">Entertainment</a></li>
+        <li><a href="#">Technology</a></li>
+        <li><a href="#">Business</a></li>
+        <li><a href="#">Politics</a></li>
+        <li><a href="#">Travel</a></li>
+      </ul>
+    </div>
+
+    <!-- Center: Carousel -->
+    <div class="hero-carousel">
+      <div class="carousel-track">
+        <div class="carousel-slide">
+          <img src="./assets/banner.png" alt="Banner 1">
+        </div>
+        <div class="carousel-slide">
+          <img src="./assets/bg.png" alt="Banner 2">
+        </div>
+        <div class="carousel-slide">
+          <img src="./assets/banner.png" alt="Banner 3">
+        </div>
+      </div>
+      <button class="carousel-btn prev">❮</button>
+      <button class="carousel-btn next">❯</button>
+    </div>
+
+    <!-- Right: Product Card -->
+    <div class="hero-promos">
+      <div class="promo-card">
+        <img src="./assets/banner.png" alt="Deal 1">
+        <h4>Special Deal</h4>
+        <p>Save 50% today</p>
+        <a href="#">Shop Now</a>
+      </div>
+      <div class="promo-card">
+        <img src="./assets/bg.png" alt="Deal 2">
+        <h4>Flash Sale</h4>
+        <p>Limited stock</p>
+        <a href="#">Grab Deal</a>
+      </div>
     </div>
   </div>
 
+  <!-- Mobile Search Bar -->
+  <div class="mobile-search-bar">
+    <input type="text" id="mobileSearchInput" placeholder="Search products...">
+    <button id="clearSearchBtn">Clear Search</button>
+  </div>
+  <div id="searchResults"></div>
   <div class="container">
     <div class="section-title">Hot Deals</div>
     <div class="carousel" id="hotDeals"></div>
-    <div class="container">
-      <h2 class="section-title">Health</h2>
-      <div class="posts-grid" id="health-posts"></div>
 
-      <h2 class="section-title">Entertainment</h2>
-      <div class="posts-grid" id="entertainment-posts"></div>
 
-      <h2 class="section-title">Sports</h2>
-      <div class="posts-grid" id="sports-posts"></div>
+    <h2 class="section-title">Health</h2>
+    <div class="posts-grid" id="health-posts"></div>
 
-      <h2 class="section-title">Technology</h2>
-      <div class="posts-grid" id="technology-posts"></div>
+    <h2 class="section-title">Entertainment</h2>
+    <div class="posts-grid" id="entertainment-posts"></div>
 
-      <h2 class="section-title">Education</h2>
-      <div class="posts-grid" id="education-posts"></div>
+    <h2 class="section-title">Sports</h2>
+    <div class="posts-grid" id="sports-posts"></div>
 
-    </div>
+    <h2 class="section-title">Technology</h2>
+    <div class="posts-grid" id="technology-posts"></div>
+
+    <h2 class="section-title">Education</h2>
+    <div class="posts-grid" id="education-posts"></div>
+
+
+    <h2 class="section-title">Travel</h2>
+    <div class="posts-grid" id="travel-posts"></div>
+
+    <h2 class="section-title">Politics</h2>
+    <div class="posts-grid" id="politics-posts"></div>
+
+    <h2 class="section-title">Business</h2>
+    <div class="posts-grid" id="business-posts"></div>
+
+    <h2 class="section-title">Lifestyle</h2>
+    <div class="posts-grid" id="lifestyle-posts"></div>
 
 
 
@@ -641,9 +603,6 @@
       <input type="email" placeholder="Enter your email"><button>Subscribe</button>
     </div>
   </div>
-
-
-  <div class="sticky-cart">🛒</div>
 
   <footer>
     <div class="footer-links">
@@ -714,7 +673,7 @@
         renderPosts(containerId, posts);
       } catch (err) {
         console.error(`Error loading ${categoryKey} posts:`, err);
-        container.innerHTML = `<p style="color:red;">Failed to load posts for ${categoryKey}.</p>`;
+        container.innerHTML = `<p style="color:red;">Failed to load posts for ${categoryKey} check your internet.</p>`;
         allCategoryPosts[categoryKey] = []; // empty array for search
       }
     }
@@ -727,7 +686,10 @@
         { key: "sports", container: "sports-posts" },
         { key: "technology", container: "technology-posts" },
         { key: "education", container: "education-posts" },
-        { key: "religion", container: "religion-posts" }
+        { key: "travel", container: "travel-posts" },
+        { key: "lifestyle", container: "lifestyle-posts" },
+        { key: "politics", container: "politics-posts" },
+        { key: "business", container: "business-posts" }
       ];
 
       categories.forEach(cat => loadCategory(cat.key, cat.container));
@@ -805,8 +767,159 @@
         document.querySelector(".h").classList.toggle("scrollBg", window.scrollY >= 200);
       });
     });
+
+
+    // // hero carousel
+    //     const slides = document.querySelectorAll(".hero-slider .slide");
+    // const prevBtn = document.querySelector(".slider-controls .prev");
+    // const nextBtn = document.querySelector(".slider-controls .next");
+    // const dotsContainer = document.getElementById("sliderDots");
+
+    // let currentIndex = 0;
+    // let autoPlay;
+
+    // // Create dots
+    // slides.forEach((_, i) => {
+    //   const dot = document.createElement("span");
+    //   if (i === 0) dot.classList.add("active");
+    //   dot.addEventListener("click", () => goToSlide(i));
+    //   dotsContainer.appendChild(dot);
+    // });
+    // const dots = dotsContainer.querySelectorAll("span");
+
+    // function showSlide(index) {
+    //   slides.forEach((s, i) => {
+    //     s.classList.toggle("active", i === index);
+    //     dots[i].classList.toggle("active", i === index);
+    //   });
+    //   currentIndex = index;
+    // }
+
+    // function nextSlide() {
+    //   showSlide((currentIndex + 1) % slides.length);
+    // }
+
+    // function prevSlide() {
+    //   showSlide((currentIndex - 1 + slides.length) % slides.length);
+    // }
+
+    // function goToSlide(index) {
+    //   showSlide(index);
+    // }
+
+    // function startAutoPlay() {
+    //   autoPlay = setInterval(nextSlide, 4000);
+    // }
+
+    // function stopAutoPlay() {
+    //   clearInterval(autoPlay);
+    // }
+
+    // nextBtn.addEventListener("click", () => { nextSlide(); stopAutoPlay(); startAutoPlay(); });
+    // prevBtn.addEventListener("click", () => { prevSlide(); stopAutoPlay(); startAutoPlay(); });
+
+    // document.getElementById("heroSlider").addEventListener("mouseenter", stopAutoPlay);
+    // document.getElementById("heroSlider").addEventListener("mouseleave", startAutoPlay);
+
+    // startAutoPlay();
+    document.addEventListener("DOMContentLoaded", () => {
+      const track = document.querySelector(".carousel-track");
+      const slides = Array.from(track.children);
+      const prevBtn = document.querySelector(".carousel-btn.prev");
+      const nextBtn = document.querySelector(".carousel-btn.next");
+
+      let currentIndex = 0;
+
+      function updateCarousel(index) {
+        track.style.transform = `translateX(-${index * 100}%)`;
+      }
+
+      function nextSlide() {
+        currentIndex = (currentIndex + 1) % slides.length;
+        updateCarousel(currentIndex);
+      }
+
+      function prevSlide() {
+        currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+        updateCarousel(currentIndex);
+      }
+
+      nextBtn.addEventListener("click", nextSlide);
+      prevBtn.addEventListener("click", prevSlide);
+
+      // Auto play every 5s
+      setInterval(nextSlide, 5000);
+    });
+
+
+
+    // mobile search function
+    document.addEventListener("DOMContentLoaded", () => {
+      const productsGrid = document.getElementById('productsGrid');
+      const searchInput = document.getElementById('mobileSearchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      // Store posts globally after fetch
+      let allPosts = [];
+
+      // ===== Load posts from backend (example: your /api/posts endpoint) =====
+      async function loadPosts() {
+        try {
+          const res = await fetch("https://lykoria-ecommerce-website.onrender.com/api/posts?status=published");
+          const posts = await res.json();
+          allPosts = posts; // save for search filtering
+          renderProducts();
+        } catch (err) {
+          console.error("Error fetching posts:", err);
+        }
+      }
+
+      // ===== Render posts =====
+      function renderProducts(filter = '') {
+        productsGrid.innerHTML = '';
+        const filtered = allPosts.filter(p =>
+          p.title.toLowerCase().includes(filter.toLowerCase())
+        );
+
+        if (filtered.length === 0) {
+          productsGrid.innerHTML = `<p style="grid-column:1/-1;text-align:center;">No results found</p>`;
+          return;
+        }
+
+        filtered.forEach(p => {
+          const card = document.createElement('div');
+          card.className = 'post-card';
+          card.innerHTML = `
+        ${p.image ? `<img src="${p.image}" alt="${p.title}">` : ""}
+        <div class="post-card-content">
+          <h3>${p.title}</h3>
+          <p>${p.body ? p.body.substring(0, 80) + "..." : ""}</p>
+          <a href="${p.url || '#'}" class="read-more">View</a>
+        </div>
+      `;
+          productsGrid.appendChild(card);
+        });
+      }
+
+      // ===== Search input live filter =====
+      searchInput.addEventListener('input', e => {
+        renderProducts(e.target.value);
+      });
+
+      // ===== Clear search =====
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        renderProducts();
+      });
+
+      // Initial load
+      loadPosts();
+    });
+
   </script>
 
+  <script src="./js/global-js.js"></script>
+  <script src="https://kit.fontawesome.com/79a2ec8048.js" crossorigin="anonymous"></script>
 </body>
 
 </html>
